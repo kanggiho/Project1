@@ -4,15 +4,19 @@ import org.example.Project1.DAO.UserDAO;
 import org.example.Project1.VO.UserVO;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Login extends JFrame {
 
     static JTextArea allText;
     private final UserDAO dao; // DAO 객체 선언
+
+    private JLabel logo;
     private JTextField id;
     private JPasswordField pw;
 
@@ -35,16 +39,39 @@ public class Login extends JFrame {
     }
 
     private void initUI() {
+
+        //로고 필드
+
+        URL imageUrl = Login.class.getClassLoader().getResource("ware1.png");
+        if (imageUrl != null) {
+            // ImageIcon 생성
+            ImageIcon logoIcon = new ImageIcon(imageUrl);
+
+            // JLabel에 이미지 설정
+            JLabel logoLabel = new JLabel(logoIcon);
+            logoLabel.setHorizontalAlignment(SwingConstants.CENTER); // 가운데 정렬
+            Image scaledImage = logoIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH); // 이미지 사이즈 조절
+            ImageIcon resizedIcon = new ImageIcon(scaledImage);
+            logoLabel.setIcon(resizedIcon);
+            logoLabel.setBorder(new EmptyBorder(0, 20, 0, 20)); // 보더 값 주기
+
+            // JLabel을 JFrame에 추가
+            add(logoLabel, BorderLayout.CENTER);
+        } else {
+            System.out.println("로고 이미지를 찾을 수 없습니다!");
+        }
+
+
         // 아이디 필드
         add(new JLabel("아이디  : "));
         id = new JTextField(12);
-        id.setText("abcd1234");
+        id.setText("abcd1111");
         add(id);
 
         // 비밀번호 필드
         add(new JLabel("비밀번호 : "));
         pw = new JPasswordField(12);
-        pw.setText("abcd1234");
+        pw.setText("abcd1111");
         add(pw);
 
         // 엔터 키 이벤트 추가
