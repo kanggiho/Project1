@@ -1,5 +1,6 @@
 package org.example.Project1.DAO;
 
+import org.example.Project1.VO.ordererVO;
 import org.example.Project1.VO.productVO;
 
 import java.sql.Connection;
@@ -24,23 +25,20 @@ public class productDAO {
         System.out.println("Connected to Database");
     }
 
-    public void find(int product_code) throws Exception {
+    public productVO find(int product_code) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select product_code, product_name from product where product_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
         psForFind.setInt(1, product_code);
 
-        ResultSet rs = psForFind.executeQuery();
-        if (rs.next()) {
-            System.out.println("<<Product Info>>");
-            System.out.println("product code>> " + rs.getString("product_code"));
-            System.out.println("product name>> " + rs.getString("product_name"));
-        } else {
-            System.out.println("상품 정보가 없습니다.");
-        }
+        ResultSet table = psForFind.executeQuery();
+        productVO vo = new productVO();
 
-        psForFind.close();
-        con.close();
+        if (table.next()) {
+           vo.setProduct_code(table.getInt("product_code"));
+           vo.setProduct_name(table.getString("product_name"));
+        }
+        return vo;
     }
 
     public void insert(productVO vo) throws Exception {
