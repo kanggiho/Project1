@@ -28,7 +28,7 @@ public class productDAO {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select product_code, product_name from product where product_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
-        psForFind.setString(1, product_code);
+        psForFind.setInt(1, product_code);
 
         ResultSet rs = psForFind.executeQuery();
         if (rs.next()) {
@@ -72,6 +72,4 @@ public class productDAO {
         pstmForDelete.close();
         con.close();
     }
-}
-
 }
