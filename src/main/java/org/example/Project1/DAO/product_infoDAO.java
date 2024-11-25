@@ -17,7 +17,7 @@ public class product_infoDAO {
 
         String url = "jdbc:mysql://localhost:3306/project1";
         String id = "root";
-        String pw = "1234";
+        String pw = "";
         con = DriverManager.getConnection(url, id, pw);
         System.out.println("Connected to Database");
     }
