@@ -1,8 +1,6 @@
 package org.example.Project1._Frame;
 
-import org.example.Project1.DAO.UserDAO;
 import org.example.Project1.DAO.ordererDAO;
-import org.example.Project1.VO.UserVO;
 import org.example.Project1.VO.ordererVO;
 
 import javax.swing.*;
@@ -16,28 +14,26 @@ import java.util.ArrayList;
 public class Login extends JFrame {
 
     static JTextArea allText;
-    private final ordererDAO dao; // DAO 객체 선언
+    private final ordererDAO dao = new ordererDAO(); // DAO 객체 선언
 
-    private JLabel logo;
     private JTextField id;
     private JPasswordField pw;
 
     public Login() throws Exception {
         // JFrame 기본 설정
+        setFrame();
+        // UI 구성 요소 초기화
+        initUI();
+        // 화면 표시
+        setVisible(true);
+    }
+
+    public void setFrame(){
         setTitle("로그인");
         setSize(1200, 675);
         setLocationRelativeTo(null);
         setLayout(new FlowLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // DAO 객체 초기화
-        dao = new ordererDAO();
-
-        // UI 구성 요소 초기화
-        initUI();
-
-        // 화면 표시
-        setVisible(true);
     }
 
     private void initUI() {
