@@ -33,7 +33,7 @@ public class IncomingPanel extends JPanel {
                 {"F103", "Cola", "SoftDrink", "Cokacola", "2024-11-20", "Warehouse-2","6"},
                 {"F104", "PorkRib", "MainDishes", "VIPS", "2024-11-20", "Warehouse-5","2"},
                 {"F105", "Grape", "fruit", "Farm-A", "2024-11-20", "Warehouse-6","22"},
-                {"F106", "Cider", "SoftDrink", "Chilseong", "2024-11-20", "Warehouse-7","32"},
+                {"F106", "Cider", "SoftDrink", "Chilseong", "2024-11-20", "Warehouse-7","32"}
         };
         DefaultTableModel dtm = new DefaultTableModel(data, columns);
 
