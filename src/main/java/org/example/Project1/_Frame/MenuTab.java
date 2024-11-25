@@ -21,7 +21,7 @@ public class MenuTab extends JFrame {
     private void setFrame() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout()); // 레이아웃 변경: BorderLayout 사용
-        setSize(550, 350); // 프레임 사이즈 설정
+        setSize(1200, 675); // 프레임 사이즈 설정
         setLocationRelativeTo(null); // 화면 중간에 출력되도록 설정
     }
 

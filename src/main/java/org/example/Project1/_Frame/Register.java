@@ -1,7 +1,9 @@
 package org.example.Project1._Frame;
 
 import org.example.Project1.DAO.UserDAO;
+import org.example.Project1.DAO.ordererDAO;
 import org.example.Project1.VO.UserVO;
+import org.example.Project1.VO.ordererVO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +15,14 @@ public class Register extends JFrame {
     private JPasswordField pwc;
     private JTextField name;
     private JTextField tel;
+    private JTextField license;
+    private JTextField loc;
+
 
     public Register() {
         // JFrame 설정
         setTitle("회원가입");
-        setSize(250, 300);
+        setSize(1200, 675);
         setLocationRelativeTo(null); // 화면 중앙 배치
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new FlowLayout());
@@ -55,6 +60,16 @@ public class Register extends JFrame {
         tel = new JTextField(12);
         add(tel);
 
+        // 사업자 등록 번호
+        add(new JLabel("사업자 등록 번호 : "));
+        license = new JTextField(12);
+        add(license);
+
+        // 사업자 등록 주소지
+        add(new JLabel("사업자 등록 주소지 : "));
+        loc = new JTextField(12);
+        add(loc);
+
         // 등록 버튼
         JButton registerBtn = new JButton("가입하기");
         add(registerBtn);
@@ -74,12 +89,12 @@ public class Register extends JFrame {
     }
 
     private void validation() throws Exception {
-        UserDAO dao = new UserDAO();
+        ordererDAO dao = new ordererDAO();
 
         // 계정 등록시 유효성 검증
         // 공백 검증
         if (id.getText().trim().isEmpty() || pw.getText().trim().isEmpty() ||
-                name.getText().trim().isEmpty() || tel.getText().trim().isEmpty()) {
+                name.getText().trim().isEmpty() || tel.getText().trim().isEmpty() || license.getText().trim().isEmpty() || loc.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "모든 필드를 올바르게 입력하세요.");
             return;
         }
@@ -103,7 +118,6 @@ public class Register extends JFrame {
         if (!pw.getText().matches("^[a-z0-9]{8,15}$")) {
             JOptionPane.showMessageDialog(this, "비밀번호 조건이 맞지 않습니다.\n영어 소문자, 숫자를 포함하여 8-15글자");
             return;
-
         }
 
         if (!pw.getText().equals(pwc.getText())) {
@@ -123,13 +137,36 @@ public class Register extends JFrame {
             return;
         }
 
+        // 5. 사업자 등록 번호 검증
+        if (!license.getText().matches("^\\d{3}-\\d{2}-\\d{5}$")) {
+            JOptionPane.showMessageDialog(this, "사업자 등록 번호 조건이 맞지 않습니다.\nXXX-XX-XXXXX");
+            return;
+        }
+
+        // 6. 사업자 등록 주소지 검증
+        if (!loc.getText().matches("^[a-zA-Z가-힣]{5,50}$")) {
+            JOptionPane.showMessageDialog(this, "사업자 등록 주소지 조건이 맞지 않습니다.\n한글, 영어, 숫자를 포함하여 5-50글자");
+            return;
+        }
+
+
         try {
             // 아이디 생성
-            UserVO vo = new UserVO();
+//            UserVO vo = new UserVO();
+//            vo.setId(id.getText());
+//            vo.setPw(pw.getText());
+//            vo.setName(name.getText());
+//            vo.setTel(tel.getText());
+//            dao.insert(vo);
+//            JOptionPane.showMessageDialog(this, "정상적으로 가입되었습니다.");
+//            dispose();
+            ordererVO vo = new ordererVO();
             vo.setId(id.getText());
-            vo.setPw(pw.getText());
+            vo.setPassword(pw.getText());
             vo.setName(name.getText());
             vo.setTel(tel.getText());
+            vo.setLicense(license.getText());
+            vo.setLoc(loc.getText());
             dao.insert(vo);
             JOptionPane.showMessageDialog(this, "정상적으로 가입되었습니다.");
             dispose();

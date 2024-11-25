@@ -1,7 +1,9 @@
 package org.example.Project1._Frame;
 
 import org.example.Project1.DAO.UserDAO;
+import org.example.Project1.DAO.ordererDAO;
 import org.example.Project1.VO.UserVO;
+import org.example.Project1.VO.ordererVO;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 public class Login extends JFrame {
 
     static JTextArea allText;
-    private final UserDAO dao; // DAO 객체 선언
+    private final ordererDAO dao; // DAO 객체 선언
 
     private JLabel logo;
     private JTextField id;
@@ -23,13 +25,13 @@ public class Login extends JFrame {
     public Login() throws Exception {
         // JFrame 기본 설정
         setTitle("로그인");
-        setSize(260, 350);
+        setSize(1200, 675);
         setLocationRelativeTo(null);
         setLayout(new FlowLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // DAO 객체 초기화
-        dao = new UserDAO();
+        dao = new ordererDAO();
 
         // UI 구성 요소 초기화
         initUI();
@@ -139,9 +141,9 @@ public class Login extends JFrame {
         String temp_pw = new String(pw.getPassword());
 
         try {
-            UserVO udao = dao.one(temp_id);
+            ordererVO ovo = dao.one(temp_id);
             if (dao.isValid(temp_id, temp_pw)) {
-                JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(udao.getName()));
+                JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
                 new MenuTab("메인 화면");
                 dispose(); // 현재 창 닫기
             } else {
@@ -160,10 +162,10 @@ public class Login extends JFrame {
             allText.setVisible(true);
 
             try {
-                ArrayList<UserVO> user_list = dao.getAll();
+                ArrayList<ordererVO> user_list = dao.getAll();
                 allText.setText("");
-                for (UserVO user : user_list) {
-                    String temp = "아이디 : " + user.getId() + " 비밀번호 : " + user.getPw() + "\n";
+                for (ordererVO user : user_list) {
+                    String temp = "아이디 : " + user.getId() + " 비밀번호 : " + user.getPassword() + "\n";
                     allText.append(temp);
                 }
             } catch (Exception ex) {
