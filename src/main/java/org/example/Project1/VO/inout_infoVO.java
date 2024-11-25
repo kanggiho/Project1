@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class inout_infoVO {
     private int product_code; // 자재코드
-    private int warehouseID; // 창고번호
+    private int warehouse_id; // 창고번호
     private int user_id; // 주문자명
     private int approval_number; // 승인번호
     private int confirm_id; // 결재자

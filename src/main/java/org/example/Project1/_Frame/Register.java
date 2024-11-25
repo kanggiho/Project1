@@ -103,6 +103,7 @@ public class Register extends JFrame {
         if (!pw.getText().matches("^[a-z0-9]{8,15}$")) {
             JOptionPane.showMessageDialog(this, "비밀번호 조건이 맞지 않습니다.\n영어 소문자, 숫자를 포함하여 8-15글자");
             return;
+
         }
 
         if (!pw.getText().equals(pwc.getText())) {

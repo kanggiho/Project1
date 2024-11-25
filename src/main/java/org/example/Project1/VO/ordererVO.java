@@ -9,8 +9,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ordererVO {
-    private int UID; // 사용자 식별자
-    private String ID; // 아이디
+    private int uid; // 사용자 식별자
+    private String id; // 아이디
     private String password; // 비밀번호
     private int license; // 사업자등록번호
     private String name; // 이름
