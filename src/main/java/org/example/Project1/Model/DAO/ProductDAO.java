@@ -1,17 +1,17 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.productVO;
+import org.example.Project1.Model.VO.ProductVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class productDAO {
+public class ProductDAO {
     Connection con; //전역변수
 
 
-    public productDAO() throws Exception {
+    public ProductDAO() throws Exception {
         //1. 드라이버 설정
         Class.forName("com.mysql.cj.jdbc.Driver");
         System.out.println("Driver Connected");
@@ -24,14 +24,14 @@ public class productDAO {
         System.out.println("Connected to Database");
     }
 
-    public productVO find(int product_code) throws Exception {
+    public ProductVO find(int product_code) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select product_code, product_name from product where product_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
         psForFind.setInt(1, product_code);
 
         ResultSet table = psForFind.executeQuery();
-        productVO vo = new productVO();
+        ProductVO vo = new ProductVO();
 
         if (table.next()) {
            vo.setProduct_code(table.getInt("product_code"));
@@ -40,7 +40,7 @@ public class productDAO {
         return vo;
     }
 
-    public void insert(productVO vo) throws Exception {
+    public void insert(ProductVO vo) throws Exception {
         //3. sql문 준비
         String sqlForInsert = "insert into product values (?, ?)";
         PreparedStatement pstmForInsert = con.prepareStatement(sqlForInsert);

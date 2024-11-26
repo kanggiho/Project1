@@ -1,6 +1,6 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.ordererVO;
+import org.example.Project1.Model.VO.OrdererVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class ordererDAO {
+public class OrdererDAO {
     Connection con;
 
-    ArrayList<ordererVO> vo_list = new ArrayList<>();
+    ArrayList<OrdererVO> vo_list = new ArrayList<>();
 
-    public ordererDAO() throws Exception {
+    public OrdererDAO() throws Exception {
         connection();
     }
 
@@ -46,7 +46,7 @@ public class ordererDAO {
         ps.close();
     }
 
-    public void insert(ordererVO vo) throws Exception {
+    public void insert(OrdererVO vo) throws Exception {
 
         String sql = "insert into orderer(id,password,name,tel,license,loc) values (?,?,?,?,?,?)";
 
@@ -61,12 +61,12 @@ public class ordererDAO {
         ps.close();
     }
 
-    public ordererVO one(String id) throws Exception {
+    public OrdererVO one(String id) throws Exception {
         String sql = "select * from orderer where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
         ResultSet table = ps.executeQuery();
-        ordererVO vo = new ordererVO();
+        OrdererVO vo = new OrdererVO();
         if (table.next()) {
             vo.setId(table.getString("id"));
             vo.setPassword(table.getString("password"));
@@ -79,14 +79,14 @@ public class ordererDAO {
     }
 
 
-    public ArrayList<ordererVO> list(String id) throws Exception {
+    public ArrayList<OrdererVO> list(String id) throws Exception {
         String sql = "select * from orderer where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
         ResultSet table = ps.executeQuery();
         while(true){
             if(table.next()){
-                ordererVO vo = new ordererVO();
+                OrdererVO vo = new OrdererVO();
                 vo.setId(table.getString("id"));
                 vo.setPassword(table.getString("password"));
                 vo.setName(table.getString("name"));
@@ -132,7 +132,7 @@ public class ordererDAO {
         return result;
     }
 
-    public ArrayList<ordererVO> getAll() throws Exception {
+    public ArrayList<OrdererVO> getAll() throws Exception {
         String sql = "select * from orderer";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
@@ -142,7 +142,7 @@ public class ordererDAO {
         while(true){
 
             if(table.next()){
-                ordererVO vo = new ordererVO();
+                OrdererVO vo = new OrdererVO();
                 vo.setId(table.getString("id"));
                 vo.setPassword(table.getString("password"));
                 vo.setName(table.getString("name"));

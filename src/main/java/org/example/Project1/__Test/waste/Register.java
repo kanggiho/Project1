@@ -1,7 +1,7 @@
 package org.example.Project1.__Test.waste;
 
-import org.example.Project1.Model.DAO.ordererDAO;
-import org.example.Project1.Model.VO.ordererVO;
+import org.example.Project1.Model.DAO.OrdererDAO;
+import org.example.Project1.Model.VO.OrdererVO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,7 +96,7 @@ public class Register extends JFrame {
 
         boolean result = false;
 
-        ordererDAO dao = new ordererDAO();
+        OrdererDAO dao = new OrdererDAO();
 
         // 계정 등록시 유효성 검증
         // 공백 검증
@@ -160,9 +160,9 @@ public class Register extends JFrame {
 
     private void registerAccount(){
         try {
-            ordererDAO dao = new ordererDAO();
+            OrdererDAO dao = new OrdererDAO();
             // 아이디 생성
-            ordererVO vo = new ordererVO();
+            OrdererVO vo = new OrdererVO();
             vo.setId(id.getText());
             vo.setPassword(pw.getText());
             vo.setName(name.getText());

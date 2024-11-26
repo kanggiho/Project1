@@ -1,6 +1,6 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.confirmVO;
+import org.example.Project1.Model.VO.ConfirmVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class confirmDAO {
+public class ConfirmDAO {
     Connection con;
 
-    ArrayList<confirmVO> vo_list = new ArrayList<>();
+    ArrayList<ConfirmVO> vo_list = new ArrayList<>();
 
-    public confirmDAO() throws Exception {
+    public ConfirmDAO() throws Exception {
         connection();
     }
 
@@ -46,7 +46,7 @@ public class confirmDAO {
         ps.close();
     }
 
-    public void insert(confirmVO vo) throws Exception {
+    public void insert(ConfirmVO vo) throws Exception {
 
         String sql = "insert into confirm values (?,?)";
 
@@ -58,12 +58,12 @@ public class confirmDAO {
         ps.close();
     }
 
-    public confirmVO one(int approval_number) throws Exception {
+    public ConfirmVO one(int approval_number) throws Exception {
         String sql = "select * from confirm where approval_number = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, approval_number);
         ResultSet table = ps.executeQuery();
-        confirmVO vo = new confirmVO();
+        ConfirmVO vo = new ConfirmVO();
         if (table.next()) {
             vo.setApproval_number(table.getInt("approval_number"));
             vo.setAdmin_id(table.getInt("admin_id"));
@@ -72,7 +72,7 @@ public class confirmDAO {
     }
 
 
-    public ArrayList<confirmVO> list(int approval_number) throws Exception {
+    public ArrayList<ConfirmVO> list(int approval_number) throws Exception {
         String sql = "select * from confirm where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, approval_number);
@@ -82,7 +82,7 @@ public class confirmDAO {
         }
         while(true){
             if(table.next()){
-                confirmVO vo = new confirmVO();
+                ConfirmVO vo = new ConfirmVO();
                 vo.setApproval_number(table.getInt("approval_number"));
                 vo.setAdmin_id(table.getInt("admin_id"));
                 vo_list.add(vo);
@@ -94,7 +94,7 @@ public class confirmDAO {
     }
 
 
-    public ArrayList<confirmVO> getAll() throws Exception {
+    public ArrayList<ConfirmVO> getAll() throws Exception {
         String sql = "select * from confirm";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
@@ -104,7 +104,7 @@ public class confirmDAO {
         while(true){
 
             if(table.next()){
-                confirmVO vo = new confirmVO();
+                ConfirmVO vo = new ConfirmVO();
                 vo.setApproval_number(table.getInt("approval_number"));
                 vo.setAdmin_id(table.getInt("admin_id"));
                 vo_list.add(vo);

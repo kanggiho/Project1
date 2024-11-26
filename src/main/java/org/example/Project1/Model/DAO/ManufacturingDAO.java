@@ -1,16 +1,16 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.manufacturingVO;
+import org.example.Project1.Model.VO.ManufacturingVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class manufacturingDAO {
+public class ManufacturingDAO {
     Connection con; //전역변수
 
-    public manufacturingDAO() throws Exception {
+    public ManufacturingDAO() throws Exception {
         //1. 드라이버 설정
         Class.forName("com.mysql.cj.jdbc.Driver");
         System.out.println("Driver Connected");
@@ -23,14 +23,14 @@ public class manufacturingDAO {
         System.out.println("Connected to Database");
     }
 
-    public manufacturingVO find(String manufacturer_code) throws Exception {
+    public ManufacturingVO find(String manufacturer_code) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select * from manufacturing where manufacturer_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
         psForFind.setString(1, manufacturer_code);
 
         ResultSet table = psForFind.executeQuery();
-        manufacturingVO vo = new manufacturingVO();
+        ManufacturingVO vo = new ManufacturingVO();
 
         if (table.next()) {
            vo.setManufacturer_code(table.getString("manufacturer_code"));
@@ -41,7 +41,7 @@ public class manufacturingDAO {
         return vo;
     }
 
-    public void insert(manufacturingVO vo) throws Exception {
+    public void insert(ManufacturingVO vo) throws Exception {
         //3. sql문 준비
         String sqlForInsert = "insert into manufacturing values (?, ?, ?, ?)";
         PreparedStatement psForInsert = con.prepareStatement(sqlForInsert);

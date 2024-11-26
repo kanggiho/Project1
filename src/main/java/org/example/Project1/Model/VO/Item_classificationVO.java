@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class productVO {
-    private int product_code; // 자재코드
-    private String product_name; // 자재명
+public class Item_classificationVO {
+    private String code; // 분류코드
+    private String item_classification; // 품목구분
 }

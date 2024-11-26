@@ -1,7 +1,7 @@
 package org.example.Project1.__Test.waste;
 
-import org.example.Project1.Model.DAO.ordererDAO;
-import org.example.Project1.Model.VO.ordererVO;
+import org.example.Project1.Model.DAO.OrdererDAO;
+import org.example.Project1.Model.VO.OrdererVO;
 import org.example.Project1.View.Frame.UserMenuFrame;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Login extends JFrame {
 
     static JTextArea allText;
-    private final ordererDAO dao = new ordererDAO(); // DAO 객체 선언
+    private final OrdererDAO dao = new OrdererDAO(); // DAO 객체 선언
 
     private JTextField id;
     private JPasswordField pw;
@@ -138,7 +138,7 @@ public class Login extends JFrame {
         String temp_pw = new String(pw.getPassword());
 
         try {
-            ordererVO ovo = dao.one(temp_id);
+            OrdererVO ovo = dao.one(temp_id);
             if (dao.isValid(temp_id, temp_pw)) {
                 JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
                 new UserMenuFrame("메인 화면");
@@ -159,9 +159,9 @@ public class Login extends JFrame {
             allText.setVisible(true);
 
             try {
-                ArrayList<ordererVO> user_list = dao.getAll();
+                ArrayList<OrdererVO> user_list = dao.getAll();
                 allText.setText("");
-                for (ordererVO user : user_list) {
+                for (OrdererVO user : user_list) {
                     String temp = "아이디 : " + user.getId() + " 비밀번호 : " + user.getPassword() + "\n";
                     allText.append(temp);
                 }

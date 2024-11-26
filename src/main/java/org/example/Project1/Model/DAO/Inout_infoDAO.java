@@ -1,6 +1,6 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.inout_infoVO;
+import org.example.Project1.Model.VO.Inout_infoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class inout_infoDAO {
+public class Inout_infoDAO {
     Connection con;
 
-    ArrayList<inout_infoVO> vo_list = new ArrayList<>();
+    ArrayList<Inout_infoVO> vo_list = new ArrayList<>();
 
-    public inout_infoDAO() throws Exception {
+    public Inout_infoDAO() throws Exception {
         connection();
     }
 
@@ -26,7 +26,7 @@ public class inout_infoDAO {
     }
 
 
-    public void insert(inout_infoVO vo) throws Exception {
+    public void insert(Inout_infoVO vo) throws Exception {
 
         String sql = "insert into inout_info values (?,?,?,?,?,?,?,?,?)";
 
@@ -57,12 +57,12 @@ public class inout_infoDAO {
 
 
 
-    public inout_infoVO one(int product_code) throws Exception {
+    public Inout_infoVO one(int product_code) throws Exception {
         String sql = "select * from inout_info where product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, product_code);
         ResultSet table = ps.executeQuery();
-        inout_infoVO vo = new inout_infoVO();
+        Inout_infoVO vo = new Inout_infoVO();
         if (table.next()) {
             vo.setProduct_code(table.getInt("approval_number"));
             vo.setWarehouse_id(table.getInt("admin_id"));
@@ -78,7 +78,7 @@ public class inout_infoDAO {
     }
 
 
-    public ArrayList<inout_infoVO> list(int product_code) throws Exception {
+    public ArrayList<Inout_infoVO> list(int product_code) throws Exception {
         String sql = "select * from inout_info where product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, product_code);
@@ -88,7 +88,7 @@ public class inout_infoDAO {
         }
         while(true){
             if(table.next()){
-                inout_infoVO vo = new inout_infoVO();
+                Inout_infoVO vo = new Inout_infoVO();
                 vo.setProduct_code(table.getInt("approval_number"));
                 vo.setWarehouse_id(table.getInt("admin_id"));
                 vo.setUser_id(table.getInt("user_id"));
@@ -107,7 +107,7 @@ public class inout_infoDAO {
     }
 
 
-    public ArrayList<inout_infoVO> getAll() throws Exception {
+    public ArrayList<Inout_infoVO> getAll() throws Exception {
         String sql = "select * from inout_info";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
@@ -117,7 +117,7 @@ public class inout_infoDAO {
         while(true){
 
             if(table.next()){
-                inout_infoVO vo = new inout_infoVO();
+                Inout_infoVO vo = new Inout_infoVO();
                 vo.setProduct_code(table.getInt("approval_number"));
                 vo.setWarehouse_id(table.getInt("admin_id"));
                 vo.setUser_id(table.getInt("user_id"));

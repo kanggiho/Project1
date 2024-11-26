@@ -1,16 +1,16 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.warehouse_infoVO;
+import org.example.Project1.Model.VO.Warehouse_infoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class warehouse_infoDAO {
+public class Warehouse_infoDAO {
     Connection con; //전역변수
 
-    public warehouse_infoDAO() throws Exception {
+    public Warehouse_infoDAO() throws Exception {
         //1. 드라이버 설정
         Class.forName("com.mysql.cj.jdbc.Driver");
         System.out.println("Driver Connected");
@@ -23,14 +23,14 @@ public class warehouse_infoDAO {
         System.out.println("Connected to Database");
     }
 
-    public warehouse_infoVO find(int warehouse_id) throws Exception {
+    public Warehouse_infoVO find(int warehouse_id) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select * from warehouse_info where warehouse_id = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
         psForFind.setInt(1, warehouse_id);
 
         ResultSet table = psForFind.executeQuery();
-        warehouse_infoVO vo = new warehouse_infoVO();
+        Warehouse_infoVO vo = new Warehouse_infoVO();
 
         if (table.next()) {
            vo.setWarehouse_id(table.getInt("warehouse_id"));
@@ -40,7 +40,7 @@ public class warehouse_infoDAO {
         return vo;
     }
 
-    public void insert(warehouse_infoVO vo) throws Exception {
+    public void insert(Warehouse_infoVO vo) throws Exception {
         //3. sql문 준비
         String sqlForInsert = "insert into warehouse_info values (?, ?, ?)";
         PreparedStatement psForInsert = con.prepareStatement(sqlForInsert);

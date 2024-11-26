@@ -1,7 +1,7 @@
 package org.example.Project1.View.Frame;
 
-import org.example.Project1.Model.DAO.ordererDAO;
-import org.example.Project1.Model.VO.ordererVO;
+import org.example.Project1.Model.DAO.OrdererDAO;
+import org.example.Project1.Model.VO.OrdererVO;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -24,9 +24,9 @@ public class RegistrationFrame extends JFrame {
 
     private void registerAccount() {
         try {
-            ordererDAO dao = new ordererDAO();
+            OrdererDAO dao = new OrdererDAO();
             // 아이디 생성
-            ordererVO vo = new ordererVO();
+            OrdererVO vo = new OrdererVO();
             vo.setId(idField.getText());
             vo.setPassword(pwField.getText());
             vo.setName(nameField.getText());
@@ -330,7 +330,7 @@ public class RegistrationFrame extends JFrame {
 
     private boolean id_valid() {
         try {
-            ordererDAO dao = new ordererDAO();
+            OrdererDAO dao = new OrdererDAO();
             if (dao.confirmID(idField.getText())) {
                 return false;
             }
@@ -342,7 +342,7 @@ public class RegistrationFrame extends JFrame {
 
 
     private boolean validation() throws Exception {
-        ordererDAO dao = new ordererDAO();
+        OrdererDAO dao = new OrdererDAO();
 
         // 계정 등록시 유효성 검증
         // 공백 검증

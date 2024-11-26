@@ -1,6 +1,6 @@
 package org.example.Project1.Model.DAO;
 
-import org.example.Project1.Model.VO.adminVO;
+import org.example.Project1.Model.VO.AdminVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class adminDAO {
+public class AdminDAO {
     Connection con;
 
-    ArrayList<adminVO> vo_list = new ArrayList<>();
+    ArrayList<AdminVO> vo_list = new ArrayList<>();
 
-    public adminDAO() throws Exception {
+    public AdminDAO() throws Exception {
         connection();
     }
 
@@ -46,7 +46,7 @@ public class adminDAO {
         ps.close();
     }
 
-    public void insert(adminVO vo) throws Exception {
+    public void insert(AdminVO vo) throws Exception {
 
         String sql = "insert into admin values (?,?,?,?)";
 
@@ -59,12 +59,12 @@ public class adminDAO {
         ps.close();
     }
 
-    public adminVO one(String id) throws Exception {
+    public AdminVO one(String id) throws Exception {
         String sql = "select * from admin where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
         ResultSet table = ps.executeQuery();
-        adminVO vo = new adminVO();
+        AdminVO vo = new AdminVO();
         if (table.next()) {
             vo.setId(table.getInt("id"));
             vo.setPassword(table.getString("password"));
@@ -75,7 +75,7 @@ public class adminDAO {
     }
 
 
-    public ArrayList<adminVO> list(String id) throws Exception {
+    public ArrayList<AdminVO> list(String id) throws Exception {
         String sql = "select * from admin where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
@@ -85,7 +85,7 @@ public class adminDAO {
         }
         while(true){
             if(table.next()){
-                adminVO vo = new adminVO();
+                AdminVO vo = new AdminVO();
                 vo.setId(table.getInt("id"));
                 vo.setPassword(table.getString("password"));
                 vo.setName(table.getString("name"));
@@ -99,7 +99,7 @@ public class adminDAO {
     }
 
 
-    public ArrayList<adminVO> getAll() throws Exception {
+    public ArrayList<AdminVO> getAll() throws Exception {
         String sql = "select * from admin";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
@@ -109,7 +109,7 @@ public class adminDAO {
         while(true){
 
             if(table.next()){
-                adminVO vo = new adminVO();
+                AdminVO vo = new AdminVO();
                 vo.setId(table.getInt("id"));
                 vo.setPassword(table.getString("password"));
                 vo.setName(table.getString("name"));
