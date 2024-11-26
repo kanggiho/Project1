@@ -160,8 +160,4 @@ public class LoginFrame extends JFrame {
 
         return centerPanel;
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(LoginFrame::new);
-    }
 }
