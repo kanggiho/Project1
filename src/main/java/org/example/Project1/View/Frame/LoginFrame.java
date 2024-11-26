@@ -1,9 +1,17 @@
 package org.example.Project1.View.Frame;
 
+import org.example.Project1.Model.DAO.OrdererDAO;
+import org.example.Project1.Model.VO.OrdererVO;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
+
+
+    JTextField idField;
+    JPasswordField passwordField;
+
 
     public LoginFrame() {
         super("My 웨하스 - 로그인"); // JFrame의 제목 설정
@@ -54,6 +62,26 @@ public class LoginFrame extends JFrame {
         return topPanel;
     }
 
+    private void handleLogin() {
+        String temp_id = idField.getText();
+        String temp_pw = new String(passwordField.getPassword());
+
+        try {
+            OrdererDAO dao = new OrdererDAO(); // DAO 객체 선언
+            OrdererVO ovo = dao.idSelect(temp_id);
+            if (dao.isValid(temp_id, temp_pw)) {
+                JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
+                new UserMenuFrame("메인 화면");
+                dispose(); // 현재 창 닫기
+            } else {
+                JOptionPane.showMessageDialog(this, "다시 확인해주세요.");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "오류가 발생했습니다: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
     private JPanel createCenterPanel() {
         JPanel centerPanel = new JPanel();
         centerPanel.setBounds(500, 150, 225, 300);
@@ -67,14 +95,14 @@ public class LoginFrame extends JFrame {
         // 아이디 입력 필드
         JLabel idLabel = new JLabel("아이디");
         idLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
-        JTextField idField = new JTextField();
+        idField = new JTextField();
         idField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
         idField.setPreferredSize(new Dimension(200, 30));
 
         // 비밀번호 입력 필드
         JLabel passwordLabel = new JLabel("비밀번호");
         passwordLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
-        JPasswordField passwordField = new JPasswordField();
+        passwordField = new JPasswordField();
         passwordField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
         passwordField.setPreferredSize(new Dimension(200, 30));
 
@@ -102,14 +130,7 @@ public class LoginFrame extends JFrame {
             if (id.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(LoginFrame.this, "아이디와 비밀번호를 입력해주세요.");
             } else {
-                JOptionPane.showMessageDialog(LoginFrame.this, "로그인 성공!\n아이디: " + id);
-                try {
-                    new UserMenuFrame("메인 화면");
-                }catch (Exception ex){
-
-                }finally {
-                    dispose();
-                }
+                handleLogin();
             }
         });
 
