@@ -1,8 +1,8 @@
 package org.example.Project1.__Test.waste;
 
-import org.example.Project1.DAO.ordererDAO;
-import org.example.Project1.VO.ordererVO;
-import org.example.Project1._Frame.MenuFrame;
+import org.example.Project1.Model.DAO.ordererDAO;
+import org.example.Project1.Model.VO.ordererVO;
+import org.example.Project1.View.Frame.MenuFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
