@@ -13,6 +13,8 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
+
+    implementation 'com.sun.mail:javax.mail:1.6.2'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'org.projectlombok:lombok:1.18.24'  // compile을 implementation으로 변경
     annotationProcessor 'org.projectlombok:lombok:1.18.24'  // annotationProcessor는 그대로 유지

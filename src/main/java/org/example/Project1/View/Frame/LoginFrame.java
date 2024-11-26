@@ -85,7 +85,8 @@ public class LoginFrame extends JFrame {
         findLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                JOptionPane.showMessageDialog(LoginFrame.this, "아이디/비밀번호 찾기 페이지로 이동합니다.");
+                new RecoveryAccountFrame();
+                //JOptionPane.showMessageDialog(LoginFrame.this, "아이디/비밀번호 찾기 페이지로 이동합니다.");
             }
         });
 

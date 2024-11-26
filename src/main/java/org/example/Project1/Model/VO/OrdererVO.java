@@ -16,4 +16,6 @@ public class OrdererVO {
     private String name; // 이름
     private String tel; // 전화번호
     private String loc; // 사업자등록주소지
+    private String email; // 이메일
+    private String grade; // 회원등급
 }

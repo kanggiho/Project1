@@ -48,7 +48,7 @@ public class OrdererDAO {
 
     public void insert(OrdererVO vo) throws Exception {
 
-        String sql = "insert into orderer(id,password,name,tel,license,loc) values (?,?,?,?,?,?)";
+        String sql = "insert into orderer(id,password,name,tel,license,loc,email,grade) values (?,?,?,?,?,?,?,?)";
 
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, vo.getId());
@@ -57,12 +57,14 @@ public class OrdererDAO {
         ps.setString(4, vo.getTel());
         ps.setString(5, vo.getLicense());
         ps.setString(6, vo.getLoc());
+        ps.setString(7, vo.getEmail());
+        ps.setString(8, vo.getGrade());
         ps.executeUpdate();
         ps.close();
     }
 
     public OrdererVO one(String id) throws Exception {
-        String sql = "select * from orderer where id = ?";
+        String sql = "select * from orderer where email = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
         ResultSet table = ps.executeQuery();
@@ -72,8 +74,10 @@ public class OrdererDAO {
             vo.setPassword(table.getString("password"));
             vo.setName(table.getString("name"));
             vo.setTel(table.getString("tel"));
-            vo.setTel(table.getString("license"));
-            vo.setTel(table.getString("loc"));
+            vo.setLicense(table.getString("license"));
+            vo.setLoc(table.getString("loc"));
+            vo.setEmail(table.getString("email"));
+            vo.setGrade(table.getString("grade"));
         }
         return vo;
     }
@@ -93,6 +97,8 @@ public class OrdererDAO {
                 vo.setTel(table.getString("tel"));
                 vo.setLicense(table.getString("license"));
                 vo.setLoc(table.getString("loc"));
+                vo.setEmail(table.getString("email"));
+                vo.setGrade(table.getString("grade"));
                 vo_list.add(vo);
             }else{
                 break;
@@ -149,6 +155,8 @@ public class OrdererDAO {
                 vo.setTel(table.getString("tel"));
                 vo.setLicense(table.getString("license"));
                 vo.setLoc(table.getString("loc"));
+                vo.setEmail(table.getString("email"));
+                vo.setGrade(table.getString("grade"));
                 vo_list.add(vo);
             }else{
                 break;

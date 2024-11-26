@@ -33,6 +33,8 @@ public class RegistrationFrame extends JFrame {
             vo.setTel(telField.getText());
             vo.setLicense(licenseField.getText());
             vo.setLoc(locField.getText());
+            vo.setEmail(emailField.getText());
+            vo.setGrade("BRONZE");
             dao.insert(vo);
             JOptionPane.showMessageDialog(this, "정상적으로 가입되었습니다.");
             dispose();
@@ -43,26 +45,13 @@ public class RegistrationFrame extends JFrame {
         }
     }
 
-
     private void addAction() {
         // 가입 완료 버튼 클릭 이벤트
         completeButton.addActionListener(e -> {
-            // 입력된 데이터를 변수에 저장
-            String id = idField.getText();
-            String name = nameField.getText();
-            String license = licenseField.getText();
-            String pw = new String(pwField.getPassword()); // JPasswordField의 비밀번호 값
-            String pwc = new String(pwcField.getPassword()); // 비밀번호 확인 필드 값
-            String tel = telField.getText();
-            String loc = locField.getText();
 
             try {
                 if (validation()) {
                     registerAccount();
-                    // 데이터 확인
-                    JOptionPane.showMessageDialog(this,
-                            "회원가입 완료!"
-                    );
                     dispose();
                 }
             } catch (Exception ex) {
