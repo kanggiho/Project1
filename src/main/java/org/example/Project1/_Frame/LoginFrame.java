@@ -1,10 +1,15 @@
-package org.example.Project1.__Main;
+package org.example.Project1._Frame;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginForm {
-    public static void main(String[] args) {
+public class LoginFrame {
+
+    public LoginFrame() {
+        setUI();
+    }
+
+    private void setUI(){
         // JFrame 생성
         JFrame frame = new JFrame("마이 웨어하우스");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,4 +144,5 @@ public class LoginForm {
         // 화면 보이기
         frame.setVisible(true);
     }
+
 }
