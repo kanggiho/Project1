@@ -4,14 +4,16 @@ import org.example.Project1.Model.DAO.ordererDAO;
 import org.example.Project1.Model.VO.ordererVO;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class RegistrationFrame extends JFrame {
 
-    private JButton completeButton;
-    private JTextField idField, nameField, licenseField, telField, locField;
+    private JButton completeButton, cancelButton;
+    private JTextField idField, nameField, emailField, licenseField, telField, locField;
     private JPasswordField pwField, pwcField; // 비밀번호 확인 필드 추가
 
 
@@ -20,7 +22,7 @@ public class RegistrationFrame extends JFrame {
         addAction();
     }
 
-    private void registerAccount(){
+    private void registerAccount() {
         try {
             ordererDAO dao = new ordererDAO();
             // 아이디 생성
@@ -42,7 +44,6 @@ public class RegistrationFrame extends JFrame {
     }
 
 
-
     private void addAction() {
         // 가입 완료 버튼 클릭 이벤트
         completeButton.addActionListener(e -> {
@@ -60,12 +61,7 @@ public class RegistrationFrame extends JFrame {
                     registerAccount();
                     // 데이터 확인
                     JOptionPane.showMessageDialog(this,
-                            "회원가입 완료!\n" +
-                                    "아이디: " + id + "\n" +
-                                    "이름: " + name + "\n" +
-                                    "사업자등록번호: " + license + "\n" +
-                                    "전화번호: " + tel + "\n" +
-                                    "주소: " + loc
+                            "회원가입 완료!"
                     );
                     dispose();
                 }
@@ -73,10 +69,13 @@ public class RegistrationFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, ex.getMessage());
             }
         });
+        cancelButton.addActionListener(e -> {
+            dispose();
+        });
     }
 
     private void setUI() {
-        setTitle("마이 웨어하우스");
+        setTitle("My 웨하스 - 회원가입");
         setSize(1200, 675);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -92,16 +91,17 @@ public class RegistrationFrame extends JFrame {
 
         // 왼쪽 입력 폼
         JPanel leftPanel = createInputPanel();
-        leftPanel.setBounds(261, 205, 324, 270); // 정확한 위치 지정
+        leftPanel.setBounds(261, 160, 324, 300); // 정확한 위치 지정
         idField = addInputField(leftPanel, "아이디", "사용할 아이디를 입력하세요.", 0);
         pwField = addPasswordField(leftPanel, "비밀번호", "사용할 비밀번호를 입력하세요.", 80); // JPasswordField 추가
-        pwcField = addPasswordField(leftPanel, "비밀번호 확인", "사용할 비밀번호를 재입력하세요." ,160); // 비밀번호 확인 필드 추가
+        pwcField = addPasswordField(leftPanel, "비밀번호 확인", "사용할 비밀번호를 재입력하세요.", 160); // 비밀번호 확인 필드 추가
+        emailField = addInputField(leftPanel, "이메일", "사용할 이메일을 입력하세요.", 240);
 
         add(leftPanel);
 
         // 오른쪽 입력 폼
         JPanel rightPanel = createInputPanel();
-        rightPanel.setBounds(614, 205, 324, 300); // 높이를 늘려 비밀번호 확인 필드 포함
+        rightPanel.setBounds(614, 160, 324, 300); // 높이를 늘려 비밀번호 확인 필드 포함
         nameField = addInputField(rightPanel, "이름", "이름을 입력하세요.", 0);
         telField = addInputField(rightPanel, "전화번호", "전화번호를 입력하세요.", 80);
         licenseField = addInputField(rightPanel, "사업자등록번호", "사업자등록번호를 입력하세요.", 160);
@@ -110,7 +110,10 @@ public class RegistrationFrame extends JFrame {
 
         // 가입 완료 버튼
         completeButton = createCompleteButton();
+        cancelButton = createCancelButton();
+
         add(completeButton);
+        add(cancelButton);
 
         setVisible(true);
     }
@@ -123,12 +126,12 @@ public class RegistrationFrame extends JFrame {
 
         JLabel logo = new JLabel();
         ImageIcon originalIcon = new ImageIcon("src/main/resources/MainLogo.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
         logo.setIcon(resizedIcon);
-        logo.setPreferredSize(new Dimension(40, 40));
+        logo.setPreferredSize(new Dimension(45, 45));
 
-        JLabel title = new JLabel("마이 웨어하우스");
+        JLabel title = new JLabel("My 웨하스");
         title.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 24));
         title.setForeground(Color.BLACK);
 
@@ -140,7 +143,7 @@ public class RegistrationFrame extends JFrame {
 
     private JLabel createSignupLabel() {
         JLabel signupLabel = new JLabel("회원가입", SwingConstants.CENTER);
-        signupLabel.setBounds(254, 119, 132, 48);
+        signupLabel.setBounds(254, 90, 132, 48);
         signupLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 32));
         signupLabel.setForeground(Color.BLACK);
         return signupLabel;
@@ -163,6 +166,77 @@ public class RegistrationFrame extends JFrame {
         inputField.setForeground(new Color(0, 0, 0, 0.5f));
         inputField.setBounds(0, yPosition + 25, 324, 35);
         inputField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+        // id 유효성 검증
+        if(label.equals("아이디")){
+            inputField.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+
+                    if (inputField.getText().length() >= 5 && inputField.getText().length() <= 15){
+                        if(idField.getText().matches("^[a-z0-9]{5,15}$")){
+                            if (!id_valid()) {
+                                fieldLabel.setForeground(Color.RED);
+                                fieldLabel.setText(label + "- 이미 동일한 아이디가 있습니다.");
+                            } else {
+                                fieldLabel.setForeground(Color.GREEN);
+                                fieldLabel.setText(label + "- 해당 아이디는 사용가능합니다.");
+                            }
+                        }else{
+                            fieldLabel.setForeground(Color.BLACK);
+                            fieldLabel.setText(label);
+                        }
+                    }else{
+                        fieldLabel.setForeground(Color.BLACK);
+                        fieldLabel.setText(label);
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    if (inputField.getText().length() >= 5 && inputField.getText().length() <= 15){
+                        if(idField.getText().matches("^[a-z0-9]{5,15}$")){
+                            if (!id_valid()) {
+                                fieldLabel.setForeground(Color.RED);
+                                fieldLabel.setText(label + "- 이미 동일한 아이디가 있습니다.");
+                            } else {
+                                fieldLabel.setForeground(Color.GREEN);
+                                fieldLabel.setText(label + "- 해당 아이디는 사용가능합니다.");
+                            }
+                        }else{
+                            fieldLabel.setForeground(Color.BLACK);
+                            fieldLabel.setText(label);
+                        }
+                    }else{
+                        fieldLabel.setForeground(Color.BLACK);
+                        fieldLabel.setText(label);
+                    }
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    if (inputField.getText().length() >= 5 && inputField.getText().length() <= 15){
+                        if(idField.getText().matches("^[a-z0-9]{5,15}$")){
+                            if (!id_valid()) {
+                                fieldLabel.setForeground(Color.RED);
+                                fieldLabel.setText(label + "- 이미 동일한 아이디가 있습니다.");
+                            } else {
+                                fieldLabel.setForeground(Color.GREEN);
+                                fieldLabel.setText(label + "- 해당 아이디는 사용가능합니다.");
+                            }
+                        }else{
+                            fieldLabel.setForeground(Color.BLACK);
+                            fieldLabel.setText(label);
+                        }
+                    }else{
+                        fieldLabel.setForeground(Color.BLACK);
+                        fieldLabel.setText(label);
+                    }
+                }
+            });
+        }
+
+
 
         // Placeholder 기능 구현
         inputField.addFocusListener(new FocusListener() {
@@ -231,7 +305,7 @@ public class RegistrationFrame extends JFrame {
 
     private JButton createCompleteButton() {
         JButton button = new JButton("가입 완료");
-        button.setBounds(455, 543, 290, 41);
+        button.setBounds(261, 543, 290, 41);
         button.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         button.setBackground(Color.BLACK);
         button.setForeground(Color.WHITE);
@@ -241,15 +315,41 @@ public class RegistrationFrame extends JFrame {
         return button;
     }
 
-    private boolean validation() throws Exception {
+    private JButton createCancelButton() {
+        JButton button = new JButton("취소");
+        button.setBounds(612, 543, 290, 41);
+        button.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
+        button.setBackground(Color.BLACK);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        return button;
+    }
 
+
+    private boolean id_valid() {
+        try {
+            ordererDAO dao = new ordererDAO();
+            if (dao.confirmID(idField.getText())) {
+                return false;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
+    }
+
+
+    private boolean validation() throws Exception {
         ordererDAO dao = new ordererDAO();
 
         // 계정 등록시 유효성 검증
         // 공백 검증
         if (idField.getText().trim().isEmpty() || pwField.getText().trim().isEmpty() ||
                 nameField.getText().trim().isEmpty() || telField.getText().trim().isEmpty() ||
-                licenseField.getText().trim().isEmpty() || locField.getText().trim().isEmpty()) {
+                licenseField.getText().trim().isEmpty() || locField.getText().trim().isEmpty() ||
+                emailField.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "모든 필드를 올바르게 입력하세요.");
             return false;
         }
@@ -269,6 +369,7 @@ public class RegistrationFrame extends JFrame {
             ex.printStackTrace();
         }
 
+
         // 2. 비밀번호 검증
         if (!pwField.getText().matches("^[a-z0-9]{8,15}$")) {
             JOptionPane.showMessageDialog(this, "비밀번호 조건이 맞지 않습니다.\n영어 소문자, 숫자를 포함하여 8-15글자");
@@ -280,25 +381,32 @@ public class RegistrationFrame extends JFrame {
             return false;
         }
 
-        // 3. 이름 검증
+        // 3. 이메일 검증
+        if (!emailField.getText().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            JOptionPane.showMessageDialog(this, "이메일 조건이 맞지 않습니다.\nXXXX@XXXX.XXX");
+            return false;
+        }
+
+
+        // 4. 이름 검증
         if (!nameField.getText().matches("^[a-zA-Z가-힣]{2,5}$")) {
             JOptionPane.showMessageDialog(this, "이름 조건이 맞지 않습니다.\n영어, 한글 2-5글자");
             return false;
         }
 
-        // 4. 전화번호 검증
+        // 5. 전화번호 검증
         if (!telField.getText().matches("^010-\\d{4}-\\d{4}$")) {
             JOptionPane.showMessageDialog(this, "전화번호 조건이 맞지 않습니다.\n010-XXXX-XXXX");
             return false;
         }
 
-        // 5. 사업자 등록 번호 검증
+        // 6. 사업자 등록 번호 검증
         if (!licenseField.getText().matches("^\\d{3}-\\d{2}-\\d{5}$")) {
             JOptionPane.showMessageDialog(this, "사업자 등록 번호 조건이 맞지 않습니다.\nXXX-XX-XXXXX");
             return false;
         }
 
-        // 6. 사업자 등록 주소지 검증
+        // 7. 사업자 등록 주소지 검증
         if (!locField.getText().matches("^[a-zA-Z가-힣]{5,50}$")) {
             JOptionPane.showMessageDialog(this, "사업자 등록 주소지 조건이 맞지 않습니다.\n한글, 영어, 숫자를 포함하여 5-50글자");
             return false;

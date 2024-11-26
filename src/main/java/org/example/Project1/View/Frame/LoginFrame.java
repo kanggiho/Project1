@@ -11,7 +11,7 @@ public class LoginFrame {
 
     private void setUI(){
         // JFrame 생성
-        JFrame frame = new JFrame("마이 웨어하우스");
+        JFrame frame = new JFrame("My 웨하스 - 로그인");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 675); // 프레임 크기 설정
         frame.setLayout(null);
@@ -24,17 +24,24 @@ public class LoginFrame {
 
         // 로고 이미지
         ImageIcon originalIcon = new ImageIcon("src/main/resources/MainLogo.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
         JLabel logoLabel = new JLabel();
         logoLabel.setIcon(resizedIcon);
 
-        JLabel programTitle = new JLabel("마이 웨어하우스");
+        JLabel programTitle = new JLabel("My 웨하스");
         programTitle.setFont(new Font("머니그라피TTF Rounded", Font.BOLD, 30));
         programTitle.setForeground(Color.BLACK);
 
+
+        JLabel versionTitle = new JLabel("ver 1.0.0");
+        versionTitle.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
+        versionTitle.setForeground(Color.GRAY);
+
+
         topPanel.add(logoLabel);
         topPanel.add(programTitle);
+        topPanel.add(versionTitle);
         frame.add(topPanel);
 
         // 중앙 패널
@@ -89,7 +96,7 @@ public class LoginFrame {
             } else {
                 JOptionPane.showMessageDialog(frame, "로그인 성공!\n아이디: " + id);
                 try {
-                    new MenuFrame("메인 화면");
+                    new UserMenuFrame("메인 화면");
                 }catch (Exception ex){
 
                 }finally {

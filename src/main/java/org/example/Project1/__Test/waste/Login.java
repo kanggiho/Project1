@@ -2,7 +2,7 @@ package org.example.Project1.__Test.waste;
 
 import org.example.Project1.Model.DAO.ordererDAO;
 import org.example.Project1.Model.VO.ordererVO;
-import org.example.Project1.View.Frame.MenuFrame;
+import org.example.Project1.View.Frame.UserMenuFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -141,7 +141,7 @@ public class Login extends JFrame {
             ordererVO ovo = dao.one(temp_id);
             if (dao.isValid(temp_id, temp_pw)) {
                 JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
-                new MenuFrame("메인 화면");
+                new UserMenuFrame("메인 화면");
                 dispose(); // 현재 창 닫기
             } else {
                 JOptionPane.showMessageDialog(this, "다시 확인해주세요.");

@@ -8,9 +8,9 @@ import org.example.Project1.View.Panel.OutgoingPanel;
 import javax.swing.*;
 import java.awt.*;
 
-public class MenuFrame extends JFrame {
+public class UserMenuFrame extends JFrame {
 
-    public MenuFrame(String title) throws Exception {
+    public UserMenuFrame(String title) throws Exception {
         super(title); // Title 설정
         setFrame(); // JFrame 설정
         initUI(); // UI 초기화
