@@ -15,6 +15,10 @@ public class RecoveryAccountFrame extends JFrame {
     private JTextField emailField, idField;
     private JButton completeButton, cancelButton;
     private JLabel emailLabel, idLabel;
+    private final String GOOGLE_ACCOUNT = "kgh8685@gmail.com";
+    private final String GOOGLE_PASSWORD = "xlgx dgci swbn vfzy";
+    private final String GOOGLE_HOST = "smtp.gmail.com";
+
 
     public RecoveryAccountFrame() {
         setUI();
@@ -46,9 +50,9 @@ public class RecoveryAccountFrame extends JFrame {
     }
 
     private boolean sendRecoveryEmail(String userEmail, String content) {
-        final String senderEmail = "kgh8685@gmail.com"; // 발신자 Gmail 주소
-        final String senderPassword = "xlgx dgci swbn vfzy"; // 앱 비밀번호
-        final String host = "smtp.gmail.com";
+        final String senderEmail = GOOGLE_ACCOUNT; // 발신자 Gmail 주소
+        final String senderPassword = GOOGLE_PASSWORD; // 앱 비밀번호
+        final String host = GOOGLE_HOST;
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -182,7 +186,7 @@ public class RecoveryAccountFrame extends JFrame {
         return inputPanel;
     }
 
-    private JPanel createButtonPanel(){
+    private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBounds(455, 500, 290, 50); // 중앙 정렬
         buttonPanel.setLayout(new GridLayout(1, 2, 10, 0)); // 버튼 간격 추가
@@ -227,17 +231,24 @@ public class RecoveryAccountFrame extends JFrame {
             }
 
             // TODO: DB에서 이메일로 아이디 조회
+            boolean success;
 
             try {
                 OrdererDAO dao = new OrdererDAO();
-                OrdererVO vo = dao.one(email);
+                OrdererVO vo = dao.emailSelect(email);
                 foundId = vo.getId();
+                if (foundId == null) {
+                    JOptionPane.showMessageDialog(this, "해당 정보가 없습니다.");
+                    return;
+                } else {
+                    success = true;
+                }
 
-            }catch (Exception e) {
+            } catch (Exception e) {
 
             }
 
-            boolean success = sendRecoveryEmail(email, "찾으신 아이디는 다음과 같습니다:\n\n아이디: " + foundId);
+            success = sendRecoveryEmail(email, "찾으신 아이디는 다음과 같습니다:\n\n아이디: " + foundId);
             if (success) {
                 JOptionPane.showMessageDialog(this, "아이디가 이메일로 전송되었습니다.");
             } else {
@@ -250,17 +261,26 @@ public class RecoveryAccountFrame extends JFrame {
                 return;
             }
             // TODO: DB에서 이메일과 아이디로 비밀번호 조회
+            boolean success;
 
             try {
                 OrdererDAO dao = new OrdererDAO();
-                OrdererVO vo = dao.one(email);
+                OrdererVO vo = dao.idemailSelect(id, email);
                 foundPassword = vo.getPassword();
+                if (foundPassword == null) {
+                    JOptionPane.showMessageDialog(this, "해당 정보가 없습니다.");
+                    return;
+                } else {
+                    success = true;
+                }
 
-            }catch (Exception e) {
+
+            } catch (Exception e) {
 
             }
 
-            boolean success = sendRecoveryEmail(email, "찾으신 비밀번호는 다음과 같습니다:\n\n비밀번호: " + foundPassword);
+
+            success = sendRecoveryEmail(email, "찾으신 비밀번호는 다음과 같습니다:\n\n비밀번호: " + foundPassword);
             if (success) {
                 JOptionPane.showMessageDialog(this, "비밀번호가 이메일로 전송되었습니다.");
             } else {
@@ -269,4 +289,3 @@ public class RecoveryAccountFrame extends JFrame {
         }
     }
 }
-

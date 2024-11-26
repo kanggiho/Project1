@@ -63,8 +63,47 @@ public class OrdererDAO {
         ps.close();
     }
 
-    public OrdererVO one(String id) throws Exception {
+    public OrdererVO emailSelect(String email) throws Exception {
         String sql = "select * from orderer where email = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, email);
+        ResultSet table = ps.executeQuery();
+        OrdererVO vo = new OrdererVO();
+        if (table.next()) {
+            vo.setId(table.getString("id"));
+            vo.setPassword(table.getString("password"));
+            vo.setName(table.getString("name"));
+            vo.setTel(table.getString("tel"));
+            vo.setLicense(table.getString("license"));
+            vo.setLoc(table.getString("loc"));
+            vo.setEmail(table.getString("email"));
+            vo.setGrade(table.getString("grade"));
+        }
+        return vo;
+    }
+
+    public OrdererVO idemailSelect(String id, String email) throws Exception {
+        String sql = "select * from orderer where id = ? and email = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, id);
+        ps.setString(2, email);
+        ResultSet table = ps.executeQuery();
+        OrdererVO vo = new OrdererVO();
+        if (table.next()) {
+            vo.setId(table.getString("id"));
+            vo.setPassword(table.getString("password"));
+            vo.setName(table.getString("name"));
+            vo.setTel(table.getString("tel"));
+            vo.setLicense(table.getString("license"));
+            vo.setLoc(table.getString("loc"));
+            vo.setEmail(table.getString("email"));
+            vo.setGrade(table.getString("grade"));
+        }
+        return vo;
+    }
+
+    public OrdererVO idSelect(String id) throws Exception {
+        String sql = "select * from orderer where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, id);
         ResultSet table = ps.executeQuery();

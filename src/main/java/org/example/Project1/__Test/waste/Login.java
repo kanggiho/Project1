@@ -138,7 +138,7 @@ public class Login extends JFrame {
         String temp_pw = new String(pw.getPassword());
 
         try {
-            OrdererVO ovo = dao.one(temp_id);
+            OrdererVO ovo = dao.emailSelect(temp_id);
             if (dao.isValid(temp_id, temp_pw)) {
                 JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
                 new UserMenuFrame("메인 화면");

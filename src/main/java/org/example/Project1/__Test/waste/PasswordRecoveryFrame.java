@@ -1,4 +1,4 @@
-package org.example.Project1.Main;
+package org.example.Project1.__Test.waste;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 public class PasswordRecoveryFrame extends JFrame {
+    final String GOOGLE_ACCOUNT = "kgh8685@gmail.com";
 
     public PasswordRecoveryFrame() {
 
@@ -58,7 +59,7 @@ public class PasswordRecoveryFrame extends JFrame {
 
     private boolean sendRecoveryEmail(String userEmail) {
         // Gmail 계정 정보
-        final String senderEmail = "kgh8685@gmail.com"; // 발신자 Gmail 주소
+        final String senderEmail = GOOGLE_ACCOUNT; // 발신자 Gmail 주소
         final String senderPassword = "xlgx dgci swbn vfzy"; // 앱 비밀번호
 
         final String host = "smtp.gmail.com";
