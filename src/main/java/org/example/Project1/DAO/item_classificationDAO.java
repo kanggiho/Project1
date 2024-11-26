@@ -19,7 +19,7 @@ public class item_classificationDAO {
         Class.forName("com.mysql.cj.jdbc.Driver");
         String url = "jdbc:mysql://localhost:3306/project1";
         String id = "root";
-        String pw = "";
+        String pw = "1234";
         con = DriverManager.getConnection(url, id, pw);
     }
 

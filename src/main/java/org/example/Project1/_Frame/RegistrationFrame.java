@@ -77,9 +77,10 @@ public class RegistrationFrame extends JFrame {
 
     private void setUI() {
         setTitle("마이 웨어하우스");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 675);
         setLayout(null);
+        setLocationRelativeTo(null);
+
 
         // 상단 패널
         JPanel topPanel = createTopPanel();

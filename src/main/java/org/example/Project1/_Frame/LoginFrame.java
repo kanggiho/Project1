@@ -15,6 +15,7 @@ public class LoginFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1200, 675); // 프레임 크기 설정
         frame.setLayout(null);
+        frame.setLocationRelativeTo(null);
 
         // 상단 로고 및 프로그램 네임
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
@@ -87,6 +88,13 @@ public class LoginFrame {
                 JOptionPane.showMessageDialog(frame, "아이디와 비밀번호를 입력해주세요.");
             } else {
                 JOptionPane.showMessageDialog(frame, "로그인 성공!\n아이디: " + id);
+                try {
+                    new MenuFrame("메인 화면");
+                }catch (Exception ex){
+
+                }finally {
+                    frame.dispose();
+                }
             }
         });
 
@@ -99,7 +107,7 @@ public class LoginFrame {
         registerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         registerButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "회원가입 페이지로 이동합니다.");
+            new RegistrationFrame();
         });
 
         // GroupLayout으로 컴포넌트 배치
