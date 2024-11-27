@@ -396,7 +396,7 @@ public class RegistrationFrame extends JFrame {
         }
 
         // 7. 사업자 등록 주소지 검증
-        if (!locField.getText().matches("^[a-zA-Z가-힣]{5,50}$")) {
+        if (!locField.getText().matches("^[0-9a-zA-Z가-힣]{5,50}$")) {
             JOptionPane.showMessageDialog(this, "사업자 등록 주소지 조건이 맞지 않습니다.\n한글, 영어, 숫자를 포함하여 5-50글자");
             return false;
         }
