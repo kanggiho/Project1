@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class ProductDAO {
     Connection con; //전역변수
@@ -24,7 +25,7 @@ public class ProductDAO {
         System.out.println("Connected to Database");
     }
 
-    public ProductVO find(int product_code) throws Exception {
+    public ProductVO one(int product_code) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select product_code, product_name from product where product_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
@@ -38,6 +39,24 @@ public class ProductDAO {
            vo.setProduct_name(table.getString("product_name"));
         }
         return vo;
+    }
+
+    public ArrayList<ProductVO> getAll() throws Exception {
+        ArrayList<ProductVO> list = new ArrayList<>();
+        String sql = "select * from product";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            ProductVO vo = new ProductVO();
+            vo.setProduct_code(rs.getInt("product_code"));
+            vo.setProduct_name(rs.getString("product_name"));
+            list.add(vo);
+        }
+
+        rs.close();
+        ps.close();
+        return list;
     }
 
     public void insert(ProductVO vo) throws Exception {
@@ -69,4 +88,6 @@ public class ProductDAO {
         pstmForDelete.close();
         con.close();
     }
+
+
 }

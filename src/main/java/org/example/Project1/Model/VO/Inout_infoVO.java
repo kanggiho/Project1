@@ -17,4 +17,6 @@ public class Inout_infoVO {
     private int count; // 재고수량
     private int incoming_quantity; // 입고량
     private int release_quantity; // 출고량
+    private String incoming_date; //입고 날짜
+    private String release_date; //출고 날짜
 }
