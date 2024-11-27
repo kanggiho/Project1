@@ -28,7 +28,7 @@ public class Inout_infoDAO {
 
     public void insert(Inout_infoVO vo) throws Exception {
 
-        String sql = "insert into inout_info values (?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into inout_info values (?,?,?,?,?,?,?,?,?,?,?)";
 
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, vo.getProduct_code());
@@ -40,6 +40,8 @@ public class Inout_infoDAO {
         ps.setInt(7, vo.getCount());
         ps.setInt(8, vo.getIncoming_quantity());
         ps.setInt(9, vo.getRelease_quantity());
+        ps.setString(10, vo.getIncoming_date());
+        ps.setString(11, vo.getRelease_date());
 
         ps.executeUpdate();
         ps.close();
@@ -73,6 +75,8 @@ public class Inout_infoDAO {
             vo.setCount(table.getInt("count"));
             vo.setIncoming_quantity(table.getInt("incoming_quantity"));
             vo.setRelease_quantity(table.getInt("release_quantity"));
+            vo.setIncoming_date(table.getString("incoming_date"));
+            vo.setRelease_date(table.getString("release date"));
         }
         return vo;
     }

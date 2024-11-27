@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class Warehouse_infoDAO {
     Connection con; //전역변수
@@ -23,7 +24,7 @@ public class Warehouse_infoDAO {
         System.out.println("Connected to Database");
     }
 
-    public Warehouse_infoVO find(int warehouse_id) throws Exception {
+    public Warehouse_infoVO one(int warehouse_id) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select * from warehouse_info where warehouse_id = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
@@ -38,6 +39,25 @@ public class Warehouse_infoDAO {
            vo.setWarehouse_temperature(table.getString("warehouse_temperature"));
         }
         return vo;
+    }
+
+    public ArrayList<Warehouse_infoVO> getAll() throws Exception {
+        ArrayList<Warehouse_infoVO> list = new ArrayList<>();
+        String sql = "select * from warehouse_info";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Warehouse_infoVO vo = new Warehouse_infoVO();
+            vo.setWarehouse_id(rs.getInt("warehouse_id"));
+            vo.setWarehouse_location(rs.getString("warehouse_location"));
+            vo.setWarehouse_temperature(rs.getString("warehouse_temperature"));
+            list.add(vo);
+        }
+
+        rs.close();
+        ps.close();
+        return list;
     }
 
     public void insert(Warehouse_infoVO vo) throws Exception {
