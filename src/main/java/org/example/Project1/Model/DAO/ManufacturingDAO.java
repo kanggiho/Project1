@@ -1,11 +1,13 @@
 package org.example.Project1.Model.DAO;
 
 import org.example.Project1.Model.VO.ManufacturingVO;
+import org.example.Project1.Model.VO.Product_infoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class ManufacturingDAO {
     Connection con; //전역변수
@@ -23,7 +25,7 @@ public class ManufacturingDAO {
         System.out.println("Connected to Database");
     }
 
-    public ManufacturingVO find(String manufacturer_code) throws Exception {
+    public ManufacturingVO one(String manufacturer_code) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select * from manufacturing where manufacturer_code = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
@@ -39,6 +41,26 @@ public class ManufacturingDAO {
            vo.setLicense_number(table.getInt("license_number"));
         }
         return vo;
+    }
+
+    public ArrayList<ManufacturingVO> getAll() throws Exception {
+        ArrayList<ManufacturingVO> list = new ArrayList<>();
+        String sql = "select * from manufacturing";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            ManufacturingVO vo = new ManufacturingVO();
+            vo.setManufacturer_code(rs.getString("manufacturing_code"));
+            vo.setManufacturer_name(rs.getString("manufacturing_name"));
+            vo.setSorting(rs.getString("sorting"));
+            vo.setLicense_number(rs.getInt("license_number"));
+            list.add(vo);
+        }
+
+        rs.close();
+        ps.close();
+        return list;
     }
 
     public void insert(ManufacturingVO vo) throws Exception {
