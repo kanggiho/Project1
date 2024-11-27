@@ -378,7 +378,7 @@ public class RegistrationFrame extends JFrame {
 
 
         // 4. 이름 검증
-        if (!nameField.getText().matches("^[a-zA-Z가-힣]{2,5}$")) {
+        if (!nameField.getText().matches("^[a-zA-Z가-힣]{2,15}$")) {
             JOptionPane.showMessageDialog(this, "이름 조건이 맞지 않습니다.\n영어, 한글 2-5글자");
             return false;
         }
