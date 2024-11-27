@@ -1,9 +1,12 @@
 package org.example.Project1.View.Frame;
 
-import org.example.Project1.View.Panel.HistoryPanel;
-import org.example.Project1.View.Panel.IncomingPanel;
-import org.example.Project1.View.Panel.InventoryPanel;
-import org.example.Project1.View.Panel.OutgoingPanel;
+import org.example.Project1.View.Panel.Admin.InventoryManagementPanel;
+import org.example.Project1.View.Panel.Admin.OutgoingConfirmPanel;
+import org.example.Project1.View.Panel.Admin.UserGradeManagementPanel;
+import org.example.Project1.View.Panel.User.ConfirmListPanel;
+import org.example.Project1.View.Panel.Admin.IncomingManagementPanel;
+import org.example.Project1.View.Panel.User.InventorySearchPanel;
+import org.example.Project1.View.Panel.User.OutgoingPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,10 +34,10 @@ public class AdminMenuFrame extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
 
         // 탭 생성 , 이모티콘 추가 예정
-        tabbedPane.addTab("입고관리", new IncomingPanel("입고관리"));
-        tabbedPane.addTab("출고관리", new OutgoingPanel("출고관리"));
-        tabbedPane.addTab("재고관리", new InventoryPanel("재고관리"));
-        tabbedPane.addTab("입출고내역", new HistoryPanel("입출고내역"));
+        tabbedPane.addTab("입고관리", new IncomingManagementPanel("입고관리"));
+        tabbedPane.addTab("출고요청관리", new OutgoingConfirmPanel("출고요청관리"));
+        tabbedPane.addTab("재고관리", new InventoryManagementPanel("재고관리"));
+        tabbedPane.addTab("회원등급관리", new UserGradeManagementPanel("회원등급관리"));
 
         // JTabbedPane 추가 , BorderLayout 으로 만듬
         add(tabbedPane, BorderLayout.CENTER);

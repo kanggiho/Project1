@@ -1,6 +1,7 @@
 package org.example.Project1.Model.DAO;
 
 import org.example.Project1.Model.VO.AdminVO;
+import org.example.Project1.Model.VO.OrdererVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -121,4 +122,39 @@ public class AdminDAO {
         }
         return vo_list;
     }
+
+
+    public boolean isValid(String id, String pw) throws Exception {
+        boolean result = false;
+        String sql = "select count(id) from admin where id = ? and password = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, id);
+        ps.setString(2, pw);
+        ResultSet table = ps.executeQuery();
+        if(table.next()){
+            int count = table.getInt(1);
+            if(count == 1){
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public AdminVO idSelect(String id) throws Exception {
+        String sql = "select * from admin where id = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, id);
+        ResultSet table = ps.executeQuery();
+        AdminVO vo = new AdminVO();
+        if (table.next()) {
+            vo.setId(table.getInt("id"));
+            vo.setPassword(table.getString("password"));
+            vo.setName(table.getString("name"));
+            vo.setTel(table.getString("tel"));
+        }
+        return vo;
+    }
+
+
+
 }

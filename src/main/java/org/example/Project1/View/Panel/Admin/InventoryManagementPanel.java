@@ -1,12 +1,12 @@
-package org.example.Project1.View.Panel;
+package org.example.Project1.View.Panel.Admin;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class OutgoingPanel extends JPanel {
+public class InventoryManagementPanel extends JPanel {
     String title;
 
-    public OutgoingPanel(String title) {
+    public InventoryManagementPanel(String title) {
         this.title = title;
         setPanel();
         initUI(); // UI 초기화

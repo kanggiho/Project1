@@ -1,6 +1,8 @@
 package org.example.Project1.View.Frame;
 
+import org.example.Project1.Model.DAO.AdminDAO;
 import org.example.Project1.Model.DAO.OrdererDAO;
+import org.example.Project1.Model.VO.AdminVO;
 import org.example.Project1.Model.VO.OrdererVO;
 
 import javax.swing.*;
@@ -156,14 +158,22 @@ public class LoginFrame extends JFrame {
         }
 
         try {
-            OrdererDAO dao = new OrdererDAO();
-            OrdererVO user = dao.idSelect(id);
+            AdminDAO Adao = new AdminDAO();
+            AdminVO Afind = Adao.idSelect(id);
 
-            if (dao.isValid(id, password)) {
-                JOptionPane.showMessageDialog(this, String.format("%s님 환영합니다.", user.getName()));
-                new UserMenuFrame("메인 화면");
+            OrdererDAO Odao = new OrdererDAO();
+            OrdererVO Ofind = Odao.idSelect(id);
+
+
+            if (Odao.isValid(id, password)) {
+                JOptionPane.showMessageDialog(this, String.format("%s님 환영합니다.", Ofind.getName()));
+                new UserMenuFrame("유저 메인 화면");
                 dispose();
-            } else {
+            } else if (Adao.isValid(id,password)){
+                JOptionPane.showMessageDialog(this, String.format("%s관리자님 환영합니다.", Afind.getName()));
+                new AdminMenuFrame("관리자 메인 화면");
+                dispose();
+            }else{
                 JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호를 다시 확인해주세요.");
             }
         } catch (Exception ex) {

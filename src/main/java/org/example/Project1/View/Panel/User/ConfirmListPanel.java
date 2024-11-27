@@ -1,12 +1,12 @@
-package org.example.Project1.View.Panel;
+package org.example.Project1.View.Panel.User;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class HistoryPanel extends JPanel {
+public class ConfirmListPanel extends JPanel {
     String title;
 
-    public HistoryPanel(String title) {
+    public ConfirmListPanel(String title) {
         this.title = title;
         setPanel();
         initUI(); // UI 초기화

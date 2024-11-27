@@ -1,13 +1,13 @@
-package org.example.Project1.View.Panel;
+package org.example.Project1.View.Panel.Admin;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class IncomingPanel extends JPanel {
+public class IncomingManagementPanel extends JPanel {
     String title;
 
-    public IncomingPanel(String title) {
+    public IncomingManagementPanel(String title) {
         this.title = title;
         setPanel();
         initUI(); // UI 초기화
