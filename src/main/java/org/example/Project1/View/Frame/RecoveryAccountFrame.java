@@ -11,95 +11,41 @@ import java.awt.*;
 import java.util.Properties;
 
 public class RecoveryAccountFrame extends JFrame {
+
     private JLabel findIdButton, findPwButton;
     private JTextField emailField, idField;
     private JButton completeButton, cancelButton;
     private JLabel emailLabel, idLabel;
-    private final String GOOGLE_ACCOUNT = "kgh8685@gmail.com";
-    private final String GOOGLE_PASSWORD = "xlgx dgci swbn vfzy";
-    private final String GOOGLE_HOST = "smtp.gmail.com";
 
+    private static final String GOOGLE_ACCOUNT = "kgh8685@gmail.com";
+    private static final String GOOGLE_PASSWORD = "xlgx dgci swbn vfzy";
+    private static final String GOOGLE_HOST = "smtp.gmail.com";
 
     public RecoveryAccountFrame() {
-        setUI();
+        setupUI();
     }
 
-    private void setUI() {
+    private void setupUI() {
         setTitle("My 웨하스 - 아이디/비밀번호 찾기");
         setSize(1200, 675);
         setLayout(null);
         setLocationRelativeTo(null);
 
-        // 상단 패널
-        JPanel topPanel = createTopPanel();
-        add(topPanel);
-
-        // 라벨 스타일의 RadioButton
-        JPanel radioPanel = createStyledRadioButtonPanel();
-        add(radioPanel);
-
-        // 입력 필드 패널
-        JPanel inputPanel = createInputPanel();
-        add(inputPanel);
-
-        // 버튼 패널
-        JPanel buttonPanel = createButtonPanel();
-        add(buttonPanel);
+        add(createTopPanel());
+        add(createStyledRadioButtonPanel());
+        add(createInputPanel());
+        add(createButtonPanel());
 
         setVisible(true);
     }
 
-    private boolean sendRecoveryEmail(String userEmail, String content) {
-        final String senderEmail = GOOGLE_ACCOUNT; // 발신자 Gmail 주소
-        final String senderPassword = GOOGLE_PASSWORD; // 앱 비밀번호
-        final String host = GOOGLE_HOST;
-
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true"); // STARTTLS 활성화
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", "587"); // SMTP 포트 (TLS)
-
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, senderPassword);
-            }
-        });
-
-        try {
-            // 이메일 작성
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail));
-            message.setSubject("아이디/비밀번호 찾기");
-            message.setText(content);
-
-            // 이메일 전송
-            Transport.send(message);
-
-            return true; // 전송 성공
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return false; // 전송 실패
-        }
-    }
-
     private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(80, 113, 158));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         topPanel.setBounds(0, 0, 1200, 60);
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
+        topPanel.setBackground(new Color(80, 113, 158));
 
-        JLabel logo = new JLabel();
-        ImageIcon originalIcon = new ImageIcon("src/main/resources/MainLogo.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH);
-        ImageIcon resizedIcon = new ImageIcon(scaledImage);
-        logo.setIcon(resizedIcon);
-        logo.setPreferredSize(new Dimension(45, 45));
-
-        JLabel title = new JLabel("My 웨하스 - 아이디/비밀번호 찾기");
-        title.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 24));
-        title.setForeground(Color.WHITE);
+        JLabel logo = createLogoLabel();
+        JLabel title = createTitleLabel("My 웨하스 - 아이디/비밀번호 찾기");
 
         topPanel.add(logo);
         topPanel.add(title);
@@ -107,29 +53,27 @@ public class RecoveryAccountFrame extends JFrame {
         return topPanel;
     }
 
+    private JLabel createLogoLabel() {
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
+                .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
+        JLabel logo = new JLabel(resizedIcon);
+        logo.setPreferredSize(new Dimension(45, 45));
+        return logo;
+    }
+
+    private JLabel createTitleLabel(String text) {
+        JLabel title = new JLabel(text);
+        title.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 24));
+        title.setForeground(Color.WHITE);
+        return title;
+    }
+
     private JPanel createStyledRadioButtonPanel() {
-        JPanel radioPanel = new JPanel();
+        JPanel radioPanel = new JPanel(new GridLayout(1, 2, 20, 0));
         radioPanel.setBounds(400, 170, 400, 50);
-        radioPanel.setLayout(new GridLayout(1, 2, 20, 0));
 
-        findIdButton = createStyledRadioButton("아이디 찾기", Color.DARK_GRAY, Color.LIGHT_GRAY);
-        findPwButton = createStyledRadioButton("비밀번호 찾기", Color.LIGHT_GRAY, Color.DARK_GRAY);
-
-        findIdButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                selectStyledRadioButton(findIdButton, findPwButton);
-                toggleInputFields(true);
-            }
-        });
-
-        findPwButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                selectStyledRadioButton(findPwButton, findIdButton);
-                toggleInputFields(false);
-            }
-        });
+        findIdButton = createStyledRadioButton("아이디 찾기", Color.DARK_GRAY, Color.LIGHT_GRAY, true);
+        findPwButton = createStyledRadioButton("비밀번호 찾기", Color.LIGHT_GRAY, Color.DARK_GRAY, false);
 
         radioPanel.add(findIdButton);
         radioPanel.add(findPwButton);
@@ -137,75 +81,78 @@ public class RecoveryAccountFrame extends JFrame {
         return radioPanel;
     }
 
-    private JLabel createStyledRadioButton(String text, Color backgroundColor, Color foregroundColor) {
+    private JLabel createStyledRadioButton(String text, Color bgColor, Color fgColor, boolean isSelected) {
         JLabel button = new JLabel(text, SwingConstants.CENTER);
         button.setFont(new Font("머니그라피TTF Rounded", Font.BOLD, 18));
         button.setOpaque(true);
-        button.setBackground(backgroundColor);
-        button.setForeground(foregroundColor);
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                toggleRadioButtons(button == findIdButton);
+            }
+        });
+
+        if (isSelected) {
+            toggleRadioButtons(true);
+        }
+
         return button;
     }
 
-    private void selectStyledRadioButton(JLabel selected, JLabel other) {
-        selected.setBackground(Color.DARK_GRAY);
-        selected.setForeground(Color.LIGHT_GRAY);
-        other.setBackground(Color.LIGHT_GRAY);
-        other.setForeground(Color.DARK_GRAY);
+    private void toggleRadioButtons(boolean isFindId) {
+        setButtonStyle(findIdButton, isFindId);
+        setButtonStyle(findPwButton, !isFindId);
+        toggleInputFields(isFindId);
+    }
+
+    private void setButtonStyle(JLabel button, boolean isSelected) {
+        button.setBackground(isSelected ? Color.DARK_GRAY : Color.LIGHT_GRAY);
+        button.setForeground(isSelected ? Color.LIGHT_GRAY : Color.DARK_GRAY);
     }
 
     private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel();
+        JPanel inputPanel = new JPanel(null);
         inputPanel.setBounds(400, 280, 400, 200);
-        inputPanel.setLayout(null);
 
-        // 이메일 필드
-        emailLabel = new JLabel("이메일");
-        emailLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
-        emailLabel.setBounds(0, 0, 80, 25);
+        emailLabel = createLabel("이메일", 0, 0);
+        emailField = createTextField(90, 0);
+
+        idLabel = createLabel("아이디", 0, 50);
+        idField = createTextField(90, 50);
+
         inputPanel.add(emailLabel);
-
-        emailField = new JTextField();
-        emailField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        emailField.setBounds(90, 0, 300, 30);
         inputPanel.add(emailField);
-
-        // 아이디 필드 (비밀번호 찾기에만 표시)
-        idLabel = new JLabel("아이디");
-        idLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
-        idLabel.setBounds(0, 50, 80, 25);
         inputPanel.add(idLabel);
-
-        idField = new JTextField();
-        idField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        idField.setBounds(90, 50, 300, 30);
         inputPanel.add(idField);
 
-        toggleInputFields(true); // 기본값: 아이디 찾기 선택
-
+        toggleInputFields(true);
         return inputPanel;
     }
 
+    private JLabel createLabel(String text, int x, int y) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
+        label.setBounds(x, y, 80, 25);
+        return label;
+    }
+
+    private JTextField createTextField(int x, int y) {
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        textField.setBounds(x, y, 300, 30);
+        return textField;
+    }
+
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBounds(455, 500, 290, 50); // 중앙 정렬
-        buttonPanel.setLayout(new GridLayout(1, 2, 10, 0)); // 버튼 간격 추가
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        buttonPanel.setBounds(455, 500, 290, 50);
 
-        completeButton = new JButton("완료");
-        completeButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        completeButton.setBackground(Color.BLACK);
-        completeButton.setForeground(Color.WHITE);
-        completeButton.setFocusPainted(false);
-        completeButton.setPreferredSize(new Dimension(290, 41));
-        completeButton.addActionListener(e -> handleRecoveryAction());
-
-        cancelButton = new JButton("취소");
-        cancelButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        cancelButton.setBackground(Color.BLACK);
-        cancelButton.setForeground(Color.WHITE);
-        cancelButton.setFocusPainted(false);
-        cancelButton.setPreferredSize(new Dimension(290, 41));
-        cancelButton.addActionListener(e -> dispose());
+        completeButton = createButton("완료", e -> handleRecoveryAction());
+        cancelButton = createButton("취소", e -> dispose());
 
         buttonPanel.add(completeButton);
         buttonPanel.add(cancelButton);
@@ -213,79 +160,103 @@ public class RecoveryAccountFrame extends JFrame {
         return buttonPanel;
     }
 
+    private JButton createButton(String text, java.awt.event.ActionListener action) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        button.setBackground(Color.BLACK);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(290, 41));
+        button.addActionListener(action);
+        return button;
+    }
+
     private void toggleInputFields(boolean isFindId) {
         idLabel.setVisible(!isFindId);
         idField.setVisible(!isFindId);
     }
 
-
     private void handleRecoveryAction() {
-        String foundId = "exampleID"; // 데이터베이스에서 조회된 아이디
-        String foundPassword = "examplePassword"; // 데이터베이스에서 조회된 비밀번호
-
         String email = emailField.getText();
-        if (findIdButton.getBackground().equals(Color.DARK_GRAY)) { // 아이디 찾기
-            if (email.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "이메일을 입력해주세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        String id = idField.getText();
 
-            // TODO: DB에서 이메일로 아이디 조회
-            boolean success;
+        if (findIdButton.getBackground().equals(Color.DARK_GRAY)) {
+            handleIdRecovery(email);
+        } else {
+            handlePwRecovery(email, id);
+        }
+    }
 
-            try {
-                OrdererDAO dao = new OrdererDAO();
-                OrdererVO vo = dao.emailSelect(email);
-                foundId = vo.getId();
-                if (foundId == null) {
-                    JOptionPane.showMessageDialog(this, "해당 정보가 없습니다.");
-                    return;
-                } else {
-                    success = true;
-                }
+    private void handleIdRecovery(String email) {
+        if (email.isEmpty()) {
+            showErrorMessage("이메일을 입력해주세요.");
+            return;
+        }
 
-            } catch (Exception e) {
+        try {
+            OrdererDAO dao = new OrdererDAO();
+            OrdererVO vo = dao.emailSelect(email);
 
-            }
-
-            success = sendRecoveryEmail(email, "찾으신 아이디는 다음과 같습니다:\n\n아이디: " + foundId);
-            if (success) {
+            if (vo != null) {
+                sendRecoveryEmail(email, "찾으신 아이디는 다음과 같습니다:\n\n아이디: " + vo.getId());
                 JOptionPane.showMessageDialog(this, "아이디가 이메일로 전송되었습니다.");
             } else {
-                JOptionPane.showMessageDialog(this, "이메일 전송에 실패했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                showErrorMessage("해당 정보가 없습니다.");
             }
-        } else { // 비밀번호 찾기
-            String id = idField.getText();
-            if (email.isEmpty() || id.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "이메일과 아이디를 입력해주세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            // TODO: DB에서 이메일과 아이디로 비밀번호 조회
-            boolean success;
+        } catch (Exception e) {
+            showErrorMessage("오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 
-            try {
-                OrdererDAO dao = new OrdererDAO();
-                OrdererVO vo = dao.idemailSelect(id, email);
-                foundPassword = vo.getPassword();
-                if (foundPassword == null) {
-                    JOptionPane.showMessageDialog(this, "해당 정보가 없습니다.");
-                    return;
-                } else {
-                    success = true;
-                }
+    private void handlePwRecovery(String email, String id) {
+        if (email.isEmpty() || id.isEmpty()) {
+            showErrorMessage("이메일과 아이디를 입력해주세요.");
+            return;
+        }
 
+        try {
+            OrdererDAO dao = new OrdererDAO();
+            OrdererVO vo = dao.idemailSelect(id, email);
 
-            } catch (Exception e) {
-
-            }
-
-
-            success = sendRecoveryEmail(email, "찾으신 비밀번호는 다음과 같습니다:\n\n비밀번호: " + foundPassword);
-            if (success) {
+            if (vo != null) {
+                sendRecoveryEmail(email, "찾으신 비밀번호는 다음과 같습니다:\n\n비밀번호: " + vo.getPassword());
                 JOptionPane.showMessageDialog(this, "비밀번호가 이메일로 전송되었습니다.");
             } else {
-                JOptionPane.showMessageDialog(this, "이메일 전송에 실패했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+                showErrorMessage("해당 정보가 없습니다.");
             }
+        } catch (Exception e) {
+            showErrorMessage("오류가 발생했습니다: " + e.getMessage());
         }
+    }
+
+    private boolean sendRecoveryEmail(String recipient, String content) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", GOOGLE_HOST);
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(GOOGLE_ACCOUNT, GOOGLE_PASSWORD);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(GOOGLE_ACCOUNT));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+            message.setSubject("아이디/비밀번호 찾기");
+            message.setText(content);
+            Transport.send(message);
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "오류", JOptionPane.ERROR_MESSAGE);
     }
 }
