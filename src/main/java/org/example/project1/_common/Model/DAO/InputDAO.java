@@ -26,25 +26,8 @@ public class InputDAO {
         System.out.println("Connected to Database");
     }
 
-    public InputVO one(String warehousedDate) throws Exception {
-        String sql = "select * from Input where warehoused_date = ?";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, warehousedDate);
-        ResultSet table = ps.executeQuery();
-        InputVO vo = new InputVO();
-        if (table.next()) {
-            vo.setInputNum(table.getInt("input_num"));
-            vo.setManufacturerCode(table.getString("manufacturer_code"));
-            vo.setProductCode(table.getInt("product_code"));
-            vo.setAskingDate(table.getString("asking_date"));
-            vo.setWarehousedQuantity(table.getString("warehoused_quantity"));
-            vo.setWarehousedDate(table.getString("warehoused_date"));
-        }
-        return vo;
-    }
-
     public ArrayList<InputVO> list(String warehousedDate) throws Exception {
-        String sql = "select * from input where warehoused_date = ?";
+        String sql = "select * from input where warehoused_date = ? and product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, warehousedDate);
         ResultSet table = ps.executeQuery();
