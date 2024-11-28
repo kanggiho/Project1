@@ -37,6 +37,7 @@ public class IncomingManagementPanel extends JPanel {
         DefaultTableModel dtm = new DefaultTableModel(data, columns);
 
 
+
         JTable inputTable = new JTable(dtm);
         inputTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         inputTable.setAutoCreateRowSorter(true);
