@@ -24,7 +24,6 @@ public class IncomingManagementPanel extends JPanel {
         setLayout(new BorderLayout());
         //add(Label, BorderLayout.CENTER);
 
-
         String[] columns = {"아이디", "제품명", "식품부류", "제조사", "생산일자", "창고", "개수"};
         Object[][] data = {
                 {"F100", "Chicken", "Instant", "Puradak", "2024-11-20", "Warehouse-1","5"},
