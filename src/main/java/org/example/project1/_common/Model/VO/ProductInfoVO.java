@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Product_infoVO {
+public class ProductInfoVO {
     private String code; // 분류코드
     private int product_code; // 자재코드
     private String manufacturer_code; // 제조업체

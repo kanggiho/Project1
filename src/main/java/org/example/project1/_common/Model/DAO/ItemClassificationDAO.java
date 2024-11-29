@@ -1,17 +1,17 @@
 package org.example.project1._common.Model.DAO;
 
-import org.example.project1._common.Model.VO.Item_classificationVO;
+import org.example.project1._common.Model.VO.ItemClassificationVO;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class Item_classificationDAO {
+public class ItemClassificationDAO {
     Connection con;
-    ArrayList<Item_classificationVO> vo_list = new ArrayList<>();
+    ArrayList<ItemClassificationVO> vo_list = new ArrayList<>();
 
-    public Item_classificationDAO() throws Exception {
+    public ItemClassificationDAO() throws Exception {
         connection();
     }
 
@@ -40,7 +40,7 @@ public class Item_classificationDAO {
         ps.close();
     }
 
-    public void insert(Item_classificationVO vo) throws Exception {
+    public void insert(ItemClassificationVO vo) throws Exception {
         String sql = "insert into item_classification(code, item_classification) values (?,?)";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, vo.getCode());
@@ -49,12 +49,12 @@ public class Item_classificationDAO {
         ps.close();
     }
 
-    public Item_classificationVO one(String code) throws Exception {
+    public ItemClassificationVO one(String code) throws Exception {
         String sql = "select * from item_classification where code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, code);
         ResultSet table = ps.executeQuery();
-        Item_classificationVO vo = new Item_classificationVO();
+        ItemClassificationVO vo = new ItemClassificationVO();
         if (table.next()) {
             vo.setCode(table.getString("code"));
             vo.setItem_classification(table.getString("item_classification"));
@@ -62,13 +62,13 @@ public class Item_classificationDAO {
         return vo;
     }
 
-    public ArrayList<Item_classificationVO> list(String code) throws Exception {
+    public ArrayList<ItemClassificationVO> list(String code) throws Exception {
         String sql = "select * from item_classification where code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, code);
         ResultSet table = ps.executeQuery();
         while(table.next()) {
-            Item_classificationVO vo = new Item_classificationVO();
+            ItemClassificationVO vo = new ItemClassificationVO();
             vo.setCode(table.getString("code"));
             vo.setItem_classification(table.getString("item_classification"));
             vo_list.add(vo);
@@ -76,7 +76,7 @@ public class Item_classificationDAO {
         return vo_list;
     }
 
-    public ArrayList<Item_classificationVO> getAll() throws Exception {
+    public ArrayList<ItemClassificationVO> getAll() throws Exception {
         String sql = "select * from item_classification";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
@@ -84,7 +84,7 @@ public class Item_classificationDAO {
             vo_list.clear();
         }
         while(table.next()) {
-            Item_classificationVO vo = new Item_classificationVO();
+            ItemClassificationVO vo = new ItemClassificationVO();
             vo.setCode(table.getString("code"));
             vo.setItem_classification(table.getString("item_classification"));
             vo_list.add(vo);

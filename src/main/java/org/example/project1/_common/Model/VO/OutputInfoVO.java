@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Inout_infoVO {
+public class OutputInfoVO {
     private int product_code; // 자재코드
     private int warehouse_id; // 창고번호
     private int user_id; // 주문자명

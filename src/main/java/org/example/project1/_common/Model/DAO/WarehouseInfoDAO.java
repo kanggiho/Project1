@@ -1,6 +1,6 @@
 package org.example.project1._common.Model.DAO;
 
-import org.example.project1._common.Model.VO.Warehouse_infoVO;
+import org.example.project1._common.Model.VO.WarehouseInfoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,10 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class Warehouse_infoDAO {
+public class WarehouseInfoDAO {
     Connection con; //전역변수
 
-    public Warehouse_infoDAO() throws Exception {
+    public WarehouseInfoDAO() throws Exception {
         //1. 드라이버 설정
         Class.forName("com.mysql.cj.jdbc.Driver");
         System.out.println("Driver Connected");
@@ -24,14 +24,14 @@ public class Warehouse_infoDAO {
         System.out.println("Connected to Database");
     }
 
-    public Warehouse_infoVO one(int warehouse_id) throws Exception {
+    public WarehouseInfoVO one(int warehouse_id) throws Exception {
         //3. sql문 준비, 4. sql문 전송
         String sqlForFind = "select * from warehouse_info where warehouse_id = ?";
         PreparedStatement psForFind = con.prepareStatement(sqlForFind);
         psForFind.setInt(1, warehouse_id);
 
         ResultSet table = psForFind.executeQuery();
-        Warehouse_infoVO vo = new Warehouse_infoVO();
+        WarehouseInfoVO vo = new WarehouseInfoVO();
 
         if (table.next()) {
            vo.setWarehouse_id(table.getInt("warehouse_id"));
@@ -41,14 +41,14 @@ public class Warehouse_infoDAO {
         return vo;
     }
 
-    public ArrayList<Warehouse_infoVO> getAll() throws Exception {
-        ArrayList<Warehouse_infoVO> list = new ArrayList<>();
+    public ArrayList<WarehouseInfoVO> getAll() throws Exception {
+        ArrayList<WarehouseInfoVO> list = new ArrayList<>();
         String sql = "select * from warehouse_info";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            Warehouse_infoVO vo = new Warehouse_infoVO();
+            WarehouseInfoVO vo = new WarehouseInfoVO();
             vo.setWarehouse_id(rs.getInt("warehouse_id"));
             vo.setWarehouse_location(rs.getString("warehouse_location"));
             vo.setWarehouse_temperature(rs.getString("warehouse_temperature"));
@@ -60,7 +60,7 @@ public class Warehouse_infoDAO {
         return list;
     }
 
-    public void insert(Warehouse_infoVO vo) throws Exception {
+    public void insert(WarehouseInfoVO vo) throws Exception {
         //3. sql문 준비
         String sqlForInsert = "insert into warehouse_info values (?, ?, ?)";
         PreparedStatement psForInsert = con.prepareStatement(sqlForInsert);

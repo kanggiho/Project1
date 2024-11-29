@@ -1,6 +1,6 @@
 package org.example.project1._common.Model.DAO;
 
-import org.example.project1._common.Model.VO.Product_infoVO;
+import org.example.project1._common.Model.VO.ProductInfoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,10 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class Product_infoDAO {
+public class ProductInfoDAO {
     Connection con;
 
-    public Product_infoDAO() throws Exception {
+    public ProductInfoDAO() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
         System.out.println("Driver Connected");
 
@@ -22,7 +22,7 @@ public class Product_infoDAO {
         System.out.println("Connected to Database");
     }
 
-    public void insert(Product_infoVO vo) throws Exception {
+    public void insert(ProductInfoVO vo) throws Exception {
         String sql = "insert into product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) values (?,?,?,?,?,?,?)";
         PreparedStatement ps = con.prepareStatement(sql);
 
@@ -39,7 +39,7 @@ public class Product_infoDAO {
         ps.close();
     }
 
-    public void update(Product_infoVO vo) throws Exception {
+    public void update(ProductInfoVO vo) throws Exception {
         String sql = "update product_info set manufacturer_code=?, warehouse_id=?, price=?, stock=?, stock_date=? where code=? and product_code=?";
         PreparedStatement ps = con.prepareStatement(sql);
 
@@ -68,7 +68,7 @@ public class Product_infoDAO {
         ps.close();
     }
 
-    public Product_infoVO find(String code, int product_code) throws Exception {
+    public ProductInfoVO find(String code, int product_code) throws Exception {
         String sql = "select * from product_info where code = ? and product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
 
@@ -76,7 +76,7 @@ public class Product_infoDAO {
         ps.setInt(2, product_code);
 
         ResultSet rs = ps.executeQuery();
-        Product_infoVO vo = new Product_infoVO();
+        ProductInfoVO vo = new ProductInfoVO();
 
         if (rs.next()) {
             vo.setCode(rs.getString("code"));
@@ -93,14 +93,14 @@ public class Product_infoDAO {
         return vo;
     }
 
-    public ArrayList<Product_infoVO> getAll() throws Exception {
-        ArrayList<Product_infoVO> list = new ArrayList<>();
+    public ArrayList<ProductInfoVO> getAll() throws Exception {
+        ArrayList<ProductInfoVO> list = new ArrayList<>();
         String sql = "select * from product_info";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {
-            Product_infoVO vo = new Product_infoVO();
+            ProductInfoVO vo = new ProductInfoVO();
             vo.setCode(rs.getString("code"));
             vo.setProduct_code(rs.getInt("product_code"));
             vo.setManufacturer_code(rs.getString("manufacturer_code"));
