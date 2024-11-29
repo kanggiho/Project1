@@ -1,5 +1,6 @@
 package org.example.project1.mainmenu.UI;
 
+import org.example.project1.inventory.UI.InventoryManagementPanel;
 import org.example.project1.order.UI.ConfirmListPanel;
 import org.example.project1.order.UI.OutgoingPanel;
 import org.example.project1.account.UI.UserDataUpdate;
@@ -32,7 +33,7 @@ public class UserMenuFrame extends JFrame {
         // 탭 생성 , 이모티콘 추가 예정
         tabbedPane.addTab("출고관리", new OutgoingPanel("출고관리"));
         tabbedPane.addTab("신청내역확인", new ConfirmListPanel("신청내역확인"));
-        tabbedPane.addTab("재고조회", new InventorySearchPanel("재고조회"));
+        tabbedPane.addTab("재고조회", new InventoryManagementPanel("재고조회"));
         tabbedPane.addTab("회원정보수정", new UserDataUpdate("회원정보수정"));
 
         // JTabbedPane 추가 , BorderLayout 으로 만듬
