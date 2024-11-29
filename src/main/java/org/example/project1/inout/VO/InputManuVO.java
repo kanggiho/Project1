@@ -8,12 +8,12 @@ import lombok.ToString;
 @Getter
 @ToString
 public class InputManuVO {
-    private String manufacturer_code;
-    private String manufacturer_name;
-    private String sorting;
-    private int input_num;
-    private int product_code;
-    private String asking_date;
-    private int warehoused_quantity;
-    private String warehoused_date;
+    private String manufacturer_code; // 제조업체명
+    private String manufacturer_name; // 제조업체 이름
+    private String sorting; // 업종
+    private int input_num; // 입고번호
+    private int product_code; // 자재코드
+    private String asking_date; // 입고신청일
+    private int warehoused_quantity; // 입고 수량
+    private String warehoused_date; // 입고일
 }
