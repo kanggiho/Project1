@@ -1,7 +1,7 @@
 package org.example.test.waste;
 
-import org.example.project1._common.Model.DAO.OrdererDAO;
-import org.example.project1._common.Model.VO.OrdererVO;
+import org.example.project1.user.DAO.OrdererDAO;
+import org.example.project1.user.VO.OrdererVO;
 
 import javax.swing.*;
 import java.awt.*;
