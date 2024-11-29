@@ -1,6 +1,5 @@
 package org.example.project1.inventory.test;
 
-import org.example.project1.inventory.DAO.InventorySearchServiceDAO;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
 

@@ -1,6 +1,7 @@
 package org.example.project1.inventory.DAO;
 
 import org.example.project1._common._Ut.HikariCPDataSource;
+import org.example.project1.inventory.VO.ProductInfoProductVO;
 import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
 import org.example.project1.inventory.VO.ProductInfoVO;
 
@@ -121,6 +122,8 @@ public class ProductInfoDAO {
 
         List<Object> params = new ArrayList<>();
 
+
+
         // 동적 쿼리 생성: 제품명, 창고 ID, 제조업체명에 따라 WHERE 절 추가
         if (productName != null && !productName.isEmpty()) {
             sql.append("AND p.product_name LIKE ? ");
@@ -154,6 +157,68 @@ public class ProductInfoDAO {
 
         return results;
     }
+    /**
+     * 재고 현황을 조회하는 메서드
+     * @return 재고 현황 정보를 담은 List<ProductInfoProductVO>
+     */
+    public List<ProductInfoProductVO> getInventoryStatus() {
+        List<ProductInfoProductVO> inventoryList = new ArrayList<>();
+        String sql = "SELECT pi.code, pi.product_code, p.product_name, pi.manufacturer_code, " +
+                "pi.warehouse_id, pi.price, pi.stock, pi.stock_date " +
+                "FROM product_info pi " +
+                "JOIN product p ON pi.product_code = p.product_code " +
+                "ORDER BY pi.product_code";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                inventoryList.add(createProductInfoProductVOFromResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return inventoryList;
+    }
+
+    /**
+     * ProductInfoProductVO 객체를 데이터베이스에 삽입하는 메서드
+     * @param vo 삽입할 ProductInfoProductVO 객체
+     * @throws SQLException SQL 예외 발생 시
+     */
+    public void insert(ProductInfoProductVO vo) throws SQLException {
+        String sql = "INSERT INTO product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) VALUES (?,?,?,?,?,?,?)";
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, vo.getCode());
+            ps.setInt(2, vo.getProduct_code());
+            ps.setString(3, vo.getManufacturer_code());
+            ps.setInt(4, vo.getWarehouse_id());
+            ps.setInt(5, vo.getPrice());
+            ps.setInt(6, vo.getStock());
+            ps.setString(7, vo.getStock_date());
+            ps.executeUpdate();
+            System.out.println("삽입 성공");
+        }
+    }
+
+    // 다른 메서드들 (update, delete, find, getAll)도 유사하게 수정합니다.
+
+    // ResultSet에서 ProductInfoProductVO 객체를 생성하는 헬퍼 메서드
+    private ProductInfoProductVO createProductInfoProductVOFromResultSet(ResultSet rs) throws SQLException {
+        return new ProductInfoProductVO(
+                rs.getString("code"),
+                rs.getInt("product_code"),
+                rs.getString("product_name"),
+                rs.getString("manufacturer_code"),
+                rs.getInt("warehouse_id"),
+                rs.getInt("price"),
+                rs.getInt("stock"),
+                rs.getString("stock_date")
+        );
+    }
 
     // ResultSet에서 ProductInfoProductWarehouseInfoManufacturingVO 객체를 생성하는 헬퍼 메서드
     private ProductInfoProductWarehouseInfoManufacturingVO createProductInfoProductWarehouseInfoManufacturingVOFromResultSet(ResultSet rs) throws SQLException {
@@ -171,4 +236,5 @@ public class ProductInfoDAO {
         vo.setStock_date(sqlDate != null ? sqlDate.toString() : null);
         return vo;
     }
+
 }
