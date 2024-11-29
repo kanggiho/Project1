@@ -1,5 +1,6 @@
 package org.example.project1.inout.DAO;
 
+import org.example.project1.inout.VO.OutputInfoVO;
 import org.example.project1.user.VO.OrdererVO;
 
 import java.sql.Connection;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class OutputInfoDAO {
     Connection con;
 
-    ArrayList<OrdererVO.OutputInfoVO> vo_list = new ArrayList<>();
+    ArrayList<OutputInfoVO> vo_list = new ArrayList<>();
 
     public OutputInfoDAO() throws Exception {
         connection();
@@ -26,9 +27,9 @@ public class OutputInfoDAO {
     }
 
 
-    public void insert(OrdererVO.OutputInfoVO vo) throws Exception {
+    public void insert(OutputInfoVO vo) throws Exception {
 
-        String sql = "insert into inout_info values (?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into output_info values (?,?,?,?,?,?,?,?,?,?,?)";
 
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, vo.getProduct_code());
@@ -49,7 +50,7 @@ public class OutputInfoDAO {
 
     public void delete(int product_code) throws Exception {
 
-        String sql = "delete from inout_info where product_code = ?";
+        String sql = "delete from output_info where product_code = ?";
 
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, product_code); //1은 ?번호
@@ -59,15 +60,15 @@ public class OutputInfoDAO {
 
 
 
-    public OrdererVO.OutputInfoVO one(int product_code) throws Exception {
-        String sql = "select * from inout_info where product_code = ?";
+    public OutputInfoVO one(int product_code) throws Exception {
+        String sql = "select * from output_info where product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, product_code);
         ResultSet table = ps.executeQuery();
-        OrdererVO.OutputInfoVO vo = new OrdererVO.OutputInfoVO();
+        OutputInfoVO vo = new OutputInfoVO();
         if (table.next()) {
-            vo.setProduct_code(table.getInt("approval_number"));
-            vo.setWarehouse_id(table.getInt("admin_id"));
+            vo.setProduct_code(table.getInt("product_code"));
+            vo.setWarehouse_id(table.getInt("warehouse_id"));
             vo.setUser_id(table.getInt("user_id"));
             vo.setApproval_number(table.getInt("approval_number"));
             vo.setConfirm_id(table.getInt("confirm_id"));
@@ -82,8 +83,8 @@ public class OutputInfoDAO {
     }
 
 
-    public ArrayList<OrdererVO.OutputInfoVO> list(int product_code) throws Exception {
-        String sql = "select * from inout_info where product_code = ?";
+    public ArrayList<OutputInfoVO> list(int product_code) throws Exception {
+        String sql = "select * from output_info where product_code = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, product_code);
         ResultSet table = ps.executeQuery();
@@ -92,7 +93,7 @@ public class OutputInfoDAO {
         }
         while(true){
             if(table.next()){
-                OrdererVO.OutputInfoVO vo = new OrdererVO.OutputInfoVO();
+                OutputInfoVO vo = new OutputInfoVO();
                 vo.setProduct_code(table.getInt("approval_number"));
                 vo.setWarehouse_id(table.getInt("admin_id"));
                 vo.setUser_id(table.getInt("user_id"));
@@ -111,8 +112,8 @@ public class OutputInfoDAO {
     }
 
 
-    public ArrayList<OrdererVO.OutputInfoVO> getAll() throws Exception {
-        String sql = "select * from inout_info";
+    public ArrayList<OutputInfoVO> getAll() throws Exception {
+        String sql = "select * from output_info";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet table = ps.executeQuery();
         if(!vo_list.isEmpty()){
@@ -121,9 +122,9 @@ public class OutputInfoDAO {
         while(true){
 
             if(table.next()){
-                OrdererVO.OutputInfoVO vo = new OrdererVO.OutputInfoVO();
-                vo.setProduct_code(table.getInt("approval_number"));
-                vo.setWarehouse_id(table.getInt("admin_id"));
+                OutputInfoVO vo = new OutputInfoVO();
+                vo.setProduct_code(table.getInt("product_code"));
+                vo.setWarehouse_id(table.getInt("warehouse_id"));
                 vo.setUser_id(table.getInt("user_id"));
                 vo.setApproval_number(table.getInt("approval_number"));
                 vo.setConfirm_id(table.getInt("confirm_id"));
