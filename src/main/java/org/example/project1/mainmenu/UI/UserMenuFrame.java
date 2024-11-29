@@ -1,7 +1,6 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1.order.UI.ConfirmListPanel;
-import org.example.project1.order.UI.InventorySearchPanel;
 import org.example.project1.order.UI.OutgoingPanel;
 import org.example.project1.account.UI.UserDataUpdate;
 
