@@ -141,7 +141,7 @@ public class Login extends JFrame {
             OrdererVO ovo = dao.emailSelect(temp_id);
             if (dao.isValid(temp_id, temp_pw)) {
                 JOptionPane.showMessageDialog(this, "%s님 환영합니다.".formatted(ovo.getName()));
-                new UserMenuFrame("메인 화면");
+                new UserMenuFrame(ovo.getName());
                 dispose(); // 현재 창 닫기
             } else {
                 JOptionPane.showMessageDialog(this, "다시 확인해주세요.");

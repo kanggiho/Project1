@@ -9,6 +9,7 @@ import org.example.project1.user.VO.OrdererVO;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 
 public class LoginFrame extends JFrame {
 
@@ -29,6 +30,7 @@ public class LoginFrame extends JFrame {
         add(createTopPanel());
         add(createCenterPanel());
 
+        listenerAction();
         setVisible(true);
     }
 
@@ -169,11 +171,11 @@ public class LoginFrame extends JFrame {
 
             if (Odao.isValid(id, password)) {
                 JOptionPane.showMessageDialog(this, String.format("%s님 환영합니다.", Ofind.getName()));
-                new UserMenuFrame("유저 메인 화면");
+                new UserMenuFrame(Ofind.getName());
                 dispose();
             } else if (Adao.isValid(id,password)){
                 JOptionPane.showMessageDialog(this, String.format("%s관리자님 환영합니다.", Afind.getName()));
-                new AdminMenuFrame("관리자 메인 화면");
+                new AdminMenuFrame(Afind.getName());
                 dispose();
             }else{
                 JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호를 다시 확인해주세요.");
@@ -183,4 +185,29 @@ public class LoginFrame extends JFrame {
             ex.printStackTrace();
         }
     }
+
+    private void listenerAction() {
+        idField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    passwordField.requestFocus(); // 아이디 입력 후 엔터를 누르면 비밀번호 필드로 이동
+                }
+            }
+        });
+
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    handleLogin(); // 비밀번호 입력 후 엔터를 누르면 로그인 실행
+                }
+            }
+        });
+    }
+
+
+
+
+
 }

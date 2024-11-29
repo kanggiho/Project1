@@ -1,4 +1,4 @@
-package org.example.test.utility;
+package org.example.project1._common.utility;
 
 import java.awt.GraphicsEnvironment;
 
