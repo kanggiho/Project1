@@ -35,22 +35,98 @@ public class ProductInfoDAO {
         }
     }
 
-    // ProductInfoVO 객체를 데이터베이스에서 업데이트하는 메서드
-    public void update(ProductInfoVO vo) throws SQLException {
-        String sql = "UPDATE product_info SET manufacturer_code=?, warehouse_id=?, price=?, stock=?, stock_date=? WHERE code=? AND product_code=?";
+    // 가격만 수정
+    public void updatePrice(String code, int product_code, int price) throws SQLException {
+        String sql = "UPDATE product_info SET price = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, price, code, product_code);
+    }
+
+    // 입고예정일만 수정
+    public void updateStockDate(String code, int product_code, String stock_date) throws SQLException {
+        String sql = "UPDATE product_info SET stock_date = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, stock_date, code, product_code);
+    }
+
+    // 창고번호만 수정
+    public void updateWarehouseId(String code, int product_code, int warehouse_id) throws SQLException {
+        String sql = "UPDATE product_info SET warehouse_id = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, warehouse_id, code, product_code);
+    }
+
+    // 가격과 입고예정일 수정
+    public void updatePriceAndStockDate(String code, int product_code, int price, String stock_date) throws SQLException {
+        String sql = "UPDATE product_info SET price = ?, stock_date = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, price, stock_date, code, product_code);
+    }
+
+    // 가격과 창고번호 수정
+    public void updatePriceAndWarehouseId(String code, int product_code, int price, int warehouse_id) throws SQLException {
+        String sql = "UPDATE product_info SET price = ?, warehouse_id = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, price, warehouse_id, code, product_code);
+    }
+
+    // 입고예정일과 창고번호 수정
+    public void updateStockDateAndWarehouseId(String code, int product_code, String stock_date, int warehouse_id) throws SQLException {
+        String sql = "UPDATE product_info SET stock_date = ?, warehouse_id = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, stock_date, warehouse_id, code, product_code);
+    }
+
+    // 가격, 입고예정일, 창고번호 모두 수정
+    public void updateAll(String code, int product_code, int price, String stock_date, int warehouse_id) throws SQLException {
+        String sql = "UPDATE product_info SET price = ?, stock_date = ?, warehouse_id = ? WHERE code = ? AND product_code = ?";
+        executeUpdate(sql, price, stock_date, warehouse_id, code, product_code);
+    }
+
+    // 공통 실행 메서드
+    private void executeUpdate(String sql, Object... params) throws SQLException {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, vo.getManufacturer_code());
-            ps.setInt(2, vo.getWarehouse_id());
-            ps.setInt(3, vo.getPrice());
-            ps.setInt(4, vo.getStock());
-            ps.setString(5, vo.getStock_date());
-            ps.setString(6, vo.getCode());
-            ps.setInt(7, vo.getProduct_code());
-            ps.executeUpdate();
-            System.out.println("Update Success");
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Update Success");
+            } else {
+                System.out.println("No rows affected. Check if the record exists.");
+            }
         }
     }
+    /**
+     * 제품명을 이용하여 재고 수량을 감소시키는 메서드
+     *
+     * @param productName 재고를 감소시킬 제품명
+     * @param quantity 감소시킬 수량
+     * @return 업데이트된 행의 수
+     * @throws SQLException SQL 예외 발생 시
+     */
+    public int decreaseStockByProductName(String productName, int quantity) throws SQLException {
+        String sql = "UPDATE product_info pi " +
+                "JOIN product p ON pi.product_code = p.product_code " +
+                "SET pi.stock = pi.stock - ? " +
+                "WHERE p.product_name = ? AND pi.stock >= ?";
+
+        int updatedRows = 0;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, quantity);
+            pstmt.setString(2, productName);
+            pstmt.setInt(3, quantity);
+
+            updatedRows = pstmt.executeUpdate();
+
+            if (updatedRows > 0) {
+                System.out.println("재고 감소 성공: " + productName + ", 감소량: " + quantity);
+            } else {
+                System.out.println("재고 감소 실패: 제품을 찾을 수 없거나 재고가 부족합니다.");
+            }
+        }
+
+        return updatedRows;
+    }
+
 
     // 지정된 코드와 제품 코드에 해당하는 레코드를 데이터베이스에서 삭제하는 메서드
     public void delete(String code, int product_code) throws SQLException {
@@ -123,7 +199,6 @@ public class ProductInfoDAO {
         List<Object> params = new ArrayList<>();
 
 
-
         // 동적 쿼리 생성: 제품명, 창고 ID, 제조업체명에 따라 WHERE 절 추가
         if (productName != null && !productName.isEmpty()) {
             sql.append("AND p.product_name LIKE ? ");
@@ -157,8 +232,10 @@ public class ProductInfoDAO {
 
         return results;
     }
+
     /**
      * 재고 현황을 조회하는 메서드
+     *
      * @return 재고 현황 정보를 담은 List<ProductInfoProductVO>
      */
     public List<ProductInfoProductVO> getInventoryStatus() {
@@ -185,6 +262,7 @@ public class ProductInfoDAO {
 
     /**
      * ProductInfoProductVO 객체를 데이터베이스에 삽입하는 메서드
+     *
      * @param vo 삽입할 ProductInfoProductVO 객체
      * @throws SQLException SQL 예외 발생 시
      */
