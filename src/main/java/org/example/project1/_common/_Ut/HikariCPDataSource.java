@@ -12,7 +12,7 @@ public class HikariCPDataSource {
     private HikariCPDataSource() {
         // HikariConfig 설정
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/shop2"); // DB URL
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/project1"); // DB URL
         config.setUsername("root"); // DB 사용자 이름
         config.setPassword("1234"); // DB 비밀번호
         config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // MySQL 드라이버
