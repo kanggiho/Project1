@@ -18,7 +18,7 @@ public class OutputInfoDAO {
 
     public void insert(OutputInfoVO vo) {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement("insert into output_info values (?,?,?,?,?,?,?,?,?,?,?)")) {
+             PreparedStatement ps = con.prepareStatement("insert into output_info values (?,?,?,?,?,?,?,?,?)")) {
             ps.setInt(1, vo.getProduct_code());
             ps.setInt(2, vo.getWarehouse_id());
             ps.setInt(3, vo.getUser_id());
@@ -26,10 +26,8 @@ public class OutputInfoDAO {
             ps.setInt(5, vo.getConfirm_id());
             ps.setString(6, vo.getStatus());
             ps.setInt(7, vo.getUnit_price());
-            ps.setInt(8, vo.getIncoming_quantity());
-            ps.setInt(9, vo.getRelease_quantity());
-            ps.setString(10, vo.getIncoming_date());
-            ps.setString(11, vo.getRelease_date());
+            ps.setInt(8, vo.getRelease_quantity());
+            ps.setString(10, vo.getRelease_date());
 
             ps.executeUpdate();
             ps.close();
@@ -52,9 +50,7 @@ public class OutputInfoDAO {
                 vo.setConfirm_id(table.getInt("confirm_id"));
                 vo.setStatus(table.getString("status"));
                 vo.setUnit_price(table.getInt("unit_price"));
-                vo.setIncoming_quantity(table.getInt("incoming_quantity"));
                 vo.setRelease_quantity(table.getInt("release_quantity"));
-                vo.setIncoming_date(table.getString("incoming_date"));
                 vo.setRelease_date(table.getString("release date"));
             }
             return vo;
@@ -83,9 +79,7 @@ public class OutputInfoDAO {
                     vo.setConfirm_id(table.getInt("confirm_id"));
                     vo.setStatus(table.getString("status"));
                     vo.setUnit_price(table.getInt("unit_price"));
-                    vo.setIncoming_quantity(table.getInt("incoming_quantity"));
                     vo.setRelease_quantity(table.getInt("release_quantity"));
-                    vo.setIncoming_date(table.getString("incoming_date"));
                     vo.setRelease_date(table.getString("release date"));
                     vo_list.add(vo);
                 } else {
@@ -118,9 +112,7 @@ public class OutputInfoDAO {
                     vo.setConfirm_id(table.getInt("confirm_id"));
                     vo.setStatus(table.getString("status"));
                     vo.setUnit_price(table.getInt("unit_price"));
-                    vo.setIncoming_quantity(table.getInt("incoming_quantity"));
                     vo.setRelease_quantity(table.getInt("release_quantity"));
-                    vo.setIncoming_date(table.getString("incoming_date"));
                     vo.setRelease_date(table.getString("release date"));
                     vo_list.add(vo);
                 } else {
