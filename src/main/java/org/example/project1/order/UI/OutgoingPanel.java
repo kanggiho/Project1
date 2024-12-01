@@ -4,20 +4,26 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.VO.OutputRequestVO;
 import org.example.project1.order.VO.ProductInfoProductVO;
+import org.example.project1.order.DAO.OrdererDAO;
+import org.example.project1.order.VO.OutputInfoVO;
 
-/**
- * OutgoingPanel 클래스는 두 개의 JTable과 각 테이블 위에 JLabel과 JButton을 포함하는 패널입니다.
- * 레이아웃을 null로 설정하고 setBounds를 사용하여 컴포넌트의 위치와 크기를 수동으로 지정합니다.
- */
+
 public class OutgoingPanel extends JPanel {
 
     private String title;
@@ -29,12 +35,19 @@ public class OutgoingPanel extends JPanel {
     private JLabel productPriceLabel;
     private JTextField quantityField;
     private JButton releaseButton;
+    private JButton finalReleaseButton;
 
     // 선택된 제품 정보
     private ProductInfoProductVO selectedProduct;
 
     // 새로운 출고 요청 테이블 모델
     private OutputRequestTableModel outputRequestTableModel;
+
+    // 재고 확인 테이블
+    private JTable stockTable;
+
+    // 총 출고 비용 라벨
+    private JLabel totalCostLabel;
 
     public OutgoingPanel(String title, String user_name) {
         this.title = title;
@@ -63,7 +76,7 @@ public class OutgoingPanel extends JPanel {
         add(stockCheckLabel);
 
         // 재고 확인 테이블 생성
-        JTable stockTable = createStockTable();    // 윗쪽 테이블
+        stockTable = createStockTable();    // 윗쪽 테이블
         JScrollPane stockScrollPane = new JScrollPane(stockTable);
         stockScrollPane.setBounds(20, 60, 800, 150); // 위치와 크기 설정
         add(stockScrollPane);
@@ -80,7 +93,7 @@ public class OutgoingPanel extends JPanel {
         deleteButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
         deleteButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteButton.setBounds(130, 230, 100, 40); // 위치와 크기 설정
+        deleteButton.setBounds(130, 240, 70, 25); // 위치와 크기 설정
         add(deleteButton);
 
         // "전체삭제" 버튼 생성
@@ -88,7 +101,7 @@ public class OutgoingPanel extends JPanel {
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteAllButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
         deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteAllButton.setBounds(240, 230, 120, 40); // 위치와 크기 설정
+        deleteAllButton.setBounds(210, 240, 70, 25); // 위치와 크기 설정
         add(deleteAllButton);
 
         // --------------------- 새로운 출고 요청 테이블 ---------------------
@@ -100,6 +113,17 @@ public class OutgoingPanel extends JPanel {
         JScrollPane outputRequestScrollPane = new JScrollPane(outputRequestTable);
         outputRequestScrollPane.setBounds(20, 270, 800, 150); // 위치와 크기 설정
         add(outputRequestScrollPane);
+
+        // --------------------- 총 출고 비용 라벨 ---------------------
+        JLabel totalCostTextLabel = new JLabel("총 출고 비용:");
+        totalCostTextLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
+        totalCostTextLabel.setBounds(840, 240, 100, 30);
+        add(totalCostTextLabel);
+
+        totalCostLabel = new JLabel("0");
+        totalCostLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
+        totalCostLabel.setBounds(940, 240, 150, 30);
+        add(totalCostLabel);
 
         // --------------------- 오른쪽 출고 기능 섹션 ---------------------
         // 제품명 라벨
@@ -142,6 +166,16 @@ public class OutgoingPanel extends JPanel {
         releaseButton.setBorder(new LineBorder(Color.BLACK, 2));
         releaseButton.setBounds(840, 190, 250, 40);
         add(releaseButton);
+
+        // --------------------- 최종 출고하기 버튼 ---------------------
+        finalReleaseButton = new JButton("최종 출고");
+        finalReleaseButton.setFont(new Font(toss_font, Font.PLAIN, 20));
+        finalReleaseButton.setBackground(new Color(19, 102, 19)); // 연한 녹색 (Light Green)
+        finalReleaseButton.setBorder(new LineBorder(Color.BLACK, 2));
+        finalReleaseButton.setBounds(840, 300, 250, 100);
+        add(finalReleaseButton);
+
+
 
         // --------------------- 테이블 선택 이벤트 ---------------------
         stockTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -284,9 +318,150 @@ public class OutgoingPanel extends JPanel {
             }
         });
 
+        // "최종 출고하기" 버튼 액션
+        finalReleaseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    List<OutputRequestVO> allRequests = outputRequestTableModel.getAllRequests();
+                    if (allRequests.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "출고 요청이 없습니다.");
+                        return;
+                    }
+
+                    // DAO 인스턴스 생성
+                    OutputInfoDAO outputInfoDAO = new OutputInfoDAO();
+                    ProductInfoDAO productInfoDAO = new ProductInfoDAO();
+                    OrdererDAO ordererDAO = new OrdererDAO();
+
+                    // 트랜잭션 관리
+                    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "1234")) {
+                        conn.setAutoCommit(false); // 트랜잭션 시작
+
+                        for (OutputRequestVO request : allRequests) {
+                            // 랜덤 8자리 양의 정수 confirm_num 생성
+                            int confirmNum = generateConfirmNum();
+
+                            // 재고 확인 테이블에서 해당 제품의 창고 ID 가져오기
+                            ProductInfoProductVO stockProduct = productInfoDAO.getProductByProductCodeAndWarehouseId(request.getProduct_code());
+
+                            if (stockProduct == null) {
+                                JOptionPane.showMessageDialog(null, "제품 코드 " + request.getProduct_code() + "에 해당하는 창고 정보가 없습니다.");
+                                conn.rollback();
+                                return;
+                            }
+
+                            // 사용자명으로 user_id 가져오기
+                            int userId = ordererDAO.getUserIdByUserName(user_name);
+
+                            // OutputInfoVO 객체 생성
+                            OutputInfoVO outputInfo = new OutputInfoVO();
+                            outputInfo.setProduct_code(request.getProduct_code());
+                            outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
+                            outputInfo.setUser_id(userId);
+                            outputInfo.setConfirm_num(confirmNum);
+                            outputInfo.setConfirm_id(19981114);
+                            outputInfo.setStatus("대기중");
+                            outputInfo.setUnit_price(request.getPrice());
+                            outputInfo.setRelease_quantity(request.getRelease_quantity());
+                            outputInfo.setRelease_date(request.getRelease_date());
+
+                            // DB에 저장
+                            outputInfoDAO.insertOutputInfo(outputInfo);
+
+                            // product_info 테이블의 재고 수량 업데이트 (이미 출고량 감소됨)
+                            productInfoDAO.updateProductStock(stockProduct.getProduct_code(), stockProduct.getWarehouse_id(), stockProduct.getStock());
+                        }
+
+                        // 트랜잭션 커밋
+                        conn.commit();
+
+                        JOptionPane.showMessageDialog(null, "출고가 완료되었습니다.");
+                        // 출고 요청 테이블 및 재고 테이블 초기화
+                        outputRequestTableModel.clearAll();
+                        productInfoDAO.refreshInventoryStatus(stockTable);
+                        updateTotalCost();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "출고 중 오류가 발생했습니다: " + ex.getMessage());
+                    }
+                }catch (Exception ex) {
+
+                }
+
+            }
+        });
+
+
+
+        // --------------------- 커스텀 셀 에디터 설정 ---------------------
+        // '출고량' 칼럼 (인덱스 4)용 커스텀 셀 에디터 생성
+        TableColumn releaseQuantityColumn = outputRequestTable.getColumnModel().getColumn(4);
+        releaseQuantityColumn.setCellEditor(new DefaultCellEditor(new JTextField()) {
+            @Override
+            public boolean stopCellEditing() {
+                String input = (String) getCellEditorValue();
+                int row = outputRequestTable.getEditingRow();
+                int productCode = (int) outputRequestTable.getModel().getValueAt(row, 0);
+                int newQuantity;
+                try {
+                    newQuantity = Integer.parseInt(input);
+                    if (newQuantity <= 0) {
+                        JOptionPane.showMessageDialog(null, "수량은 0보다 커야 합니다.");
+                        return false;
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "유효한 수량을 입력해주세요.");
+                    return false;
+                }
+
+                // Get the stock model
+                ProductInfoTableModel stockModel = (ProductInfoTableModel) stockTable.getModel();
+                ProductInfoProductVO stockProduct = stockModel.getProductByProductCode(productCode);
+                if (stockProduct != null) {
+                    OutputRequestVO request = outputRequestTableModel.getOutputRequestAt(row);
+                    int currentReleaseQuantity = request.getRelease_quantity();
+                    int availableStock = stockProduct.getStock() + currentReleaseQuantity;
+
+                    if (newQuantity > availableStock) {
+                        JOptionPane.showMessageDialog(null, "출고 수량이 재고 수량을 초과합니다.");
+                        return false;
+                    }
+
+                    // Adjust the stock
+                    int delta = newQuantity - currentReleaseQuantity;
+                    stockProduct.setStock(stockProduct.getStock() - delta);
+                    stockModel.fireTableDataChanged();
+
+                    // Update the request's release_quantity
+                    request.setRelease_quantity(newQuantity);
+                    outputRequestTableModel.fireTableRowsUpdated(row, row);
+
+                    // Update the total cost
+                    updateTotalCost();
+                }
+
+                return super.stopCellEditing();
+            }
+        });
+
+        // --------------------- 총 출고 비용 업데이트 ---------------------
+        // 테이블 모델 리스너 추가하여 총 출고 비용 갱신
+        outputRequestTableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                updateTotalCost();
+            }
+        });
+
         // UI 갱신
         revalidate();
         repaint();
+    }
+
+    // 랜덤 8자리 양의 정수 생성 메서드
+    private int generateConfirmNum() {
+        return (int) (10000000 + Math.random() * 90000000);
     }
 
     // 재고 확인 테이블 생성
@@ -315,5 +490,15 @@ public class OutgoingPanel extends JPanel {
             // 예외 발생 시 빈 테이블 반환
             return new JTable();
         }
+    }
+
+    // 총 출고 비용 계산 및 업데이트 메서드
+    private void updateTotalCost() {
+        int totalCost = 0;
+        List<OutputRequestVO> requests = outputRequestTableModel.getAllRequests();
+        for (OutputRequestVO request : requests) {
+            totalCost += request.getPrice() * request.getRelease_quantity();
+        }
+        totalCostLabel.setText(String.valueOf(totalCost));
     }
 }

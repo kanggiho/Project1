@@ -1,5 +1,3 @@
-// OutputRequestTableModel.java
-
 package org.example.project1.order.UI;
 
 import javax.swing.table.AbstractTableModel;
@@ -70,6 +68,12 @@ public class OutputRequestTableModel extends AbstractTableModel {
             }
         }
         return -1;
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        // '출고량' 칼럼만 편집 가능 (인덱스 4)
+        return columnIndex == 4;
     }
 
     @Override

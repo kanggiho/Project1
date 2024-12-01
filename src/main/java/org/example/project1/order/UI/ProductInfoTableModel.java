@@ -11,7 +11,12 @@ public class ProductInfoTableModel extends AbstractTableModel {
     private final String[] columnNames = {
             "코드", "제품 코드", "제품명", "제조업체 코드", "창고 ID", "가격", "재고", "입고 예정일"
     };
-    private final List<ProductInfoProductVO> data;
+    private List<ProductInfoProductVO> data;
+
+    public void setData(List<ProductInfoProductVO> data) {
+        this.data = data;
+    }
+
 
     public ProductInfoTableModel(List<ProductInfoProductVO> data) {
         this.data = data;
