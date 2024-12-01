@@ -48,4 +48,12 @@ public class OutputInfoTableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         return columnNames[column];
     }
+
+    // 선택된 행의 OutputInfoVO 반환 메서드
+    public OutputInfoVO getOutputAt(int row) {
+        if (row >= 0 && row < data.size()) {
+            return data.get(row);
+        }
+        return null;
+    }
 }

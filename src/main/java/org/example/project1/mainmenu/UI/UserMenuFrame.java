@@ -120,7 +120,7 @@ public class UserMenuFrame extends JFrame {
 
 
         // 본인 패널 객체 생성
-        OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리");
+        OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리",name);
         ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인");
 
 
