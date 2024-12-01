@@ -1,8 +1,11 @@
 package org.example.project1.inventory.UI;
 
 import org.example.project1.inventory.DAO.ProductInfoDAO;
+
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.sql.SQLException;
 
 // 재고 수량 업데이트
@@ -10,6 +13,8 @@ public class StockUpdatePanel extends JPanel {
     private ProductInfoDAO productInfoDAO;
     private JTextField productNameField;
     private JTextField quantityField;
+    private PropertyChangeSupport pcs = new
+            PropertyChangeSupport(this);
 
     // 생성자: 패널 초기화
     public StockUpdatePanel() {
@@ -22,7 +27,7 @@ public class StockUpdatePanel extends JPanel {
         setLayout(new BorderLayout());
 
         // 제목 라벨 생성 및 추가
-        JLabel titleLabel = new JLabel("재고 수량 업데이트", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("발주하기", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
@@ -34,17 +39,22 @@ public class StockUpdatePanel extends JPanel {
 
         productNameField = new JTextField(15);
         quantityField = new JTextField(5);
-        JButton updateButton = new JButton("재고 감소");
+        JButton updateButton = new JButton("발주");
 
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         inputPanel.add(new JLabel("제품명:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
         inputPanel.add(productNameField, gbc);
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         inputPanel.add(new JLabel("감소 수량:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
         inputPanel.add(quantityField, gbc);
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         inputPanel.add(updateButton, gbc);
 
@@ -69,6 +79,8 @@ public class StockUpdatePanel extends JPanel {
             int updatedRows = productInfoDAO.decreaseStockByProductName(productName, quantity);
             if (updatedRows > 0) {
                 JOptionPane.showMessageDialog(this, "재고가 성공적으로 업데이트되었습니다.", "업데이트 성공", JOptionPane.INFORMATION_MESSAGE);
+                pcs.firePropertyChange("stockUpdated", null, null); // 이벤트 발생
+                SwingUtilities.getWindowAncestor(this).dispose(); // 다이얼로그 닫기
             } else {
                 JOptionPane.showMessageDialog(this, "재고 업데이트에 실패했습니다. 제품명과 재고를 확인하세요.", "업데이트 실패", JOptionPane.WARNING_MESSAGE);
             }
@@ -79,5 +91,9 @@ public class StockUpdatePanel extends JPanel {
         // 입력 필드 초기화
         productNameField.setText("");
         quantityField.setText("");
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
 }

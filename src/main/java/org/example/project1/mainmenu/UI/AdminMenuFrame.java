@@ -3,6 +3,7 @@ package org.example.project1.mainmenu.UI;
 import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.inventory.UI.StockEditPanel;
+import org.example.project1.inventory.UI.StockUpdatePanel;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
 import org.example.project1.user.UI.LoginFrame;
 
@@ -20,6 +21,7 @@ public class AdminMenuFrame extends JFrame {
     private JButton currentSelectedButton;
     private StockStatusPanel stockStatusPanel;
     private StockEditPanel stockEditPanel;
+    private StockUpdatePanel stockUpdatePanel;
 
     public AdminMenuFrame(String name) {
         setTitle("My 웨하스 - 관리자 모드");
@@ -114,20 +116,33 @@ public class AdminMenuFrame extends JFrame {
 
         stockStatusPanel = new StockStatusPanel("재고관리 화면");
         stockEditPanel = new StockEditPanel();
+        stockUpdatePanel = new StockUpdatePanel();
 
         JPanel inventoryPanel = new JPanel(new BorderLayout());
         inventoryPanel.add(stockStatusPanel, BorderLayout.CENTER);
-        inventoryPanel.add(stockEditPanel, BorderLayout.SOUTH);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton refreshButton = new JButton("새로고침");
+        refreshButton.addActionListener(e -> stockStatusPanel.loadStockData());
+        buttonPanel.add(refreshButton);
+
+        JButton editButton = new JButton("선택 항목 수정");
+        editButton.addActionListener(e -> openEditDialog());
+        buttonPanel.add(editButton);
+
+        JButton orderButton = new JButton("발주하기");
+        orderButton.addActionListener(e -> openOrderDialog());
+        buttonPanel.add(orderButton);
+
+        inventoryPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         innerPanel.add(inventoryPanel, "재고관리");
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
 
         stockStatusPanel.addPropertyChangeListener("rowSelected", evt -> {
             boolean rowSelected = (boolean) evt.getNewValue();
-            stockEditPanel.setEditButtonEnabled(rowSelected);
+            editButton.setEnabled(rowSelected);
         });
-
-        stockEditPanel.setEditButtonListener(e -> openEditDialog());
 
         add(innerPanel);
     }
@@ -151,6 +166,23 @@ public class AdminMenuFrame extends JFrame {
         panel.add(label, BorderLayout.CENTER);
         panel.setBackground(ColorSet.color1_light[0]);
         return panel;
+    }
+    private void openOrderDialog() {
+        JDialog orderDialog = new JDialog(this, "발주하기", true);
+        orderDialog.setContentPane(stockUpdatePanel);
+        orderDialog.pack();
+        orderDialog.setLocationRelativeTo(this);
+
+        // 발주 완료 후 새로 고침을 위한 리스너 추가
+        stockUpdatePanel.addPropertyChangeListener("stockUpdated", evt -> {
+            stockStatusPanel.loadStockData();
+            orderDialog.dispose();
+        });
+
+        orderDialog.setVisible(true);
+
+        // 다이얼로그가 닫힌 후 재고 목록 새로고침
+        stockStatusPanel.loadStockData();
     }
 
     private void openEditDialog() {
