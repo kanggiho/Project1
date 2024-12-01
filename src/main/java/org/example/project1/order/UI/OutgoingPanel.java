@@ -18,11 +18,10 @@ import java.util.List;
 
 import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
-import org.example.project1.order.VO.OutputRequestVO;
-import org.example.project1.order.VO.ProductInfoProductVO;
 import org.example.project1.order.DAO.OrdererDAO;
 import org.example.project1.order.VO.OutputInfoVO;
-
+import org.example.project1.order.VO.OutputRequestVO;
+import org.example.project1.order.VO.ProductInfoProductVO;
 
 public class OutgoingPanel extends JPanel {
 
@@ -48,6 +47,9 @@ public class OutgoingPanel extends JPanel {
 
     // 총 출고 비용 라벨
     private JLabel totalCostLabel;
+
+    // DAO 클래스 멤버 변수
+    private ProductInfoDAO productInfoDAO;
 
     public OutgoingPanel(String title, String user_name) {
         this.title = title;
@@ -101,7 +103,7 @@ public class OutgoingPanel extends JPanel {
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteAllButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
         deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteAllButton.setBounds(210, 240, 70, 25); // 위치와 크기 설정
+        deleteAllButton.setBounds(210, 240, 100, 25); // 위치와 크기 설정
         add(deleteAllButton);
 
         // --------------------- 새로운 출고 요청 테이블 ---------------------
@@ -170,12 +172,11 @@ public class OutgoingPanel extends JPanel {
         // --------------------- 최종 출고하기 버튼 ---------------------
         finalReleaseButton = new JButton("최종 출고");
         finalReleaseButton.setFont(new Font(toss_font, Font.PLAIN, 20));
-        finalReleaseButton.setBackground(new Color(19, 102, 19)); // 연한 녹색 (Light Green)
+        finalReleaseButton.setBackground(new Color(19, 102, 19)); // 짙은 녹색
+        finalReleaseButton.setForeground(Color.WHITE);
         finalReleaseButton.setBorder(new LineBorder(Color.BLACK, 2));
         finalReleaseButton.setBounds(840, 300, 250, 100);
         add(finalReleaseButton);
-
-
 
         // --------------------- 테이블 선택 이벤트 ---------------------
         stockTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -293,14 +294,15 @@ public class OutgoingPanel extends JPanel {
                 // 주문자명은 생성자에서 전달된 user_name 사용
                 String userName = user_name;
 
-                // 출고 요청 VO 생성
+                // 출고 요청 VO 생성 (warehouse_id 포함)
                 OutputRequestVO request = new OutputRequestVO(
                         selectedProduct.getProduct_code(),
                         selectedProduct.getProduct_name(),
                         userName,
                         selectedProduct.getPrice(),
                         quantity,
-                        releaseDate
+                        releaseDate,
+                        selectedProduct.getWarehouse_id() // 창고 ID 추가
                 );
 
                 // 테이블에 출고 요청 추가
@@ -319,83 +321,214 @@ public class OutgoingPanel extends JPanel {
         });
 
         // "최종 출고하기" 버튼 액션
+
+
         finalReleaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    List<OutputRequestVO> allRequests = outputRequestTableModel.getAllRequests();
-                    if (allRequests.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "출고 요청이 없습니다.");
-                        return;
-                    }
+                List<OutputRequestVO> allRequests = outputRequestTableModel.getAllRequests();
 
-                    // DAO 인스턴스 생성
-                    OutputInfoDAO outputInfoDAO = new OutputInfoDAO();
-                    ProductInfoDAO productInfoDAO = new ProductInfoDAO();
-                    OrdererDAO ordererDAO = new OrdererDAO();
-
-                    // 트랜잭션 관리
-                    try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/project1", "root", "1234")) {
-                        conn.setAutoCommit(false); // 트랜잭션 시작
-
-                        for (OutputRequestVO request : allRequests) {
-                            // 랜덤 8자리 양의 정수 confirm_num 생성
-                            int confirmNum = generateConfirmNum();
-
-                            // 재고 확인 테이블에서 해당 제품의 창고 ID 가져오기
-                            ProductInfoProductVO stockProduct = productInfoDAO.getProductByProductCodeAndWarehouseId(request.getProduct_code());
-
-                            if (stockProduct == null) {
-                                JOptionPane.showMessageDialog(null, "제품 코드 " + request.getProduct_code() + "에 해당하는 창고 정보가 없습니다.");
-                                conn.rollback();
-                                return;
-                            }
-
-                            // 사용자명으로 user_id 가져오기
-                            int userId = ordererDAO.getUserIdByUserName(user_name);
-
-                            // OutputInfoVO 객체 생성
-                            OutputInfoVO outputInfo = new OutputInfoVO();
-                            outputInfo.setProduct_code(request.getProduct_code());
-                            outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
-                            outputInfo.setUser_id(userId);
-                            outputInfo.setConfirm_num(confirmNum);
-                            outputInfo.setConfirm_id(19981114);
-                            outputInfo.setStatus("대기중");
-                            outputInfo.setUnit_price(request.getPrice());
-                            outputInfo.setRelease_quantity(request.getRelease_quantity());
-                            outputInfo.setRelease_date(request.getRelease_date());
-
-                            // DB에 저장
-                            outputInfoDAO.insertOutputInfo(outputInfo);
-
-                            // product_info 테이블의 재고 수량 업데이트 (이미 출고량 감소됨)
-                            productInfoDAO.updateProductStock(stockProduct.getProduct_code(), stockProduct.getWarehouse_id(), stockProduct.getStock());
-                        }
-
-                        // 트랜잭션 커밋
-                        conn.commit();
-
-                        JOptionPane.showMessageDialog(null, "출고가 완료되었습니다.");
-                        // 출고 요청 테이블 및 재고 테이블 초기화
-                        outputRequestTableModel.clearAll();
-                        productInfoDAO.refreshInventoryStatus(stockTable);
-                        updateTotalCost();
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "출고 중 오류가 발생했습니다: " + ex.getMessage());
-                    }
-                }catch (Exception ex) {
-
+                if (allRequests.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "출고 요청이 없습니다.");
+                    return;
                 }
 
+                // DAO 인스턴스 생성을 위한 Connection 객체 생성
+                Connection conn = null;
+                try {
+                    // DB 연결 정보 (실제 정보로 변경)
+                    String url = "jdbc:mysql://localhost:3306/project1"; // DB URL
+                    String user = "root"; // DB 사용자명
+                    String password = "1234"; // DB 비밀번호
+                    conn = DriverManager.getConnection(url, user, password);
+                    conn.setAutoCommit(false); // 트랜잭션 시작
+
+                    // DAO 인스턴스 생성 (Connection을 전달)
+                    ProductInfoDAO productInfoDAO = new ProductInfoDAO(conn);
+                    OutputInfoDAO outputInfoDAO = new OutputInfoDAO(conn);
+                    OrdererDAO ordererDAO = new OrdererDAO(conn);
+
+                    for (OutputRequestVO request : allRequests) {
+                        // 재고 확인 테이블에서 해당 제품의 정보를 가져옴
+                        ProductInfoProductVO stockProduct = productInfoDAO.getProductByProductCodeAndWarehouseId(
+                                request.getProduct_code(),
+                                request.getWarehouse_id()
+                        );
+
+                        // 랜덤 8자리 양의 정수 confirm_num 생성
+                        int confirmNum = generateConfirmNum();
+
+                        if (stockProduct == null) {
+                            JOptionPane.showMessageDialog(null, "제품 코드 " + request.getProduct_code() + "에 해당하는 창고 정보가 없습니다.");
+                            conn.rollback();
+                            return;
+                        }
+
+                        // 현재 재고에서 출고량을 차감한 새 재고 계산
+                        int updatedStock = stockProduct.getStock() - request.getRelease_quantity();
+
+                        // product_info 테이블의 재고 업데이트
+                        productInfoDAO.updateProductStock(
+                                stockProduct.getProduct_code(),
+                                stockProduct.getWarehouse_id(),
+                                updatedStock
+                        );
+
+                        // 사용자명으로 user_id 가져오기
+                        int userId = ordererDAO.getUserIdByUserName(user_name);
+
+                        // OutputInfoVO 객체 생성
+                        OutputInfoVO outputInfo = new OutputInfoVO();
+                        outputInfo.setProduct_code(request.getProduct_code());
+                        outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
+                        outputInfo.setUser_id(userId);
+                        outputInfo.setConfirm_num(confirmNum);
+                        outputInfo.setConfirm_id(19981114);
+                        outputInfo.setStatus("대기중");
+                        outputInfo.setUnit_price(request.getPrice());
+                        outputInfo.setRelease_quantity(request.getRelease_quantity());
+                        outputInfo.setRelease_date(LocalDate.parse(request.getRelease_date()));
+
+                        // DB에 저장
+                        outputInfoDAO.insertOutputInfo(outputInfo);
+
+
+
+                    }
+
+                    // 트랜잭션 커밋
+                    conn.commit();
+
+                    JOptionPane.showMessageDialog(null, "출고가 완료되었습니다.");
+                    // 출고 요청 테이블 초기화
+                    outputRequestTableModel.clearAll();
+                    productInfoDAO.refreshInventoryStatus(stockTable);
+                    updateTotalCost();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    try {
+                        if (conn != null) {
+                            conn.rollback();
+                        }
+                    } catch (SQLException rollbackEx) {
+                        rollbackEx.printStackTrace();
+                    }
+                    JOptionPane.showMessageDialog(null, "출고 중 오류가 발생했습니다: " + ex.getMessage());
+                } finally {
+                    try {
+                        if (conn != null) {
+                            conn.setAutoCommit(true);
+                            conn.close();
+                        }
+                    } catch (SQLException closeEx) {
+                        closeEx.printStackTrace();
+                    }
+                }
             }
         });
 
 
+//        finalReleaseButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                List<OutputRequestVO> allRequests = outputRequestTableModel.getAllRequests();
+//
+//                if (allRequests.isEmpty()) {
+//                    JOptionPane.showMessageDialog(null, "출고 요청이 없습니다.");
+//                    return;
+//                }
+//
+//                // DAO 인스턴스 생성을 위한 Connection 객체 생성
+//                Connection conn = null;
+//                try {
+//                    // DB 연결 정보 (실제 정보로 변경)
+//                    String url = "jdbc:mysql://localhost:3306/project1"; // DB URL
+//                    String user = "root"; // DB 사용자명
+//                    String password = "1234"; // DB 비밀번호
+//                    conn = DriverManager.getConnection(url, user, password);
+//                    conn.setAutoCommit(false); // 트랜잭션 시작
+//
+//                    // DAO 인스턴스 생성 (Connection을 전달)
+//                    ProductInfoDAO productInfoDAO = new ProductInfoDAO(conn);
+//                    OutputInfoDAO outputInfoDAO = new OutputInfoDAO(conn);
+//                    OrdererDAO ordererDAO = new OrdererDAO(conn);
+//
+//                    for (OutputRequestVO request : allRequests) {
+//                        // 랜덤 8자리 양의 정수 confirm_num 생성
+//                        int confirmNum = generateConfirmNum();
+//
+//                        // 재고 확인 테이블에서 해당 제품의 창고 ID 가져오기
+//                        ProductInfoProductVO stockProduct = productInfoDAO.getProductByProductCodeAndWarehouseId(
+//                                request.getProduct_code(),
+//                                request.getWarehouse_id()
+//                        );
+//
+//                        if (stockProduct == null) {
+//                            JOptionPane.showMessageDialog(null, "제품 코드 " + request.getProduct_code() + "에 해당하는 창고 정보가 없습니다.");
+//                            conn.rollback();
+//                            return;
+//                        }
+//
+//                        // 사용자명으로 user_id 가져오기
+//                        int userId = ordererDAO.getUserIdByUserName(user_name);
+//
+//                        // OutputInfoVO 객체 생성
+//                        OutputInfoVO outputInfo = new OutputInfoVO();
+//                        outputInfo.setProduct_code(request.getProduct_code());
+//                        outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
+//                        outputInfo.setUser_id(userId);
+//                        outputInfo.setConfirm_num(confirmNum);
+//                        outputInfo.setConfirm_id(19981114);
+//                        outputInfo.setStatus("대기중");
+//                        outputInfo.setUnit_price(request.getPrice());
+//                        outputInfo.setRelease_quantity(request.getRelease_quantity());
+//                        outputInfo.setRelease_date(LocalDate.parse(request.getRelease_date()));
+//
+//                        // DB에 저장
+//                        outputInfoDAO.insertOutputInfo(outputInfo);
+//
+//                        // product_info 테이블의 재고 수량 업데이트 (이미 출고량 감소됨)
+//                        productInfoDAO.updateProductStock(
+//                                stockProduct.getProduct_code(),
+//                                stockProduct.getWarehouse_id(),
+//                                stockProduct.getStock()
+//                        );
+//                    }
+//
+//                    // 트랜잭션 커밋
+//                    conn.commit();
+//
+//                    JOptionPane.showMessageDialog(null, "출고가 완료되었습니다.");
+//                    // 출고 요청 테이블 및 재고 테이블 초기화
+//                    outputRequestTableModel.clearAll();
+//                    productInfoDAO.refreshInventoryStatus(stockTable);
+//                    updateTotalCost();
+//                } catch (SQLException ex) {
+//                    ex.printStackTrace();
+//                    try {
+//                        if (conn != null) {
+//                            conn.rollback();
+//                        }
+//                    } catch (SQLException rollbackEx) {
+//                        rollbackEx.printStackTrace();
+//                    }
+//                    JOptionPane.showMessageDialog(null, "출고 중 오류가 발생했습니다: " + ex.getMessage());
+//                } finally {
+//                    try {
+//                        if (conn != null) {
+//                            conn.setAutoCommit(true);
+//                            conn.close();
+//                        }
+//                    } catch (SQLException closeEx) {
+//                        closeEx.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
 
         // --------------------- 커스텀 셀 에디터 설정 ---------------------
-        // '출고량' 칼럼 (인덱스 4)용 커스텀 셀 에디터 생성
+        // '출고 수량' 칼럼 (인덱스 4)용 커스텀 셀 에디터 생성
         TableColumn releaseQuantityColumn = outputRequestTable.getColumnModel().getColumn(4);
         releaseQuantityColumn.setCellEditor(new DefaultCellEditor(new JTextField()) {
             @Override
@@ -467,7 +600,14 @@ public class OutgoingPanel extends JPanel {
     // 재고 확인 테이블 생성
     private JTable createStockTable() {
         try {
-            ProductInfoDAO productInfoDAO = new ProductInfoDAO();
+            // Connection 생성
+            String url = "jdbc:mysql://localhost:3306/project1"; // DB URL
+            String user = "root"; // DB 사용자명
+            String password = "1234"; // DB 비밀번호
+            Connection conn = DriverManager.getConnection(url, user, password);
+
+            // 클래스 멤버 변수에 ProductInfoDAO 할당
+            productInfoDAO = new ProductInfoDAO(conn);
 
             // 실제 데이터 로드
             List<ProductInfoProductVO> productList = productInfoDAO.getInventoryStatus();

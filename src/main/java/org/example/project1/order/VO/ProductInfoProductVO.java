@@ -8,18 +8,14 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ProductInfoProductVO {
-    private String code;
-    private int product_code;
-    private String product_name;
-    private String manufacturer_code;
-    private int warehouse_id;
-    private int price;
-    private int stock;
-    private String stock_date;
+    private String code;                 // 코드
+    private int product_code;            // 제품 코드
+    private String product_name;         // 제품명
+    private String manufacturer_code;    // 제조사 코드
+    private int warehouse_id;            // 창고 ID
+    private int price;                   // 가격
+    private int stock;                   // 재고
+    private String stock_date;           // 재고 날짜
 
-    // 기존 생성자, getters, setters 등이 이미 정의되어 있다고 가정
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
+    // 기본 생성자 및 기타 필요한 메서드가 있을 수 있습니다.
 }

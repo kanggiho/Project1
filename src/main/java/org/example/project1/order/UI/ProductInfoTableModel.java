@@ -1,30 +1,36 @@
 package org.example.project1.order.UI;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.example.project1.order.VO.OutputRequestVO;
 import org.example.project1.order.VO.ProductInfoProductVO;
 
-/**
- * ProductInfoProductVO 데이터를 표시하기 위한 테이블 모델 클래스입니다.
- */
 public class ProductInfoTableModel extends AbstractTableModel {
-    private final String[] columnNames = {
-            "코드", "제품 코드", "제품명", "제조업체 코드", "창고 ID", "가격", "재고", "입고 예정일"
-    };
-    private List<ProductInfoProductVO> data;
 
-    public void setData(List<ProductInfoProductVO> data) {
-        this.data = data;
+    private final String[] columnNames = {
+            "코드", "제품 코드", "제품명", "제조사 코드", "창고 ID", "가격", "재고", "재고 날짜"
+    };
+
+    private final Class<?>[] columnClasses = {
+            String.class, Integer.class, String.class, String.class, Integer.class, Integer.class, Integer.class, String.class
+    };
+
+    private List<ProductInfoProductVO> products;
+
+    public ProductInfoTableModel(List<ProductInfoProductVO> products) {
+        this.products = products;
     }
 
-
-    public ProductInfoTableModel(List<ProductInfoProductVO> data) {
-        this.data = data;
+    // 데이터 갱신을 위한 메서드
+    public void setData(List<ProductInfoProductVO> products) {
+        this.products = products;
     }
 
     @Override
     public int getRowCount() {
-        return data.size();
+        return products != null ? products.size() : 0;
     }
 
     @Override
@@ -33,41 +39,72 @@ public class ProductInfoTableModel extends AbstractTableModel {
     }
 
     @Override
+    public String getColumnName(int columnIndex) {
+        if (columnIndex >= 0 && columnIndex < columnNames.length) {
+            return columnNames[columnIndex];
+        }
+        return super.getColumnName(columnIndex);
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex >= 0 && columnIndex < columnClasses.length) {
+            return columnClasses[columnIndex];
+        }
+        return Object.class;
+    }
+
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        ProductInfoProductVO vo = data.get(rowIndex);
+        ProductInfoProductVO product = products.get(rowIndex);
         switch (columnIndex) {
-            case 0: return vo.getCode();
-            case 1: return vo.getProduct_code();
-            case 2: return vo.getProduct_name();
-            case 3: return vo.getManufacturer_code();
-            case 4: return vo.getWarehouse_id();
-            case 5: return vo.getPrice();
-            case 6: return vo.getStock();
-            case 7: return vo.getStock_date();
-            default: return null;
+            case 0:
+                return product.getCode();
+            case 1:
+                return product.getProduct_code();
+            case 2:
+                return product.getProduct_name();
+            case 3:
+                return product.getManufacturer_code();
+            case 4:
+                return product.getWarehouse_id();
+            case 5:
+                return product.getPrice();
+            case 6:
+                return product.getStock();
+            case 7:
+                return product.getStock_date();
+            default:
+                return null;
         }
     }
 
     @Override
-    public String getColumnName(int column) {
-        return columnNames[column];
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        // 모든 셀은 편집 불가능
+        return false;
     }
 
-    // 선택된 행의 ProductInfoProductVO 반환 메서드
-    public ProductInfoProductVO getProductAt(int row) {
-        if (row >= 0 && row < data.size()) {
-            return data.get(row);
+    // 특정 행의 ProductInfoProductVO 객체를 반환하는 메서드
+    public ProductInfoProductVO getProductAt(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < products.size()) {
+            return products.get(rowIndex);
         }
         return null;
     }
 
-    // 제품 코드를 기준으로 ProductInfoProductVO 반환 메서드
+    // 제품 코드로 제품 검색 (필요에 따라 사용)
     public ProductInfoProductVO getProductByProductCode(int productCode) {
-        for (ProductInfoProductVO vo : data) {
-            if (vo.getProduct_code() == productCode) {
-                return vo;
+        for (ProductInfoProductVO product : products) {
+            if (product.getProduct_code() == productCode) {
+                return product;
             }
         }
         return null;
     }
+    // 모든 출고 요청 가져오기
+    public List<ProductInfoProductVO> getAllRequests() {
+        return new ArrayList<>(products);
+    }
+
 }
