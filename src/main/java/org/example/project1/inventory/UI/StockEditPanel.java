@@ -14,11 +14,9 @@ import java.util.List;
 //재고 정보 수정 가격,입고예정일,창고번호, 수정
 public class StockEditPanel extends JPanel {
     private ProductInfoDAO dao;
-    private JTextField productNameField;
-    private JTextField priceField;
-    private JTextField stockDateField;
-    private JTextField warehouseIdField;
-    private JTextArea resultArea;
+    private JButton editButton;
+    private ActionListener editButtonListener;
+
     public StockEditPanel() {
         dao = new ProductInfoDAO();
         setLayout(new BorderLayout());
@@ -26,115 +24,78 @@ public class StockEditPanel extends JPanel {
     }
 
     private void initComponents() {
-        // 입력 필드 패널
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
-        inputPanel.add(new JLabel("자재명:"));
-        productNameField = new JTextField(20);
-        inputPanel.add(productNameField);
-        inputPanel.add(new JLabel("새 가격:"));
-        priceField = new JTextField(20);
-        inputPanel.add(priceField);
-        inputPanel.add(new JLabel("새 입고예정일 (YYYY-MM-DD):"));
-        stockDateField = new JTextField(20);
-        inputPanel.add(stockDateField);
-        inputPanel.add(new JLabel("새 창고 ID:"));
-        warehouseIdField = new JTextField(20);
-        inputPanel.add(warehouseIdField);
+        editButton = new JButton("선택 항목 수정");
+        editButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        editButton.setPreferredSize(new Dimension(120, 30));
+        editButton.setEnabled(false);
 
-        // 버튼 패널
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton updateButton = new JButton("수정");
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateProductInfo();
-            }
-        });
-        buttonPanel.add(updateButton);
-
-        // 결과 표시 영역
-        resultArea = new JTextArea(10, 40);
-        resultArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(resultArea);
-
-        // 패널에 컴포넌트 추가
-        add(inputPanel, BorderLayout.NORTH);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(editButton);
         add(buttonPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
     }
 
-    /**
-     * 제품 정보를 업데이트하는 메서드
-     */
-    private void updateProductInfo() {
-        String productName = productNameField.getText();
-        String priceText = priceField.getText();
-        String stockDate = stockDateField.getText();
-        String warehouseIdText = warehouseIdField.getText();
+    public void setEditButtonListener(ActionListener listener) {
+        if (editButtonListener != null) {
+            editButton.removeActionListener(editButtonListener);
+        }
+        editButtonListener = listener;
+        editButton.addActionListener(listener);
+    }
 
-        try {
-            // 자재명으로 제품 찾기
-            ProductInfoProductVO product = findProductByName(productName);
+    public void setEditButtonEnabled(boolean enabled) {
+        editButton.setEnabled(enabled);
+    }
 
-            if (product == null) {
-                resultArea.setText("해당 자재명의 제품을 찾을 수 없습니다.");
-                return;
+    public void updateProductInfo(ProductInfoProductVO product) {
+        // 다이얼로그를 통해 정보 입력 받기
+        JTextField priceField = new JTextField(10);
+        JTextField stockDateField = new JTextField(10);
+        JTextField warehouseIdField = new JTextField(10);
+
+        JPanel panel = new JPanel(new GridLayout(0, 2));
+        panel.add(new JLabel("새 가격:"));
+        panel.add(priceField);
+        panel.add(new JLabel("새 입고예정일 (YYYY-MM-DD):"));
+        panel.add(stockDateField);
+        panel.add(new JLabel("새 창고 ID:"));
+        panel.add(warehouseIdField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel,
+                "제품 정보 수정", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                String priceText = priceField.getText();
+                String stockDate = stockDateField.getText();
+                String warehouseIdText = warehouseIdField.getText();
+
+                boolean updated = false;
+
+                if (!priceText.isEmpty()) {
+                    int price = Integer.parseInt(priceText);
+                    dao.updatePrice(product.getCode(), product.getProduct_code(), price);
+                    updated = true;
+                }
+                if (!stockDate.isEmpty()) {
+                    dao.updateStockDate(product.getCode(), product.getProduct_code(), stockDate);
+                    updated = true;
+                }
+                if (!warehouseIdText.isEmpty()) {
+                    int warehouseId = Integer.parseInt(warehouseIdText);
+                    dao.updateWarehouseId(product.getCode(), product.getProduct_code(), warehouseId);
+                    updated = true;
+                }
+
+                if (updated) {
+                    JOptionPane.showMessageDialog(null, "제품 정보가 성공적으로 업데이트되었습니다.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "업데이트할 정보를 입력해주세요.");
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "데이터베이스 오류: " + ex.getMessage());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "잘못된 숫자 형식입니다.");
             }
-
-            // 입력된 정보에 따라 업데이트 수행
-            if (!priceText.isEmpty() && !stockDate.isEmpty() && !warehouseIdText.isEmpty()) {
-                int price = Integer.parseInt(priceText);
-                int warehouseId = Integer.parseInt(warehouseIdText);
-                dao.updateAll(product.getCode(), product.getProduct_code(), price, stockDate, warehouseId);
-                resultArea.setText("가격, 입고예정일, 창고 ID가 모두 업데이트되었습니다.");
-            } else if (!priceText.isEmpty() && !stockDate.isEmpty()) {
-                int price = Integer.parseInt(priceText);
-                dao.updatePriceAndStockDate(product.getCode(), product.getProduct_code(), price, stockDate);
-                resultArea.setText("가격과 입고예정일이 업데이트되었습니다.");
-            } else if (!priceText.isEmpty() && !warehouseIdText.isEmpty()) {
-                int price = Integer.parseInt(priceText);
-                int warehouseId = Integer.parseInt(warehouseIdText);
-                dao.updatePriceAndWarehouseId(product.getCode(), product.getProduct_code(), price, warehouseId);
-                resultArea.setText("가격과 창고 ID가 업데이트되었습니다.");
-            } else if (!stockDate.isEmpty() && !warehouseIdText.isEmpty()) {
-                int warehouseId = Integer.parseInt(warehouseIdText);
-                dao.updateStockDateAndWarehouseId(product.getCode(), product.getProduct_code(), stockDate, warehouseId);
-                resultArea.setText("입고예정일과 창고 ID가 업데이트되었습니다.");
-            } else if (!priceText.isEmpty()) {
-                int price = Integer.parseInt(priceText);
-                dao.updatePrice(product.getCode(), product.getProduct_code(), price);
-                resultArea.setText("가격이 업데이트되었습니다.");
-            } else if (!stockDate.isEmpty()) {
-                dao.updateStockDate(product.getCode(), product.getProduct_code(), stockDate);
-                resultArea.setText("입고예정일이 업데이트되었습니다.");
-            } else if (!warehouseIdText.isEmpty()) {
-                int warehouseId = Integer.parseInt(warehouseIdText);
-                dao.updateWarehouseId(product.getCode(), product.getProduct_code(), warehouseId);
-                resultArea.setText("창고 ID가 업데이트되었습니다.");
-            } else {
-                resultArea.setText("업데이트할 정보를 입력해주세요.");
-            }
-        } catch (SQLException ex) {
-            resultArea.setText("데이터베이스 오류: " + ex.getMessage());
-        } catch (NumberFormatException ex) {
-            resultArea.setText("잘못된 숫자 형식입니다.");
         }
     }
-
-    /**
-     * 자재명으로 제품을 찾는 메서드
-     * @param productName 찾을 제품의 자재명
-     * @return 찾은 ProductInfoProductVO 객체, 없으면 null
-     * @throws SQLException SQL 예외 발생 시
-     */
-    private ProductInfoProductVO findProductByName(String productName) throws SQLException {
-        List<ProductInfoProductVO> inventoryList = dao.getInventoryStatus();
-        for (ProductInfoProductVO item : inventoryList) {
-            if (item.getProduct_name().equalsIgnoreCase(productName)) {
-                return item;
-            }
-        }
-        return null;
-    }
-
 }

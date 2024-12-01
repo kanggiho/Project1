@@ -6,6 +6,7 @@ import org.example.project1.user.UI.LoginFrame;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        new LoginFrame();
+        //new LoginFrame();
+        new AdminMenuFrame("s");
     }
 }

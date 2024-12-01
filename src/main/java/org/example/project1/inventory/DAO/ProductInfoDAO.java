@@ -183,6 +183,7 @@ public class ProductInfoDAO {
         return vo;
     }
 
+
     // 제품명, 창고 ID, 제조업체명으로 재고를 검색하는 메서드
     public List<ProductInfoProductWarehouseInfoManufacturingVO> searchInventory(String productName, Integer warehouseId, String manufacturerName) throws SQLException {
         List<ProductInfoProductWarehouseInfoManufacturingVO> results = new ArrayList<>();
@@ -195,6 +196,7 @@ public class ProductInfoDAO {
                         "JOIN manufacturing m ON pi.manufacturer_code = m.manufacturer_code " +
                         "WHERE 1=1 "
         );
+
 
         List<Object> params = new ArrayList<>();
 
