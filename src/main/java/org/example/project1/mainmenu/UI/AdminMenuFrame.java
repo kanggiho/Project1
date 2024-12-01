@@ -1,6 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.user.UI.LoginFrame;
 
 import javax.swing.*;
@@ -96,10 +97,14 @@ public class AdminMenuFrame extends JFrame {
         innerPanel.setLayout(cardLayout);
         innerPanel.setBackground(Color.decode("#97A6A0"));
 
+
+        StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
+
+
         // 각 패널 추가
         innerPanel.add(createPanel("입고관리 화면"), "입고관리");
         innerPanel.add(createPanel("출고요청관리 화면"), "출고요청관리");
-        innerPanel.add(createPanel("재고관리 화면"), "재고관리");
+        innerPanel.add(stockStatusPanel, "재고관리");
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
         add(innerPanel);
 
