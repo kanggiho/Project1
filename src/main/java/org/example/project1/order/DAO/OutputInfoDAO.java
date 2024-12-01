@@ -96,7 +96,7 @@ public class OutputInfoDAO {
 
     public ArrayList<OutputInfoVO> getAll() {
         try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement("select * from output_info")) {
+             PreparedStatement ps = con.prepareStatement("select * from output_info order by status desc,release_date")) {
             ResultSet table = ps.executeQuery();
             if (!vo_list.isEmpty()) {
                 vo_list.clear();
@@ -113,7 +113,7 @@ public class OutputInfoDAO {
                     vo.setStatus(table.getString("status"));
                     vo.setUnit_price(table.getInt("unit_price"));
                     vo.setRelease_quantity(table.getInt("release_quantity"));
-                    vo.setRelease_date(table.getString("release date"));
+                    vo.setRelease_date(table.getString("release_date"));
                     vo_list.add(vo);
                 } else {
                     break;
