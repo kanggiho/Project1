@@ -2,6 +2,7 @@ package org.example.project1.inventory.UI;
 
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
+import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -47,7 +48,7 @@ public class StockStatusPanel extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
 
         // 테이블 모델 및 테이블 생성
-        String[] columnNames = {"코드", "제품 코드", "제품명", "제조업체 코드", "창고 ID", "가격", "재고", "입고 예정일"};
+        String[] columnNames = {"코드", "제품 코드", "제품명", "제조업체 코드", "제조업체명", "창고 ID", "가격", "재고", "입고 예정일"};
         tableModel = new DefaultTableModel(columnNames, 0);
         stockTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(stockTable);
@@ -124,5 +125,22 @@ public class StockStatusPanel extends JPanel {
             );
         }
         return null;
+    }
+    public void updateTable(List<ProductInfoProductWarehouseInfoManufacturingVO> results) {
+        tableModel.setRowCount(0); // 기존 데이터 초기화
+
+        for (ProductInfoProductWarehouseInfoManufacturingVO vo : results) {
+            Object[] row = {
+                    vo.getCode(),
+                    vo.getProduct_code(),
+                    vo.getProduct_name(),
+                    vo.getManufacturer_name(),
+                    vo.getWarehouse_id(),
+                    vo.getPrice(),
+                    vo.getStock(),
+                    vo.getStock_date()
+            };
+            tableModel.addRow(row);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.inventory.UI.StockSearchPanel;
 import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.inventory.UI.StockEditPanel;
 import org.example.project1.inventory.UI.StockUpdatePanel;
@@ -117,8 +118,11 @@ public class AdminMenuFrame extends JFrame {
         stockStatusPanel = new StockStatusPanel("재고관리 화면");
         stockEditPanel = new StockEditPanel();
         stockUpdatePanel = new StockUpdatePanel();
+        StockSearchPanel stockSearchPanel = new StockSearchPanel(stockStatusPanel);
+
 
         JPanel inventoryPanel = new JPanel(new BorderLayout());
+        inventoryPanel.add(stockSearchPanel, BorderLayout.NORTH);
         inventoryPanel.add(stockStatusPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
