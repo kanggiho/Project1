@@ -3,7 +3,7 @@ package org.example.project1._common.utility;
 import java.awt.GraphicsEnvironment;
 
 public class AvailableFonts {
-    public static void main(String[] args) {
+        public static void main(String[] args) {
         // GraphicsEnvironment 객체 가져오기
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 

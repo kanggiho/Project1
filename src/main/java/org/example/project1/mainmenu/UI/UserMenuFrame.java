@@ -38,7 +38,7 @@ public class UserMenuFrame extends JFrame {
 
         // 이미지 로고 추가
         JLabel logo = new JLabel();
-        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         logo.setIcon(resizedIcon);
         logo.setPreferredSize(new Dimension(45, 45));
