@@ -15,8 +15,6 @@ public class OutputInfoVO {
         private int confirm_id; // 결재자
         private String status; // 승인 여부
         private int unit_price; // 단가
-        private int incoming_quantity; // 입고량
         private int release_quantity; // 출고량
-        private String incoming_date; //입고 날짜
         private String release_date; //출고 날짜
 }
