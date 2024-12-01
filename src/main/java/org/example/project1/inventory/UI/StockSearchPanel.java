@@ -25,7 +25,7 @@ public class StockSearchPanel extends JPanel {
     private void initUI() {
         setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        String[] searchTypes = {"자재명", "창고번호", "제조업체명"};
+        String[] searchTypes = {"자재명", "창고ID", "제조업체명"};
         searchTypeComboBox = new JComboBox<>(searchTypes);
         searchField = new JTextField(15);
         JButton searchButton = new JButton("검색");
