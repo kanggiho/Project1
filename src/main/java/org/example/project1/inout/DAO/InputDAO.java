@@ -4,8 +4,10 @@ import org.example.project1._common._Ut.HikariCPDataSource;
 import org.example.project1.inout.VO.InputManuVO;
 import org.example.project1.inout.VO.InputProductVO;
 import org.example.project1.inout.VO.InputVO;
+import org.example.project1.inventory.VO.ProductInfoVO;
 
 import javax.sql.DataSource;
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -40,38 +42,63 @@ public class InputDAO {
         }
     }
 
-    public void insertToInventory(InputVO vo) {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement("insert into product_info values (?, ?, ?, ?, ?, ?, ?)")) {
-            ps.setString(1, "code");
-            ps.setInt(2, vo.getProductCode());
-            ps.setString(3, vo.getManufacturerCode());
-            ps.setString(4, "warehouse_id");
-            ps.setString(5, "price");
-            ps.setInt(6, vo.getWarehousedQuantity());
-            ps.setString(7, vo.getWarehousedDate());
+    public void upsertToInventory(ProductInfoVO vo) {
+        try (Connection con = dataSource.getConnection()) {
+            String checkQuery = "SELECT COUNT(*) FROM product_info WHERE product_code = ?";
+            try (PreparedStatement checkStmt = con.prepareStatement(checkQuery)) {
+                checkStmt.setInt(1, vo.getProduct_code());
+                ResultSet rs = checkStmt.executeQuery();
+                boolean exists = false;
+                if (rs.next()) {
+                    exists = rs.getInt(1) > 0;
+                    rs.close();
 
-            ps.executeUpdate();
-            System.out.println("Insert Success");
+                    if (exists) {
+                        String getStockQuery = "SELECT stock FROM product_info WHERE product_code = ?";
+                        try (PreparedStatement getStockStmt = con.prepareStatement(getStockQuery)) {
+                            getStockStmt.setInt(1, vo.getProduct_code());
+                            ResultSet resultSet = getStockStmt.executeQuery();
+                            int currentStock = 0;
+                            if (rs.next()) {
+                                currentStock = rs.getInt("stock");
+                            }
+                            rs.close();
 
-            ps.close();
-            con.close();
+                            int updatedStock = currentStock + vo.getStock();
+                            String updateDate = vo.getStock_date();
+
+                            String updateQuery = "UPDATE product_info SET stock = ? " +
+                                    "and stock_date = ? " +
+                                    "WHERE product_code = ?";
+                            try (PreparedStatement updateStmt = con.prepareStatement(updateQuery)) {
+                                updateStmt.setInt(1, updatedStock);
+                                updateStmt.setString(2, updateDate);
+                                updateStmt.setInt(3, vo.getProduct_code());
+                                updateStmt.executeUpdate();
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null,"재고 업데이트에 실패했습니다.");
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+           JOptionPane.showMessageDialog(null, "입고 신청에 실패했습니다(재고 업데이트 실패).");
         }
     }
+
 
     //자재코드 기준 검색 결과
     public ArrayList<InputProductVO> listForProductCode(int product_code) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
                      ("select p.product_code, p.product_name, i.input_num, " +
-                     "i.manufacturer_code, i.asking_date, " +
-                     "i.warehoused_quantity, i.warehoused_date " +
-                     "from product p " +
-                     "left join input i " +
-                     "on i.product_code = p.product_code " +
-                     "where i.product_code = ?")) {
+                             "i.manufacturer_code, i.asking_date, " +
+                             "i.warehoused_quantity, i.warehoused_date " +
+                             "from product p " +
+                             "left join input i " +
+                             "on i.product_code = p.product_code " +
+                             "where i.product_code = ?")) {
             ps.setInt(1, product_code);
             ResultSet table = ps.executeQuery();
             if (!vo_listForProduct.isEmpty()) {
@@ -100,7 +127,7 @@ public class InputDAO {
     }
 
     //제조업체 코드 기준 검색 결과
-    public ArrayList<InputManuVO> listForManu (String manufacturer_code) {
+    public ArrayList<InputManuVO> listForManu(String manufacturer_code) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
                      ("select m.manufacturer_code, m.manufacturer_name, m.sorting, i.input_num, i.product_code, " +
@@ -176,7 +203,6 @@ public class InputDAO {
                 vo_list.clear();
             }
             while (true) {
-
                 if (table.next()) {
                     InputVO vo = new InputVO();
                     vo.setInputNum(table.getInt("input_num"));
