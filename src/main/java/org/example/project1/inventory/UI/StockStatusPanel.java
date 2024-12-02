@@ -14,11 +14,19 @@ import java.util.List;
  * 재고 상태를 표시하는 패널 클래스
  */
 public class StockStatusPanel extends JPanel {
-    // 클래스 멤버 변수 선언
-    private String title;
-    private JTable stockTable;
-    private DefaultTableModel tableModel;
-    private ProductInfoDAO productInfoDAO;
+    // 테이블 열 이름 상수
+    private static final String[] COLUMN_NAMES = {
+            "코드", "제품 코드", "제품명", "제조업체 코드", "제조업체명",
+            "창고 ID", "창고 위치", "가격", "재고", "입고 예정일"
+    };
+    // 폰트 관련 상수
+    private static final String FONT_NAME = "Arial";
+    private static final int TITLE_FONT_SIZE = 18;
+
+    private final String title; // 패널 제목
+    private final JTable stockTable; // 재고 정보를 표시할 테이블
+    private final DefaultTableModel tableModel; // 테이블 모델
+    private final ProductInfoDAO productInfoDAO; // 데이터 접근 객체
 
     /**
      * StockStatusPanel 생성자
@@ -27,35 +35,37 @@ public class StockStatusPanel extends JPanel {
     public StockStatusPanel(String title) {
         this.title = title;
         this.productInfoDAO = new ProductInfoDAO();
-        setPanel();
-        initUI();
+        this.tableModel = new DefaultTableModel(COLUMN_NAMES, 0);
+        this.stockTable = new JTable(tableModel);
+
+        initializePanel();
         loadStockData();
     }
 
     /**
-     * 패널의 레이아웃을 설정하는 메소드
+     * 패널 초기화 메소드
      */
-    private void setPanel() {
+    private void initializePanel() {
         setLayout(new BorderLayout());
+        add(createTitleLabel(), BorderLayout.NORTH);
+        add(new JScrollPane(stockTable), BorderLayout.CENTER);
+        setupTableSelectionListener();
     }
 
     /**
-     * UI 컴포넌트를 초기화하고 배치하는 메소드
+     * 제목 라벨 생성 메소드
+     * @return 생성된 JLabel 객체
      */
-    private void initUI() {
-        // 제목 라벨 생성 및 추가
+    private JLabel createTitleLabel() {
         JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setFont(new Font(FONT_NAME, Font.BOLD, TITLE_FONT_SIZE));
+        return titleLabel;
+    }
 
-        // 테이블 모델 및 테이블 생성
-        String[] columnNames = {"코드", "제품 코드", "제품명", "제조업체 코드", "제조업체명", "창고 ID", "창고 위치", "가격", "재고", "입고 예정일"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        stockTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(stockTable);
-        add(scrollPane, BorderLayout.CENTER);
-
-        // 테이블 행 선택 리스너 추가
+    /**
+     * 테이블 선택 리스너 설정 메소드
+     */
+    private void setupTableSelectionListener() {
         stockTable.getSelectionModel().addListSelectionListener(e -> {
             boolean rowSelected = stockTable.getSelectedRow() != -1;
             firePropertyChange("rowSelected", !rowSelected, rowSelected);
@@ -67,46 +77,12 @@ public class StockStatusPanel extends JPanel {
      */
     public void loadStockData() {
         try {
-            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = productInfoDAO.getInventoryStatusWithManufacturer();
+            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList =
+                    productInfoDAO.getInventoryStatusWithManufacturer();
             updateTable(inventoryList);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "데이터 로딩 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException e) {
+            showErrorMessage("데이터 로딩 중 오류 발생: " + e.getMessage());
         }
-    }
-
-    /**
-     * 제조업체 정보를 포함한 재고 데이터를 로드하는 메소드
-     */
-    public void loadStockDataWithManufacturer() {
-        try {
-            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = productInfoDAO.getInventoryStatusWithManufacturer();
-            updateTable(inventoryList);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "데이터 로딩 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * ProductInfoProductVO 리스트로 테이블을 업데이트하는 메소드
-     * @param inventoryList ProductInfoProductVO 객체 리스트
-     */
-    private void updateTableWithProductVO(List<ProductInfoProductVO> inventoryList) {
-        tableModel.setRowCount(0);
-        for (ProductInfoProductVO item : inventoryList) {
-            Object[] row = {
-                    item.getCode(),
-                    item.getProduct_code(),
-                    item.getProduct_name(),
-                    item.getManufacturer_code(),
-                    "", // 제조업체명은 비워둡니다
-                    item.getWarehouse_id(),
-                    item.getPrice(),
-                    item.getStock(),
-                    item.getStock_date()
-            };
-            tableModel.addRow(row);
-        }
-        stockTable.repaint();
     }
 
     /**
@@ -116,21 +92,23 @@ public class StockStatusPanel extends JPanel {
     public void updateTable(List<ProductInfoProductWarehouseInfoManufacturingVO> results) {
         tableModel.setRowCount(0);
         for (ProductInfoProductWarehouseInfoManufacturingVO vo : results) {
-            Object[] row = {
-                    vo.getCode(),
-                    vo.getProduct_code(),
-                    vo.getProduct_name(),
-                    vo.getManufacturer_code(),
-                    vo.getManufacturer_name(),
-                    vo.getWarehouse_id(),
-                    vo.getWarehouse_location(),  // 창고 위치 추가
-                    vo.getPrice(),
-                    vo.getStock(),
-                    vo.getStock_date()
-            };
-            tableModel.addRow(row);
+            tableModel.addRow(createRowData(vo));
         }
         stockTable.repaint();
+    }
+
+    /**
+     * VO 객체에서 테이블 행 데이터를 생성하는 메소드
+     * @param vo ProductInfoProductWarehouseInfoManufacturingVO 객체
+     * @return 테이블 행 데이터 배열
+     */
+    private Object[] createRowData(ProductInfoProductWarehouseInfoManufacturingVO vo) {
+        return new Object[]{
+                vo.getCode(), vo.getProduct_code(), vo.getProduct_name(),
+                vo.getManufacturer_code(), vo.getManufacturer_name(),
+                vo.getWarehouse_id(), vo.getWarehouse_location(),
+                vo.getPrice(), vo.getStock(), vo.getStock_date()
+        };
     }
 
     /**
@@ -152,5 +130,13 @@ public class StockStatusPanel extends JPanel {
             );
         }
         return null;
+    }
+
+    /**
+     * 오류 메시지를 표시하는 메소드
+     * @param message 표시할 오류 메시지
+     */
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "오류", JOptionPane.ERROR_MESSAGE);
     }
 }
