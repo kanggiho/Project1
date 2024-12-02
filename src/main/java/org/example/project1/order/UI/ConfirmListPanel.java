@@ -1,6 +1,7 @@
 package org.example.project1.order.UI;
 
 import org.example.project1.order.DAO.OutputInfoDAO;
+import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.VO.OutputInfoProductWarehouseInfoOrdererVO;
 
 import javax.swing.*;
@@ -30,6 +31,8 @@ public class ConfirmListPanel extends JPanel {
     private JRadioButton allRadioBtn; // New "전체" radio button
     private ButtonGroup statusButtonGroup;
 
+    ProductInfoDAO productInfoDAO;
+
     // Table and its model
     private JTable outputTable;
     private DefaultTableModel tableModel;
@@ -39,6 +42,18 @@ public class ConfirmListPanel extends JPanel {
         this.userName = userName;
         setPanel();
         initUI();
+
+        try {
+            String url = "jdbc:mysql://localhost:3306/project1";
+            String user = "root";
+            String password = "1234";
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection(url, user, password);
+            }
+            productInfoDAO = new ProductInfoDAO(conn); // 초기화
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         loadTableData(); // Initial data load
     }
 
@@ -91,15 +106,21 @@ public class ConfirmListPanel extends JPanel {
         statusButtonGroup.add(allRadioBtn);
 
         // Position the radio buttons
-        rejectedRadioBtn.setBounds(300, 25, 80, 30);
-        approvedRadioBtn.setBounds(390, 25, 80, 30);
-        pendingRadioBtn.setBounds(480, 25, 100, 30);
-        allRadioBtn.setBounds(590, 25, 80, 30); // Position the new button
+        allRadioBtn.setBounds(300, 25, 60, 30); // Position the new button
+        approvedRadioBtn.setBounds(370, 25, 60, 30);
+        pendingRadioBtn.setBounds(440, 25, 70, 30);
+        rejectedRadioBtn.setBounds(530, 25, 60, 30);
 
-        add(rejectedRadioBtn);
+        allRadioBtn.setBackground(Color.WHITE);
+        approvedRadioBtn.setBackground(Color.WHITE);
+        pendingRadioBtn.setBackground(Color.WHITE);
+        rejectedRadioBtn.setBackground(Color.WHITE);
+
+
+        add(allRadioBtn);
         add(approvedRadioBtn);
         add(pendingRadioBtn);
-        add(allRadioBtn);
+        add(rejectedRadioBtn);
 
         // --------------------- 필터 변경 시 테이블 데이터 로드 ---------------------
         ActionListener filterListener = new ActionListener() {
@@ -116,18 +137,18 @@ public class ConfirmListPanel extends JPanel {
         allRadioBtn.addActionListener(filterListener);
 
         // --------------------- 버튼 추가 ---------------------
-        JButton deleteButton = new JButton("삭제");
+        JButton deleteButton = new JButton("취소");
         deleteButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteButton.setBackground(new Color(255, 182, 193));
-        deleteButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteButton.setBounds(130, 400, 100, 40);
+        //deleteButton.setBorder(new LineBorder(Color.BLACK, 2));
+        deleteButton.setBounds(780,400 , 110, 40);
         add(deleteButton);
 
-        JButton deleteAllButton = new JButton("전체삭제");
+        JButton deleteAllButton = new JButton("전체취소");
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteAllButton.setBackground(new Color(255, 182, 193));
-        deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteAllButton.setBounds(240, 400, 120, 40);
+        //deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
+        deleteAllButton.setBounds(900, 400, 110, 40);
         add(deleteAllButton);
 
         // --------------------- 출고 요청 테이블 추가 ---------------------
@@ -258,6 +279,8 @@ public class ConfirmListPanel extends JPanel {
         }
 
         int confirmNum = (int) tableModel.getValueAt(selectedRow, 7); // 승인번호 컬럼
+        int product_code = (int) tableModel.getValueAt(selectedRow, 0); // 코드 컬럼
+        int stock = (int) tableModel.getValueAt(selectedRow, 6); // 재고 컬럼
 
         int confirm = JOptionPane.showConfirmDialog(this, "선택한 행을 삭제하시겠습니까?", "삭제 확인", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
@@ -268,6 +291,10 @@ public class ConfirmListPanel extends JPanel {
             OutputInfoDAO outputInfoDAO = new OutputInfoDAO(conn);
             boolean success = outputInfoDAO.deleteOutputInfo(confirmNum);
             if (success) {
+                int temp_stock = productInfoDAO.one(product_code).getStock();
+                System.out.println(stock);
+
+                productInfoDAO.updateProductStock(product_code, temp_stock + stock);
                 tableModel.removeRow(selectedRow);
                 JOptionPane.showMessageDialog(this, "선택한 행이 삭제되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -288,6 +315,8 @@ public class ConfirmListPanel extends JPanel {
 
         try {
             OutputInfoDAO outputInfoDAO = new OutputInfoDAO(conn);
+
+
             boolean success = outputInfoDAO.deleteAllPendingOutputInfo();
             if (success) {
                 loadTableData(); // Reload table data after deletion
