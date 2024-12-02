@@ -41,7 +41,7 @@ public class Login extends JFrame {
 
         //로고 필드
 
-        URL imageUrl = Login.class.getClassLoader().getResource("ware1.png");
+        URL imageUrl = Login.class.getClassLoader().getResource("image/ware1.png");
         if (imageUrl != null) {
             // ImageIcon 생성
             ImageIcon logoIcon = new ImageIcon(imageUrl);

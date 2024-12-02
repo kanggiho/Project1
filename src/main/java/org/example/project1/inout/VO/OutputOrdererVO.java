@@ -15,5 +15,5 @@ public class OutputOrdererVO {
    private int confirm_num; // 승인 번호
    private int confirm_id; // 결재자
    private String status; // 승인여부
-   private String release_date; // 출고량
+   private String release_date; // 출고일
 }
