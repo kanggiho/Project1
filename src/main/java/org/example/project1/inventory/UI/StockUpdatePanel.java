@@ -11,67 +11,50 @@ import java.sql.SQLException;
 // 재고 수량 업데이트
 public class StockUpdatePanel extends JPanel {
     private ProductInfoDAO productInfoDAO;
-    private JTextField productNameField;
-    private JTextField quantityField;
-    private PropertyChangeSupport pcs = new
-            PropertyChangeSupport(this);
+    private InventoryManagementPanel parentPanel;
+    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    // 생성자: 패널 초기화
-    public StockUpdatePanel() {
+    public StockUpdatePanel(InventoryManagementPanel parentPanel) {
         this.productInfoDAO = new ProductInfoDAO();
+        this.parentPanel = parentPanel;
         initUI();
     }
 
-    private String toss_font = "머니그라피TTF Rounded";
-
-    // UI 구성요소 초기화 및 배치
     private void initUI() {
         setLayout(new BorderLayout());
 
-        // 제목 라벨 생성 및 추가
-        JLabel titleLabel = new JLabel("발주하기", SwingConstants.CENTER);
-        titleLabel.setFont(new Font(toss_font, Font.BOLD, 18));
-        add(titleLabel, BorderLayout.NORTH);
 
-        // 입력 필드와 버튼을 포함할 패널
-        JPanel inputPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
 
-        productNameField = new JTextField(15);
-        quantityField = new JTextField(5);
-        JButton updateButton = new JButton("발주");
+        JButton orderButton = new JButton("발주하기");
+        orderButton.addActionListener(e -> showOrderDialog());
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        inputPanel.add(new JLabel("제품명:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        inputPanel.add(productNameField, gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        inputPanel.add(new JLabel("감소 수량:"), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        inputPanel.add(quantityField, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        inputPanel.add(updateButton, gbc);
-
-        add(inputPanel, BorderLayout.CENTER);
-
-        // 업데이트 버튼 액션 리스너
-        updateButton.addActionListener(e -> updateStock());
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(orderButton);
+        add(buttonPanel, BorderLayout.CENTER);
     }
 
-    // 재고 수량 업데이트 메서드
-    private void updateStock() {
-        String productName = productNameField.getText();
+    private void showOrderDialog() {
+        JTextField productNameField = new JTextField(15);
+        JTextField quantityField = new JTextField(5);
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("제품명:"));
+        panel.add(productNameField);
+        panel.add(new JLabel("감소 수량:"));
+        panel.add(quantityField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "발주하기",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (result == JOptionPane.OK_OPTION) {
+            updateStock(productNameField.getText(), quantityField.getText());
+        }
+    }
+
+    private void updateStock(String productName, String quantityStr) {
         int quantity;
         try {
-            quantity = Integer.parseInt(quantityField.getText());
+            quantity = Integer.parseInt(quantityStr);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "올바른 수량을 입력하세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
             return;
@@ -81,18 +64,14 @@ public class StockUpdatePanel extends JPanel {
             int updatedRows = productInfoDAO.decreaseStockByProductName(productName, quantity);
             if (updatedRows > 0) {
                 JOptionPane.showMessageDialog(this, "재고가 성공적으로 업데이트되었습니다.", "업데이트 성공", JOptionPane.INFORMATION_MESSAGE);
-                pcs.firePropertyChange("stockUpdated", null, null); // 이벤트 발생
-                SwingUtilities.getWindowAncestor(this).dispose(); // 다이얼로그 닫기
+                pcs.firePropertyChange("stockUpdated", null, null);
+                parentPanel.loadStockData();
             } else {
                 JOptionPane.showMessageDialog(this, "재고 업데이트에 실패했습니다. 제품명과 재고를 확인하세요.", "업데이트 실패", JOptionPane.WARNING_MESSAGE);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "데이터베이스 오류: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
         }
-
-        // 입력 필드 초기화
-        productNameField.setText("");
-        quantityField.setText("");
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

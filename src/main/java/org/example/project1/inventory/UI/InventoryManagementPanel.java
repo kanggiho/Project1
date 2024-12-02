@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
+import java.util.List;
 
 public class InventoryManagementPanel extends JPanel {
 
@@ -29,10 +30,15 @@ public class InventoryManagementPanel extends JPanel {
         // StockEditPanel 초기화
         stockEditPanel = new StockEditPanel();
 
-        // 다른 패널들 초기화 (필요에 따라)
-        // stockUpdatePanel = new StockUpdatePanel();
-        // lowStockAlertPanel = new LowStockAlertPanel();
-        // stockSearchPanel = new StockSearchPanel();
+        // StockUpdatePanel 초기화
+        stockUpdatePanel = new StockUpdatePanel(this);
+
+        // StockSearchPanel 초기화
+        stockSearchPanel = new StockSearchPanel(stockStatusPanel);
+        // LowStockAlertPanel 초기화
+        lowStockAlertPanel = new LowStockAlertPanel();
+
+
         setEditButtonListener(e -> {
             ProductInfoProductVO selectedProduct = stockStatusPanel.getSelectedProduct();
             if (selectedProduct != null) {
@@ -54,11 +60,31 @@ public class InventoryManagementPanel extends JPanel {
             }
         });
 
+        // StockUpdatePanel의 재고 업데이트 이벤트 리스너 설정
+        stockUpdatePanel.addPropertyChangeListener(evt -> {
+            if ("stockUpdated".equals(evt.getPropertyName())) {
+                stockStatusPanel.loadStockData();
+            }
+        });
+
+        // 상단 패널 생성 및 구성 (StockSearchPanel 추가)
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(stockSearchPanel, BorderLayout.CENTER);
+
+        // 메인 패널에 상단 패널 추가
+        add(topPanel, BorderLayout.NORTH);
+
         // 메인 패널에 StockStatusPanel 추가
         add(stockStatusPanel, BorderLayout.CENTER);
 
-        // StockEditPanel을 하단에 추가
-        add(stockEditPanel, BorderLayout.SOUTH);
+        // 하단 패널 생성 및 구성 (LowStockAlertPanel 추가)
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
+        bottomPanel.add(stockEditPanel);
+        bottomPanel.add(stockUpdatePanel);
+
+
+        // 하단 패널을 메인 패널의 남쪽에 추가
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // 패널 크기 설정
         setPreferredSize(new Dimension(800, 600));
@@ -85,6 +111,19 @@ public class InventoryManagementPanel extends JPanel {
     // 편집 완료 이벤트를 전달하는 메서드
     public void addEditCompletedListener(PropertyChangeListener listener) {
         stockEditPanel.addPropertyChangeListener("editCompleted", listener);
+    }
+
+    // StockSearchPanel의 메서드들을 위임
+    public void performSearch() {
+        stockSearchPanel.performSearch();
+    }
+
+    public List<ProductInfoProductWarehouseInfoManufacturingVO> searchInventory(String searchType, String searchValue) throws SQLException {
+        return stockSearchPanel.searchInventory(searchType, searchValue);
+    }
+
+    public void showErrorMessage(String message, String title) {
+        stockSearchPanel.showErrorMessage(message, title);
     }
 
 

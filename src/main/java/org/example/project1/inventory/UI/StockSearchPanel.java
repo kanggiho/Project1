@@ -56,7 +56,7 @@ public class StockSearchPanel extends JPanel {
     /**
      * 검색 수행 메소드
      */
-    private void performSearch() {
+    public void performSearch() {
         String searchType = (String) searchTypeComboBox.getSelectedItem();
         String searchValue = searchField.getText().trim();
 
@@ -82,7 +82,7 @@ public class StockSearchPanel extends JPanel {
      * @return 검색 결과 리스트
      * @throws SQLException SQL 예외 발생 시
      */
-    private List<ProductInfoProductWarehouseInfoManufacturingVO> searchInventory(String searchType, String searchValue) throws SQLException {
+    public List<ProductInfoProductWarehouseInfoManufacturingVO> searchInventory(String searchType, String searchValue) throws SQLException {
         switch (searchType) {
             case "자재명":
                 return productInfoDAO.searchInventory(searchValue, null, null);
@@ -101,7 +101,7 @@ public class StockSearchPanel extends JPanel {
      * @param message 에러 메시지
      * @param title 에러 창 제목
      */
-    private void showErrorMessage(String message, String title) {
+    public void showErrorMessage(String message, String title) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 }
