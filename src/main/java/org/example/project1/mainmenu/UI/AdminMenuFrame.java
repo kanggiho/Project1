@@ -35,7 +35,7 @@ public class AdminMenuFrame extends JFrame {
 
         // 이미지 로고 추가
         JLabel logo = new JLabel();
-        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         logo.setIcon(resizedIcon);
         logo.setPreferredSize(new Dimension(45, 45));
@@ -99,6 +99,7 @@ public class AdminMenuFrame extends JFrame {
         innerPanel.setLayout(cardLayout);
         innerPanel.setBackground(Color.decode("#97A6A0"));
 
+
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
         OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
         StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
@@ -108,6 +109,7 @@ public class AdminMenuFrame extends JFrame {
         innerPanel.add(incomingManagementPanel, "입고관리");
         innerPanel.add(outgoingConfirmPanel, "출고요청관리");
         innerPanel.add(stockStatusPanel, "재고관리");
+
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
         add(innerPanel);
 
