@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class InputVO {
-    private int inputNum; //입고 벊호
+    private int inputNum; //입고 번호
     private String manufacturerCode; //제조업체 코드
     private int productCode; //물품 코드
     private String askingDate; //입고신청일

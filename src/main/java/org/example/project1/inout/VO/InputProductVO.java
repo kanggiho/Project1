@@ -13,6 +13,6 @@ public class InputProductVO {
     private int input_num; // 입고번호
     private String manufacturer_code; // 제조업체 코드
     private String asking_date; // 입고신청일
-    private int warehoused_quantity; // 입고 수령
+    private int warehoused_quantity; // 입고 수량
     private String warehoused_date; // 입고일
 }
