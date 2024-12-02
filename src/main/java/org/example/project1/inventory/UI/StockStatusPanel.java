@@ -55,16 +55,6 @@ public class StockStatusPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(stockTable);
         add(scrollPane, BorderLayout.CENTER);
 
-        // 버튼 패널 생성 및 추가
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
-        // 새로고침 버튼 생성 및 이벤트 리스너 추가
-        JButton refreshButton = new JButton("새로고침");
-        refreshButton.addActionListener(e -> loadStockData());
-        buttonPanel.add(refreshButton);
-
-        add(buttonPanel, BorderLayout.SOUTH);
-
         // 테이블 행 선택 리스너 추가
         stockTable.getSelectionModel().addListSelectionListener(e -> {
             boolean rowSelected = stockTable.getSelectedRow() != -1;
