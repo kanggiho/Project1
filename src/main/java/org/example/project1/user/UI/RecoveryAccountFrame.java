@@ -91,7 +91,7 @@ public class RecoveryAccountFrame extends JFrame {
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
 
         JLabel logo = new JLabel();
-        ImageIcon originalIcon = new ImageIcon("src/main/resources/MainLogo.png");
+        ImageIcon originalIcon = new ImageIcon("src/main/resources/image/MainLogo.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(scaledImage);
         logo.setIcon(resizedIcon);

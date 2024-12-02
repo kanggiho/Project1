@@ -1,6 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.user.UI.LoginFrame;
 
 import javax.swing.*;
@@ -32,7 +33,7 @@ public class AdminMenuFrame extends JFrame {
 
         // 이미지 로고 추가
         JLabel logo = new JLabel();
-        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         logo.setIcon(resizedIcon);
         logo.setPreferredSize(new Dimension(45, 45));
@@ -96,10 +97,14 @@ public class AdminMenuFrame extends JFrame {
         innerPanel.setLayout(cardLayout);
         innerPanel.setBackground(Color.decode("#97A6A0"));
 
+
+        StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
+
+
         // 각 패널 추가
         innerPanel.add(createPanel("입고관리 화면"), "입고관리");
         innerPanel.add(createPanel("출고요청관리 화면"), "출고요청관리");
-        innerPanel.add(createPanel("재고관리 화면"), "재고관리");
+        innerPanel.add(stockStatusPanel, "재고관리");
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
         add(innerPanel);
 

@@ -2,7 +2,6 @@ package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.UI.InventoryManagementPanel;
-import org.example.project1.order.UI.ConfirmListPanel;
 import org.example.project1.order.UI.OutgoingPanel;
 import org.example.project1.account.UI.UserDataUpdate;
 import org.example.project1.user.UI.LoginFrame;
@@ -38,7 +37,7 @@ public class UserMenuFrame extends JFrame {
 
         // 이미지 로고 추가
         JLabel logo = new JLabel();
-        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         logo.setIcon(resizedIcon);
         logo.setPreferredSize(new Dimension(45, 45));
@@ -118,9 +117,15 @@ public class UserMenuFrame extends JFrame {
         innerPanel.setLayout(cardLayout);
         innerPanel.setBackground(Color.decode("#97A6A0"));
 
+
+        // 본인 패널 객체 생성
+        OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리",name);
+        //ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인");
+
+
         // 각 패널 추가
-        innerPanel.add(createPanel("발주관리 화면"), "발주관리");
-        innerPanel.add(createPanel("발주내역확인 화면"), "발주내역확인");
+        innerPanel.add(outgoingPanel,"발주관리");
+        innerPanel.add(outgoingPanel, "발주내역확인");
         innerPanel.add(createPanel("대시보드 화면"), "대시보드");
         innerPanel.add(createPanel("창고위치찾기 화면"), "창고위치찾기");
         add(innerPanel);
