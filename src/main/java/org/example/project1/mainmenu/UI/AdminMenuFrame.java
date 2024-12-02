@@ -1,10 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
-import org.example.project1.inventory.UI.StockSearchPanel;
-import org.example.project1.inventory.UI.StockStatusPanel;
-import org.example.project1.inventory.UI.StockEditPanel;
-import org.example.project1.inventory.UI.StockUpdatePanel;
+import org.example.project1.inventory.UI.*;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
 import org.example.project1.user.UI.LoginFrame;
 
@@ -14,6 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.TimerTask;
+import javax.swing.Timer;
+
 
 public class AdminMenuFrame extends JFrame {
     // 클래스 멤버 변수 선언
@@ -24,6 +24,8 @@ public class AdminMenuFrame extends JFrame {
     private StockStatusPanel stockStatusPanel;
     private StockEditPanel stockEditPanel;
     private StockUpdatePanel stockUpdatePanel;
+    private LowStockAlertPanel lowStockAlertPanel;
+
 
     // 생성자
     public AdminMenuFrame(String name) {
@@ -127,15 +129,22 @@ public class AdminMenuFrame extends JFrame {
         stockEditPanel = new StockEditPanel();
         stockUpdatePanel = new StockUpdatePanel();
         StockSearchPanel stockSearchPanel = new StockSearchPanel(stockStatusPanel);
+        lowStockAlertPanel = new LowStockAlertPanel();
 
 
         JPanel inventoryPanel = new JPanel(new BorderLayout());
         inventoryPanel.add(stockSearchPanel, BorderLayout.NORTH);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("재고 현황", stockStatusPanel);
+        tabbedPane.addTab("재고 부족 알림", lowStockAlertPanel);
         inventoryPanel.add(stockStatusPanel, BorderLayout.CENTER);
 //버튼 패널 생성 및 버튼 추가
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton refreshButton = new JButton("새로고침");
-        refreshButton.addActionListener(e -> stockStatusPanel.loadStockData());
+        refreshButton.addActionListener(e -> {
+            stockStatusPanel.loadStockData();
+            lowStockAlertPanel.refreshLowStockAlert(); // 수정된 부분
+        });
         buttonPanel.add(refreshButton);
 
         JButton editButton = new JButton("선택 항목 수정");
@@ -212,6 +221,17 @@ public class AdminMenuFrame extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+
+    private void startAlertCheck() {
+        Timer timer = new Timer(60000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> lowStockAlertPanel.refreshLowStockAlert());
+            }
+        });
+        timer.start();
     }
     // 버튼 액션 리스너 내부 클래스
 

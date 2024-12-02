@@ -6,8 +6,10 @@ import org.example.project1.inventory.VO.ProductInfoProductVO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Timer;
+import javax.swing.Timer;
 import java.util.TimerTask;
 
 //재고 부족시 알림 기능(재고가 30개 이하)
@@ -43,15 +45,18 @@ public class LowStockAlertPanel extends JPanel {
         refreshButton.addActionListener(e -> checkLowStock());
         add(refreshButton, BorderLayout.SOUTH);
     }
+    public void refreshLowStockAlert() {
+        checkLowStock();
+    }
 
     private void startAlertCheck() {
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        Timer timer = new Timer(60000, new ActionListener() {
             @Override
-            public void run() {
-                SwingUtilities.invokeLater(() -> checkLowStock());
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> refreshLowStockAlert());
             }
-        }, 0, 60000); // 1분마다 체크
+        });
+        timer.start();
     }
 
     private void checkLowStock() {
@@ -71,6 +76,7 @@ public class LowStockAlertPanel extends JPanel {
                 lowStockFound = true;
             }
         }
+
 
         if (lowStockFound) {
             JOptionPane.showMessageDialog(this,
