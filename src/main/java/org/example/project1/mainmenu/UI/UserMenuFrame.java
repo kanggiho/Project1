@@ -133,6 +133,12 @@ public class UserMenuFrame extends JFrame {
 
         // 버튼 클릭 이벤트
         btnIncoming.addActionListener(new UserMenuFrame.ButtonActionListener(btnIncoming, "발주관리"));
+        btnIncoming.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outgoingPanel.refresh();
+            }
+        });
         btnOutgoing.addActionListener(new UserMenuFrame.ButtonActionListener(btnOutgoing, "발주내역확인"));
         btnOutgoing.addActionListener(new ActionListener() {
             @Override
