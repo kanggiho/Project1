@@ -122,11 +122,12 @@ public class OutgoingConfirmPanel extends JPanel {
 
         resultTableForSearch = new JTable(new DefaultTableModel());
         JScrollPane scrollPane = new JScrollPane(resultTableForSearch);
+        scrollPane.setPreferredSize(new Dimension(550, 225));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         bottomTablePanel.add(scrollPane, BorderLayout.CENTER);
         bottomTablePanel.setBackground(Color.white);
-        bottomTablePanel.setBounds(550, 225, 1100, 225);
+        bottomTablePanel.setBounds(550, 225, 550, 225);
         add(bottomTablePanel);
     }
 
