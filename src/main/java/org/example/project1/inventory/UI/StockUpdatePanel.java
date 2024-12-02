@@ -22,13 +22,15 @@ public class StockUpdatePanel extends JPanel {
         initUI();
     }
 
+    private String toss_font = "머니그라피TTF Rounded";
+
     // UI 구성요소 초기화 및 배치
     private void initUI() {
         setLayout(new BorderLayout());
 
         // 제목 라벨 생성 및 추가
         JLabel titleLabel = new JLabel("발주하기", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font(toss_font, Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
         // 입력 필드와 버튼을 포함할 패널
