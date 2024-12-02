@@ -17,6 +17,7 @@ public class LowStockAlertPanel extends JPanel {
     private JTable alertTable;
     private DefaultTableModel tableModel;
     private ProductInfoDAO productInfoDAO;
+    private String toss_font = "머니그라피TTF Rounded";
 
     public LowStockAlertPanel() {
         this.productInfoDAO = new ProductInfoDAO();
@@ -28,7 +29,7 @@ public class LowStockAlertPanel extends JPanel {
         setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("재고 부족 알림", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setFont(new Font(toss_font, Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
         String[] columnNames = {"제품 코드", "제품명", "현재 재고", "창고 ID"};

@@ -15,6 +15,8 @@ public class StockEditPanel extends JPanel {
     private final ProductInfoDAO dao;
     private final JButton editButton;
     private ActionListener editButtonListener;
+    private String toss_font = "머니그라피TTF Rounded";
+
 
     /**
      * StockEditPanel 생성자
@@ -33,7 +35,7 @@ public class StockEditPanel extends JPanel {
      */
     private JButton createEditButton() {
         JButton button = new JButton("선택 항목 수정");
-        button.setFont(new Font("Arial", Font.PLAIN, 14));
+        button.setFont(new Font(toss_font, Font.PLAIN, 14));
         button.setPreferredSize(new Dimension(120, 30));
         button.setEnabled(false);
         return button;

@@ -1,9 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
-import org.example.project1.inventory.UI.*;
-import org.example.project1.inventory.VO.ProductInfoProductVO;
-//import org.example.project1.inventory.UI.StockStatusPanel;
+import org.example.project1.inventory.UI.InventoryManagementPanel;
 import org.example.project1.user.UI.LoginFrame;
 
 import javax.swing.*;
@@ -12,185 +10,126 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.TimerTask;
-import javax.swing.Timer;
-
 
 public class AdminMenuFrame extends JFrame {
-    // 클래스 멤버 변수 선언
     private CardLayout cardLayout;
     private JPanel innerPanel;
     private String toss_font = "머니그라피TTF Rounded";
-    private JButton currentSelectedButton;
-    private StockStatusPanel stockStatusPanel;
-    private StockEditPanel stockEditPanel;
-    private StockUpdatePanel stockUpdatePanel;
-    private LowStockAlertPanel lowStockAlertPanel;
+    private JButton currentSelectedButton; // 현재 선택된 버튼 저장
 
-
-    // 생성자
     public AdminMenuFrame(String name) {
-        // 프레임 기본 설정
+        // 프레임 설정
         setTitle("My 웨하스 - 관리자 모드");
         setSize(1200, 675);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(null);
-// UI 구성요소 생성
-        createTopBar(name);
-        createButtonBar();
-        createInnerPanel();
+        setLayout(null); // 절대 위치 사용
 
-        setVisible(true);
-    }
-
-    // 상단 바 생성 메서드
-    private void createTopBar(String name) {
-        // 상단 바 패널 생성 및 설정
+        // TopBar 생성
         JPanel topBar = new JPanel();
         topBar.setBounds(0, 0, 1200, 60);
         topBar.setBackground(ColorSet.color1_bold[0]);
-        topBar.setLayout(null);
-        // 로고 추가
+        topBar.setLayout(null); // 절대 위치 설정
+
+        // 이미지 로고 추가
         JLabel logo = new JLabel();
-        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
+        ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         logo.setIcon(resizedIcon);
+        logo.setPreferredSize(new Dimension(45, 45));
         logo.setBounds(10, 8, 45, 45);
         topBar.add(logo);
 
+        // 큰 텍스트 레이블 (40px)
         JLabel largeTextLabel = new JLabel("My 웨하스");
         largeTextLabel.setFont(new Font(toss_font, Font.BOLD, 30));
         largeTextLabel.setForeground(Color.WHITE);
-        largeTextLabel.setBounds(70, 8, 300, 50);
+        largeTextLabel.setBounds(70, 8, 300, 50); // 텍스트 위치 조정
         topBar.add(largeTextLabel);
 
+        // 작은 텍스트 레이블 (20px)
         JLabel smallTextLabel = new JLabel("관리자 모드입니다 - %s".formatted(name));
         smallTextLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
         smallTextLabel.setForeground(Color.WHITE);
         smallTextLabel.setBounds(230, 23, 200, 30);
         topBar.add(smallTextLabel);
-// 로그아웃 라벨 추가
+
         JLabel logoutLabel = new JLabel("로그아웃");
         logoutLabel.setBounds(1080, 27, 70, 30);
         logoutLabel.setForeground(Color.WHITE);
+        topBar.add(logoutLabel);
         logoutLabel.setFont(new Font(toss_font, Font.PLAIN, 14));
+
         logoutLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 new LoginFrame();
                 dispose();
+                super.mouseClicked(e);
             }
         });
-        topBar.add(logoutLabel);
+
 
         add(topBar);
-    }
-    // 버튼 바 생성 메서드
-    private void createButtonBar() {
+
+        // ButtonBar 생성
         JPanel buttonBar = new JPanel();
         buttonBar.setBounds(40, 80, 1100, 65);
         buttonBar.setBackground(Color.decode("#93BFB7"));
-        buttonBar.setLayout(new GridLayout(1, 4, 0, 0));
+        buttonBar.setLayout(new GridLayout(1, 4, 0, 0)); // 버튼 간 간격 제거
         add(buttonBar);
-        // 각 기능 버튼 생성
+
+        // 버튼 생성 및 추가
         JButton btnIncoming = createButton("입고관리", ColorSet.color1_light[1]);
         JButton btnOutgoing = createButton("출고요청관리", ColorSet.color1_light[1]);
         JButton btnInventory = createButton("재고관리", ColorSet.color1_light[1]);
         JButton btnHistory = createButton("회원등급수정", ColorSet.color1_light[1]);
-// 버튼을 패널에 추가
+
         buttonBar.add(btnIncoming);
         buttonBar.add(btnOutgoing);
         buttonBar.add(btnInventory);
         buttonBar.add(btnHistory);
-// 각 버튼에 액션 리스너 추가
 
-        btnIncoming.addActionListener(new ButtonActionListener(btnIncoming, "입고관리"));
-        btnOutgoing.addActionListener(new ButtonActionListener(btnOutgoing, "출고요청관리"));
-        btnInventory.addActionListener(new ButtonActionListener(btnInventory, "재고관리"));
-        btnHistory.addActionListener(new ButtonActionListener(btnHistory, "회원등급수정"));
-        // 초기 선택 버튼 설정
-        currentSelectedButton = btnIncoming;
-        btnIncoming.setBackground(ColorSet.color1_bold[1]);
-    }
-    // 내부 패널 생성 메서드
-    private void createInnerPanel() {
-        // 내부 패널 생성 및 설정
+        // InnerPanel 생성
         innerPanel = new JPanel();
         innerPanel.setBounds(40, 145, 1100, 450);
         cardLayout = new CardLayout();
         innerPanel.setLayout(cardLayout);
         innerPanel.setBackground(Color.decode("#97A6A0"));
-        // 각 기능별 패널 추가
 
+        InventoryManagementPanel inventoryManagementPanel = new InventoryManagementPanel("hi",this);
 
+        // 각 패널 추가
         innerPanel.add(createPanel("입고관리 화면"), "입고관리");
         innerPanel.add(createPanel("출고요청관리 화면"), "출고요청관리");
-//재고 관리 관련 패널 추가
-        stockStatusPanel = new StockStatusPanel("재고관리 화면");
-        stockEditPanel = new StockEditPanel();
-        stockUpdatePanel = new StockUpdatePanel();
-        StockSearchPanel stockSearchPanel = new StockSearchPanel(stockStatusPanel);
-        lowStockAlertPanel = new LowStockAlertPanel();
-
-
-//         StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
-
-
-//         // 각 패널 추가
-//         innerPanel.add(createPanel("입고관리 화면"), "입고관리");
-//         innerPanel.add(createPanel("출고요청관리 화면"), "출고요청관리");
-//         innerPanel.add(stockStatusPanel, "재고관리");
-//         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
-//         add(innerPanel);
-
-
-        JPanel inventoryPanel = new JPanel(new BorderLayout());
-        inventoryPanel.add(stockSearchPanel, BorderLayout.NORTH);
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("재고 현황", stockStatusPanel);
-        tabbedPane.addTab("재고 부족 알림", lowStockAlertPanel);
-        inventoryPanel.add(stockStatusPanel, BorderLayout.CENTER);
-//버튼 패널 생성 및 버튼 추가
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton refreshButton = new JButton("새로고침");
-        refreshButton.addActionListener(e -> {
-            stockStatusPanel.loadStockData();
-            lowStockAlertPanel.refreshLowStockAlert(); // 수정된 부분
-        });
-        buttonPanel.add(refreshButton);
-
-        JButton editButton = new JButton("선택 항목 수정");
-        editButton.addActionListener(e -> openEditDialog());
-        buttonPanel.add(editButton);
-
-        JButton orderButton = new JButton("발주하기");
-        orderButton.addActionListener(e -> openOrderDialog());
-        buttonPanel.add(orderButton);
-
-        inventoryPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        innerPanel.add(inventoryPanel, "재고관리");
+        innerPanel.add(inventoryManagementPanel, "재고관리");
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
-//행 선택시 수정 버튼 활성화
-        stockStatusPanel.addPropertyChangeListener("rowSelected", evt -> {
-            boolean rowSelected = (boolean) evt.getNewValue();
-            editButton.setEnabled(rowSelected);
-        });
-
         add(innerPanel);
+
+        // 버튼 클릭 이벤트
+        btnIncoming.addActionListener(new ButtonActionListener(btnIncoming, "입고관리"));
+        btnOutgoing.addActionListener(new ButtonActionListener(btnOutgoing, "출고요청관리"));
+        btnInventory.addActionListener(new ButtonActionListener(btnInventory, "재고관리"));
+        btnHistory.addActionListener(new ButtonActionListener(btnHistory, "회원등급수정"));
+
+        // 초기 선택된 버튼 설정
+        currentSelectedButton = btnIncoming;
+        btnIncoming.setBackground(ColorSet.color1_bold[1]);
+        setVisible(true);
     }
-//버튼 생성 메서드
+
+    // 버튼 생성 메서드
     private JButton createButton(String text, Color bgColor) {
         JButton button = new JButton(text);
         button.setFont(new Font(toss_font, Font.PLAIN, 20));
-        button.setBackground(bgColor);
+        button.setBackground(bgColor); // 배경색 설정
         button.setOpaque(true);
-        button.setBorderPainted(false);
-        button.setForeground(Color.WHITE);
+        button.setBorderPainted(false); // 버튼 테두리 제거
+        button.setForeground(Color.WHITE); // 글자색 흰색
         return button;
     }
-    // 기본 패널 생성 메서드
+
+    // 패널 생성 메서드
     private JPanel createPanel(String text) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -201,53 +140,8 @@ public class AdminMenuFrame extends JFrame {
         panel.setBackground(ColorSet.color1_light[0]);
         return panel;
     }
-    //발주 다이얼로그 열기 메서드
-    private void openOrderDialog() {
-        JDialog orderDialog = new JDialog(this, "발주하기", true);
-        orderDialog.setContentPane(stockUpdatePanel);
-        orderDialog.pack();
-        orderDialog.setLocationRelativeTo(this);
 
-        // 발주 완료 후 새로 고침을 위한 리스너 추가
-        stockUpdatePanel.addPropertyChangeListener("stockUpdated", evt -> {
-            stockStatusPanel.loadStockData();
-            orderDialog.dispose();
-        });
-
-        orderDialog.setVisible(true);
-
-        // 다이얼로그가 닫힌 후 재고 목록 새로고침
-        stockStatusPanel.loadStockData();
-    }
-    // 수정 다이얼로그 열기 메서드
-    private void openEditDialog() {
-        try {
-            ProductInfoProductVO selectedProduct = stockStatusPanel.getSelectedProduct();
-            if (selectedProduct != null) {
-                stockEditPanel.updateProductInfo(selectedProduct);
-                stockStatusPanel.loadStockData(); // 데이터 갱신
-            } else {
-                JOptionPane.showMessageDialog(this, "수정할 항목을 선택해주세요.", "선택 오류", JOptionPane.WARNING_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "데이터 형식 오류: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    private void startAlertCheck() {
-        Timer timer = new Timer(60000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(() -> lowStockAlertPanel.refreshLowStockAlert());
-            }
-        });
-        timer.start();
-    }
-    // 버튼 액션 리스너 내부 클래스
-
+    // 버튼 액션 리스너 클래스
     private class ButtonActionListener implements ActionListener {
         private final JButton button;
         private final String panelName;
@@ -259,11 +153,15 @@ public class AdminMenuFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            // 이전 버튼의 색상 초기화
             if (currentSelectedButton != null) {
                 currentSelectedButton.setBackground(ColorSet.color1_light[1]);
             }
+            // 현재 버튼의 색상 변경
             button.setBackground(ColorSet.color1_bold[1]);
             currentSelectedButton = button;
+
+            // 패널 전환
             cardLayout.show(innerPanel, panelName);
         }
     }

@@ -20,7 +20,8 @@ public class StockStatusPanel extends JPanel {
             "창고 ID", "창고 위치", "가격", "재고", "입고 예정일"
     };
     // 폰트 관련 상수
-    private static final String FONT_NAME = "Arial";
+
+    private static final String FONT_NAME = "머니그라피TTF Rounded";
     private static final int TITLE_FONT_SIZE = 18;
 
     private final String title; // 패널 제목
