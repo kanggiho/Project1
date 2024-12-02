@@ -2,6 +2,7 @@ package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.UI.InventoryManagementPanel;
+import org.example.project1.order.UI.ConfirmListPanel;
 import org.example.project1.order.UI.OutgoingPanel;
 import org.example.project1.account.UI.UserDataUpdate;
 import org.example.project1.user.UI.LoginFrame;
@@ -120,12 +121,12 @@ public class UserMenuFrame extends JFrame {
 
         // 본인 패널 객체 생성
         OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리",name);
-        //ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인");
+        ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인",name);
 
 
         // 각 패널 추가
         innerPanel.add(outgoingPanel,"발주관리");
-        innerPanel.add(outgoingPanel, "발주내역확인");
+        innerPanel.add(confirmListPanel, "발주내역확인");
         innerPanel.add(createPanel("대시보드 화면"), "대시보드");
         innerPanel.add(createPanel("창고위치찾기 화면"), "창고위치찾기");
         add(innerPanel);
@@ -133,6 +134,12 @@ public class UserMenuFrame extends JFrame {
         // 버튼 클릭 이벤트
         btnIncoming.addActionListener(new UserMenuFrame.ButtonActionListener(btnIncoming, "발주관리"));
         btnOutgoing.addActionListener(new UserMenuFrame.ButtonActionListener(btnOutgoing, "발주내역확인"));
+        btnOutgoing.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                confirmListPanel.loadData();
+            }
+        });
         btnInventory.addActionListener(new UserMenuFrame.ButtonActionListener(btnInventory, "대시보드"));
         btnHistory.addActionListener(new UserMenuFrame.ButtonActionListener(btnHistory, "창고위치찾기"));
 
