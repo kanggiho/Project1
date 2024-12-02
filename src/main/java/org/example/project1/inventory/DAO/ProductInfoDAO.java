@@ -283,7 +283,26 @@ public class ProductInfoDAO {
             System.out.println("삽입 성공");
         }
     }
+    // 제조업체 정보를 포함한 재고 현황을 조회하는 메서드
+    public List<ProductInfoProductWarehouseInfoManufacturingVO> getInventoryStatusWithManufacturer() throws SQLException {
+        List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = new ArrayList<>();
+        String sql = "SELECT pi.code, pi.product_code, p.product_name, pi.manufacturer_code, " +
+                "m.manufacturer_name, pi.warehouse_id, w.warehouse_location, pi.price, pi.stock, pi.stock_date " +
+                "FROM product_info pi " +
+                "JOIN product p ON pi.product_code = p.product_code " +
+                "JOIN manufacturing m ON pi.manufacturer_code = m.manufacturer_code " +
+                "JOIN warehouse_info w ON pi.warehouse_id = w.warehouse_id " +
+                "ORDER BY pi.product_code";
 
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                inventoryList.add(createProductInfoProductWarehouseInfoManufacturingVOFromResultSet(rs));
+            }
+        }
+        return inventoryList;
+    }
     // 다른 메서드들 (update, delete, find, getAll)도 유사하게 수정합니다.
 
     // ResultSet에서 ProductInfoProductVO 객체를 생성하는 헬퍼 메서드

@@ -14,6 +14,7 @@ import java.util.List;
  * 재고 상태를 표시하는 패널 클래스
  */
 public class StockStatusPanel extends JPanel {
+    // 클래스 멤버 변수 선언
     private String title;
     private JTable stockTable;
     private DefaultTableModel tableModel;
@@ -48,7 +49,7 @@ public class StockStatusPanel extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
 
         // 테이블 모델 및 테이블 생성
-        String[] columnNames = {"코드", "제품 코드", "제품명", "제조업체 코드", "제조업체명", "창고 ID", "가격", "재고", "입고 예정일"};
+        String[] columnNames = {"코드", "제품 코드", "제품명", "제조업체 코드", "제조업체명", "창고 ID", "창고 위치", "가격", "재고", "입고 예정일"};
         tableModel = new DefaultTableModel(columnNames, 0);
         stockTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(stockTable);
@@ -57,6 +58,7 @@ public class StockStatusPanel extends JPanel {
         // 버튼 패널 생성 및 추가
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
+        // 새로고침 버튼 생성 및 이벤트 리스너 추가
         JButton refreshButton = new JButton("새로고침");
         refreshButton.addActionListener(e -> loadStockData());
         buttonPanel.add(refreshButton);
@@ -75,37 +77,72 @@ public class StockStatusPanel extends JPanel {
      */
     public void loadStockData() {
         try {
-            List<ProductInfoProductVO> inventoryList = productInfoDAO.getInventoryStatus();
-
-
-            // 테이블 모델 데이터를 한 번에 설정
-            Object[][] data = new Object[inventoryList.size()][8];
-            for (int i = 0; i < inventoryList.size(); i++) {
-                ProductInfoProductVO item = inventoryList.get(i);
-                data[i] = new Object[]{
-                        item.getCode(),
-                        item.getProduct_code(),
-                        item.getProduct_name(),
-                        item.getManufacturer_code(),
-                        item.getWarehouse_id(),
-                        item.getPrice(),
-                        item.getStock(),
-                        item.getStock_date()
-                };
-            }
-
-            // 컬럼 이름 배열 (필요에 따라 수정)
-            String[] columnNames = {"코드", "제품 코드", "제품명", "제조사 코드", "창고 ID", "가격", "재고", "입고일"};
-
-            // 테이블 모델 한 번에 업데이트
-            tableModel.setDataVector(data, columnNames);
-
-            // 테이블 새로고침
-            stockTable.repaint();
+            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = productInfoDAO.getInventoryStatusWithManufacturer();
+            updateTable(inventoryList);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "데이터 로딩 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    /**
+     * 제조업체 정보를 포함한 재고 데이터를 로드하는 메소드
+     */
+    public void loadStockDataWithManufacturer() {
+        try {
+            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = productInfoDAO.getInventoryStatusWithManufacturer();
+            updateTable(inventoryList);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "데이터 로딩 중 오류 발생: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * ProductInfoProductVO 리스트로 테이블을 업데이트하는 메소드
+     * @param inventoryList ProductInfoProductVO 객체 리스트
+     */
+    private void updateTableWithProductVO(List<ProductInfoProductVO> inventoryList) {
+        tableModel.setRowCount(0);
+        for (ProductInfoProductVO item : inventoryList) {
+            Object[] row = {
+                    item.getCode(),
+                    item.getProduct_code(),
+                    item.getProduct_name(),
+                    item.getManufacturer_code(),
+                    "", // 제조업체명은 비워둡니다
+                    item.getWarehouse_id(),
+                    item.getPrice(),
+                    item.getStock(),
+                    item.getStock_date()
+            };
+            tableModel.addRow(row);
+        }
+        stockTable.repaint();
+    }
+
+    /**
+     * ProductInfoProductWarehouseInfoManufacturingVO 리스트로 테이블을 업데이트하는 메소드
+     * @param results ProductInfoProductWarehouseInfoManufacturingVO 객체 리스트
+     */
+    public void updateTable(List<ProductInfoProductWarehouseInfoManufacturingVO> results) {
+        tableModel.setRowCount(0);
+        for (ProductInfoProductWarehouseInfoManufacturingVO vo : results) {
+            Object[] row = {
+                    vo.getCode(),
+                    vo.getProduct_code(),
+                    vo.getProduct_name(),
+                    vo.getManufacturer_code(),
+                    vo.getManufacturer_name(),
+                    vo.getWarehouse_id(),
+                    vo.getWarehouse_location(),  // 창고 위치 추가
+                    vo.getPrice(),
+                    vo.getStock(),
+                    vo.getStock_date()
+            };
+            tableModel.addRow(row);
+        }
+        stockTable.repaint();
+    }
+
     /**
      * 현재 선택된 제품의 정보를 반환하는 메소드
      * @return 선택된 제품의 ProductInfoProductVO 객체, 선택된 제품이 없으면 null
@@ -115,32 +152,15 @@ public class StockStatusPanel extends JPanel {
         if (selectedRow != -1) {
             return new ProductInfoProductVO(
                     (String) tableModel.getValueAt(selectedRow, 0),
-                    (Integer) tableModel.getValueAt(selectedRow, 1),
+                    Integer.parseInt(tableModel.getValueAt(selectedRow, 1).toString()),
                     (String) tableModel.getValueAt(selectedRow, 2),
                     (String) tableModel.getValueAt(selectedRow, 3),
-                    (Integer) tableModel.getValueAt(selectedRow, 4),
-                    (Integer) tableModel.getValueAt(selectedRow, 5),
-                    (Integer) tableModel.getValueAt(selectedRow, 6),
-                    (String) tableModel.getValueAt(selectedRow, 7)
+                    Integer.parseInt(tableModel.getValueAt(selectedRow, 5).toString()),
+                    Integer.parseInt(tableModel.getValueAt(selectedRow, 7).toString()),
+                    Integer.parseInt(tableModel.getValueAt(selectedRow, 8).toString()),
+                    (String) tableModel.getValueAt(selectedRow, 9)
             );
         }
         return null;
-    }
-    public void updateTable(List<ProductInfoProductWarehouseInfoManufacturingVO> results) {
-        tableModel.setRowCount(0); // 기존 데이터 초기화
-
-        for (ProductInfoProductWarehouseInfoManufacturingVO vo : results) {
-            Object[] row = {
-                    vo.getCode(),
-                    vo.getProduct_code(),
-                    vo.getProduct_name(),
-                    vo.getManufacturer_name(),
-                    vo.getWarehouse_id(),
-                    vo.getPrice(),
-                    vo.getStock(),
-                    vo.getStock_date()
-            };
-            tableModel.addRow(row);
-        }
     }
 }
