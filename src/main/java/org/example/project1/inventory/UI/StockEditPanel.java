@@ -3,8 +3,8 @@ package org.example.project1.inventory.UI;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing .*;
+import java.awt .*;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
@@ -31,6 +31,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 수정 버튼 생성 메서드
+     *
      * @return 생성된 JButton
      */
     private JButton createEditButton() {
@@ -43,6 +44,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 버튼 패널 생성 메서드
+     *
      * @return 생성된 JPanel
      */
     private JPanel createButtonPanel() {
@@ -53,6 +55,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 수정 버튼에 대한 액션 리스너 설정 메서드
+     *
      * @param listener 설정할 ActionListener 객체
      */
     public void setEditButtonListener(ActionListener listener) {
@@ -65,6 +68,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 수정 버튼의 활성화/비활성화 설정 메서드
+     *
      * @param enabled true면 버튼 활성화, false면 비활성화
      */
     public void setEditButtonEnabled(boolean enabled) {
@@ -73,6 +77,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 제품 정보 업데이트 메서드
+     *
      * @param product 수정할 제품 정보 객체
      */
     public void updateProductInfo(ProductInfoProductVO product) {
@@ -81,8 +86,7 @@ public class StockEditPanel extends JPanel {
         JTextField stockDateField = (JTextField) inputPanel.getComponent(3);
         JTextField warehouseIdField = (JTextField) inputPanel.getComponent(5);
 
-        int result = JOptionPane.showConfirmDialog(null, inputPanel,
-                "제품 정보 수정", JOptionPane.OK_CANCEL_OPTION);
+        int result = JOptionPane.showConfirmDialog(null, inputPanel, "제품 정보 수정", JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
             updateProductInfoInDatabase(product, priceField.getText(), stockDateField.getText(), warehouseIdField.getText());
@@ -91,6 +95,7 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 입력 패널 생성 메서드
+     *
      * @return 생성된 JPanel
      */
     private JPanel createInputPanel() {
@@ -106,9 +111,10 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 데이터베이스에 제품 정보 업데이트 메서드
-     * @param product 수정할 제품 정보 객체
-     * @param priceText 새 가격
-     * @param stockDate 새 입고예정일
+     *
+     * @param product         수정할 제품 정보 객체
+     * @param priceText       새 가격
+     * @param stockDate       새 입고예정일
      * @param warehouseIdText 새 창고 ID
      */
     private void updateProductInfoInDatabase(ProductInfoProductVO product, String priceText, String stockDate, String warehouseIdText) {
@@ -130,7 +136,8 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 가격 업데이트 메서드
-     * @param product 수정할 제품 정보 객체
+     *
+     * @param product   수정할 제품 정보 객체
      * @param priceText 새 가격
      * @return 업데이트 성공 여부
      * @throws SQLException SQL 예외 발생 시
@@ -146,7 +153,8 @@ public class StockEditPanel extends JPanel {
 
     /**
      * 입고예정일 업데이트 메서드
-     * @param product 수정할 제품 정보 객체
+     *
+     * @param product   수정할 제품 정보 객체
      * @param stockDate 새 입고예정일
      * @return 업데이트 성공 여부
      * @throws SQLException SQL 예외 발생 시
@@ -159,9 +167,11 @@ public class StockEditPanel extends JPanel {
         return false;
     }
 
+
     /**
      * 창고 ID 업데이트 메서드
-     * @param product 수정할 제품 정보 객체
+     *
+     * @param product         수정할 제품 정보 객체
      * @param warehouseIdText 새 창고 ID
      * @return 업데이트 성공 여부
      * @throws SQLException SQL 예외 발생 시
