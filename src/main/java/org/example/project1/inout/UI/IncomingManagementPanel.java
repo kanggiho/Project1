@@ -46,7 +46,7 @@ public class IncomingManagementPanel extends JPanel {
         add(scrollPane);
 
         // 모드 선택 기능 구현
-        String[] modes = {"전체보기", "자재코드", "제조업체", "입고신청일"};
+        String[] modes = {"전체보기", "자재코드", "제조업체", "입고일"};
         modeSelector = new JComboBox<>(modes);
         modeSelector.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
 
@@ -102,15 +102,16 @@ public class IncomingManagementPanel extends JPanel {
         topPanel.add(modeSelector);
         topPanel.add(inputField);
         topPanel.add(searchButton);
-        topPanel.add(clearButton); // Add the clear button
-        topPanel.setBackground(Color.decode("#97A6A0"));
+        topPanel.add(clearButton);
+        topPanel.setBackground(Color.white);
         topPanel.setBounds(0, 0, 1100, 30);
         add(topPanel);
 
         // 테이블 추가
         JPanel middlePanel = new JPanel();
-        middlePanel.add(scrollPane);
-        middlePanel.setBackground(Color.decode("#97A6A0"));
+        middlePanel.setLayout(new BorderLayout());
+        middlePanel.add(scrollPane,BorderLayout.CENTER);
+        middlePanel.setBackground(Color.white);
         middlePanel.setBounds(0, 30, 1100, 280);
         add(middlePanel);
 
@@ -118,7 +119,7 @@ public class IncomingManagementPanel extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         bottomPanel.setSize(1100, 145);
-        bottomPanel.setBackground(Color.decode("#97A6A0"));
+        bottomPanel.setBackground(Color.white);
         bottomPanel.setBounds(0, 310, 1100, 140);
         add(bottomPanel);
 
@@ -221,7 +222,6 @@ public class IncomingManagementPanel extends JPanel {
     }
 
     private Object[] extractRowData(Object data) {
-        // This method will extract row data from different VO types.
         if (data instanceof InputProductVO) {
             InputProductVO vo = (InputProductVO) data;
             return new Object[]{vo.getProduct_code(), vo.getProduct_name(), vo.getInput_num(),

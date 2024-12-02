@@ -104,7 +104,7 @@ public class InputDAO {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
                      ("select m.manufacturer_code, m.manufacturer_name, m.sorting, i.input_num, i.product_code, " +
-                             "i.asking_date, i.warehoused_quantity, i.warehoused_date" +
+                             "i.asking_date, i.warehoused_quantity, i.warehoused_date " +
                              "from manufacturing m " +
                              "left join input i " +
                              "on i.manufacturer_code = m.manufacturer_code " +
