@@ -137,7 +137,7 @@ public class InputDAO {
         }
     }
 
-    //입고신청일 기준 검색 결과
+    //입고일 기준 검색 결과
     public ArrayList<InputVO> list(String warehousedDate) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement("select * from input where warehoused_date = ?")) {

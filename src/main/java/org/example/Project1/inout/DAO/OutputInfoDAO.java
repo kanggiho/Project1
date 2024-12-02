@@ -24,10 +24,10 @@ public class OutputInfoDAO {
     public ArrayList<OutputOrdererVO> listForOrderer(int user_id) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
-                     ("select oi.user_id, o.license, o.name, o.tel, o.loc, oi.confirm_num, oi.confirm_id, oi.status, oi.release_date" +
-                            "from orderer o" +
-                            "left join output_info oi" +
-                             "on o.uid = oi.user_id" +
+                     ("select oi.user_id, o.license, o.name, o.tel, o.loc, oi.confirm_num, oi.confirm_id, oi.status, oi.release_date " +
+                            "from orderer o " +
+                            "left join output_info oi " +
+                             "on o.uid = oi.user_id " +
                              "where o.uid = ?")) {
             ps.setInt(1, user_id);
             ResultSet table = ps.executeQuery();
@@ -61,10 +61,10 @@ public class OutputInfoDAO {
     public ArrayList<OutputAdminVO> listForConfirm(int confirm_id) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
-                     ("select oi.confirm_id, oi.confirm_num, a.name, a.tel, oi.user_id, oi.status, oi.release_date\n" +
-                             "from output_info oi\n" +
-                             "left join admin a\n" +
-                             "on oi.confirm_id = a.id;\n" +
+                     ("select oi.confirm_id, oi.confirm_num, a.name, a.tel, oi.user_id, oi.status, oi.release_date " +
+                             "from output_info oi " +
+                             "left join admin a " +
+                             "on oi.confirm_id = a.id " +
                              "where oi.confirm_id = ?")) {
             ps.setInt(1, confirm_id);
             ResultSet table = ps.executeQuery();
@@ -97,7 +97,9 @@ public class OutputInfoDAO {
     public ArrayList<OutputInfoVO> listForStatus(String status) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
-                     ("select status, confirm_num, product_code, user_id, release_date")) {
+                     ("select status, confirm_num, product_code, user_id " +
+                             "from output_info " +
+                             "where status = ?")) {
             ps.setString(1, status);
             ResultSet table = ps.executeQuery();
             if (!vo_listForStatus.isEmpty()) {
@@ -110,7 +112,6 @@ public class OutputInfoDAO {
                     vo.setConfirm_num(table.getInt("confirm_num"));
                     vo.setProduct_code(table.getInt("product_code"));
                     vo.setUser_id(table.getInt("user_id"));
-                    vo.setRelease_date(table.getDate("release_date").toLocalDate());
                     vo_listForStatus.add(vo);
                 } else {
                     break;
