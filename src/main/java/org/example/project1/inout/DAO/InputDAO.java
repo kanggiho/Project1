@@ -71,7 +71,7 @@ public class InputDAO {
                      "from product p " +
                      "left join input i " +
                      "on i.product_code = p.product_code " +
-                     "where product_code = ?")) {
+                     "where i.product_code = ?")) {
             ps.setInt(1, product_code);
             ResultSet table = ps.executeQuery();
             if (!vo_listForProduct.isEmpty()) {
@@ -105,10 +105,10 @@ public class InputDAO {
              PreparedStatement ps = con.prepareStatement
                      ("select m.manufacturer_code, m.manufacturer_name, m.sorting, i.input_num, i.product_code, " +
                              "i.asking_date, i.warehoused_quantity, i.warehoused_date" +
-                             "from manufacturing m" +
-                             "left join input i" +
-                             "on i.manufacturer_code = m.manufacturer_code" +
-                             "where input_num is not null and manufacturer_code = ?")) {
+                             "from manufacturing m " +
+                             "left join input i " +
+                             "on i.manufacturer_code = m.manufacturer_code " +
+                             "where input_num is not null and i.manufacturer_code = ?")) {
             ps.setString(1, manufacturer_code);
             ResultSet table = ps.executeQuery();
             if (!vo_listForManu.isEmpty()) {
