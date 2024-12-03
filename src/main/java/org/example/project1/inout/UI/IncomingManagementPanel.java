@@ -125,38 +125,37 @@ public class IncomingManagementPanel extends JPanel {
         add(middlePanel);
 
 
+
+
         // ----------------------- 입고 신청 기능 --------------------------
         // 입고 신청 내용 입력창 생성
+        // 제조 업체 코드 입력창
+        manufacturerCode = new JTextField(15);
+        String placeholderText3 = "제조 업체 코드";
+        Font placeholderFont3 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
+        Color placeholderColor3 = Color.GRAY;
+        Color inputTextColor3 = Color.BLACK;
 
-        // 입고 번호 입력창
-        inputNum = new JTextField(15);
-        String placeholderText1 = "입고 번호";
-        Font placeholderFont1 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
-        Color placeholderColor1 = Color.GRAY;
-        Color inputTextColor1 = Color.BLACK;
+        manufacturerCode.setText(placeholderText3);
+        manufacturerCode.setFont(placeholderFont3);
+        manufacturerCode.setForeground(placeholderColor3);
 
-        inputNum.setText(placeholderText1);
-        inputNum.setFont(placeholderFont1);
-        inputNum.setForeground(placeholderColor1);
-
-        inputNum.addFocusListener(new FocusListener() {
+        manufacturerCode.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                // 기본 텍스트라면 지우고 입력용 스타일 적용
-                if (inputNum.getForeground().equals(placeholderColor1) && inputNum.getText().equals(placeholderText1)) {
-                    inputNum.setText(""); // 기본 텍스트 지우기
-                    inputNum.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12)); // 입력용 폰트
-                    inputNum.setForeground(inputTextColor1); // 입력용 글자색
+                if (manufacturerCode.getForeground().equals(placeholderColor3) && manufacturerCode.getText().equals(placeholderText3)) {
+                    manufacturerCode.setText("");
+                    manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    manufacturerCode.setForeground(inputTextColor3);
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                // 입력된 값이 비어있다면 기본 텍스트 다시 설정
-                if (inputNum.getText().isEmpty()) {
-                    inputNum.setText(placeholderText1); // 기본 텍스트 설정
-                    inputNum.setFont(placeholderFont1); // 기본 텍스트 폰트
-                    inputNum.setForeground(placeholderColor1); // 기본 텍스트 색상
+                if (manufacturerCode.getText().isEmpty()) {
+                    manufacturerCode.setText(placeholderText3);
+                    manufacturerCode.setFont(placeholderFont3);
+                    manufacturerCode.setForeground(placeholderColor3);
                 }
             }
         });
@@ -192,36 +191,6 @@ public class IncomingManagementPanel extends JPanel {
             }
         });
 
-        // 제조 업체 코드 입력창
-        manufacturerCode = new JTextField(15);
-        String placeholderText3 = "제조 업체 코드";
-        Font placeholderFont3 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
-        Color placeholderColor3 = Color.GRAY;
-        Color inputTextColor3 = Color.BLACK;
-
-        manufacturerCode.setText(placeholderText3);
-        manufacturerCode.setFont(placeholderFont3);
-        manufacturerCode.setForeground(placeholderColor3);
-
-        manufacturerCode.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (manufacturerCode.getForeground().equals(placeholderColor3) && manufacturerCode.getText().equals(placeholderText3)) {
-                    manufacturerCode.setText("");
-                    manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-                    manufacturerCode.setForeground(inputTextColor3);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (manufacturerCode.getText().isEmpty()) {
-                    manufacturerCode.setText(placeholderText3);
-                    manufacturerCode.setFont(placeholderFont3);
-                    manufacturerCode.setForeground(placeholderColor3);
-                }
-            }
-        });
 
         // 입고신청일 입력 창
         askingDate = new JTextField(15);
@@ -285,7 +254,7 @@ public class IncomingManagementPanel extends JPanel {
             }
         });
 
-        // 입고일 입력창
+        // 입고일 입력 창
         warehousedDate = new JTextField(15);
         String placeholderText6 = "입고일";
         Font placeholderFont6 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
@@ -323,9 +292,8 @@ public class IncomingManagementPanel extends JPanel {
 
 
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(inputNum);
-        bottomPanel.add(productCode);
         bottomPanel.add(manufacturerCode);
+        bottomPanel.add(productCode);
         bottomPanel.add(askingDate);
         bottomPanel.add(warehousedDate);
         bottomPanel.add(warehousedQuantity);
@@ -340,8 +308,7 @@ public class IncomingManagementPanel extends JPanel {
         setVisible(true);
     }
 
-
-
+    // ------------------------- 기능 메소드 --------------------------------
     // 검색창 텍스트 필드 설정
     private void setPlaceholderText() {
         String selectMode = (String) modeSelector.getSelectedItem();
@@ -463,34 +430,55 @@ public class IncomingManagementPanel extends JPanel {
         return new Object[0];
     }
 
+    // 입고 신청 버튼 기능
     private void handleApplyButton() {
-        String inputNumInput = inputNum.getText().trim();
-        String productCodeInput = productCode.getText().trim();
         String manufacturerCodeInput = manufacturerCode.getText().trim();
+        String productCodeInput = productCode.getText().trim();
         String askingDateInput = askingDate.getText().trim();
         String warehousedQuantityInput = warehousedQuantity.getText().trim();
         String warehousedDateInput = warehousedDate.getText().trim();
 
-        if (inputNumInput.isEmpty() || productCodeInput.isEmpty() || manufacturerCodeInput.isEmpty() ||
-                askingDateInput.isEmpty() || warehousedQuantityInput.isEmpty() || warehousedDateInput.isEmpty()) {
+        System.out.println("텍스트 추출");
+
+        if (manufacturerCodeInput.isEmpty() || productCodeInput.isEmpty() ||
+        askingDateInput.isEmpty() || warehousedQuantityInput.isEmpty() || warehousedDateInput.isEmpty()) {
             JOptionPane.showMessageDialog(null, "모든 필드를 입력해주세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
             InputVO vo1 = new InputVO();
-            vo1.setInputNum(Integer.parseInt(inputNumInput));
-            vo1.setProductCode(Integer.parseInt(productCodeInput));
             vo1.setManufacturerCode(manufacturerCodeInput);
+            vo1.setProductCode(Integer.parseInt(productCodeInput));
             vo1.setAskingDate(askingDateInput);
             vo1.setWarehousedQuantity(Integer.parseInt(warehousedQuantityInput));
             vo1.setWarehousedDate(warehousedDateInput);
 
+
             ProductInfoVO vo2 = new ProductInfoVO();
+            vo2.setProduct_code(Integer.parseInt(productCodeInput));
+            vo2.setManufacturer_code(manufacturerCodeInput);
             vo2.setStock(Integer.parseInt(warehousedQuantityInput));
             vo2.setStock_date(warehousedDateInput);
+
+
+            // 입고 신청 내역에 데이터 추가
             inputDAO.insertToInput(vo1);
-            inputDAO.upsertToInventory(vo2);
+
+            // 기존 재고에 물품 있는지 확인하고
+            // 있으면 업데이트, 없으면 추가
+            if (inputDAO.checkInventory(vo2)) {
+                JOptionPane.showMessageDialog(null, "기존 재고가 존재합니다. 재고가 업데이트 됩니다.");
+                inputDAO.updateInventory(vo2);
+            } else {
+                JOptionPane.showMessageDialog(null, "기존 재고가 없습니다. 추가 데이터를 입력해주세요.");
+                // 추가 데이터 입력 창
+                JFrame extraframe = new JFrame();
+
+                // 추가 데이터 입력 텍스트 추출
+                // 추가 데이터 vo에 담아서 dao에 전송
+                inputDAO.insertToInventory(vo2);
+            }
 
             JOptionPane.showMessageDialog(null, "입고 신청 완료");
         } catch (NumberFormatException e) {
