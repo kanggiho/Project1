@@ -21,6 +21,8 @@ public class InventoryManagementPanel extends JPanel {
     private StockSearchPanel stockSearchPanel;
     private StockStatusPanel stockStatusPanel;
     private String toss_font = "머니그라피TTF Rounded";
+    private JButton lowStockButton; // LowStockAlertPanel버튼 사용하기위해
+    private JButton refreshButton; // LowStockAlertPanel버튼 사용하기위해
 
     public InventoryManagementPanel(String title, Frame frame) {
 
@@ -39,6 +41,8 @@ public class InventoryManagementPanel extends JPanel {
     }
 
     private void initUI(){
+        lowStockButton = new JButton("재고 부족 조회");
+        refreshButton = new JButton("새로고침");
         // 패널 초기화
         removeAll();
 
@@ -62,7 +66,10 @@ public class InventoryManagementPanel extends JPanel {
         stockEditPanel.setBounds(30,400,100,100);
         stockUpdatePanel.setBounds(330,400,100,100);
         stockSearchPanel.setBounds(300,10,500,30);
-        lowStockAlertPanel.setBounds(630,400,300,100);
+
+        // 버튼 위치 및 크기 설정
+        lowStockButton.setBounds(630, 400, 150, 30);
+        refreshButton.setBounds(790, 400, 100, 30);
 
 
 
@@ -72,7 +79,10 @@ public class InventoryManagementPanel extends JPanel {
         add(stockEditPanel);
         add(stockUpdatePanel);
         add(stockSearchPanel);
-        add(lowStockAlertPanel);
+        // 버튼을 패널에 추가
+        add(lowStockButton);
+        add(refreshButton);
+
 
     }
 
@@ -105,6 +115,10 @@ public class InventoryManagementPanel extends JPanel {
                 stockStatusPanel.loadStockData();
             }
         });
+
+        //lowStockAlertPanel 기능
+        lowStockButton.addActionListener(e -> lowStockAlertPanel.showLowStockItems());
+        refreshButton.addActionListener(e -> stockStatusPanel.loadStockData());
 
     }
 
@@ -149,6 +163,12 @@ public class InventoryManagementPanel extends JPanel {
 
     public void refreshLowStockAlert() {
         lowStockAlertPanel.showLowStockItems();
+    }
+    // 패널이 더 이상 필요하지 않을 때 타이머를 정지하는 메서드 추가
+    public void cleanup() {
+        if (lowStockAlertPanel != null) {
+            lowStockAlertPanel.stopAlertTimer();
+        }
     }
     // 기타 필요한 메서드들...
 }

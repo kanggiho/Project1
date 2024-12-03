@@ -1,7 +1,6 @@
 package org.example.project1.inventory.UI;
 
 import org.example.project1.inventory.DAO.ProductInfoDAO;
-import org.example.project1.inventory.VO.ProductInfoProductVO;
 import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
 
 import javax.swing.*;
@@ -9,35 +8,24 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LowStockAlertPanel extends JPanel {
     private static final int LOW_STOCK_THRESHOLD = 30;
     private ProductInfoDAO productInfoDAO;
     private StockStatusPanel stockStatusPanel;
-    private ProductInfoProductWarehouseInfoManufacturingVO productInfoProductWarehouseInfoManufacturingVO;
+    private Timer alertTimer;
 
     public LowStockAlertPanel(StockStatusPanel stockStatusPanel) {
         this.productInfoDAO = new ProductInfoDAO();
         this.stockStatusPanel = stockStatusPanel;
         initUI();
+        startAlertTimer();
     }
 
     private void initUI() {
-        setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel();
-
-        JButton refreshButton = new JButton("새로고침");
-        refreshButton.addActionListener(e -> stockStatusPanel.loadStockData());
-
-        JButton lowStockButton = new JButton("재고 부족 조회");
-        lowStockButton.addActionListener(e -> showLowStockItems());
-
-        buttonPanel.add(refreshButton);
-        buttonPanel.add(lowStockButton);
-
-        add(buttonPanel, BorderLayout.CENTER);
     }
 
     public void showLowStockItems() {
@@ -56,6 +44,43 @@ public class LowStockAlertPanel extends JPanel {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "데이터베이스 오류: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+        }
+    }
+    private void startAlertTimer() {
+        alertTimer = new Timer();
+        alertTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> checkAndNotifyLowStock());
+            }
+        }, 0, 60000); // 60000밀리초(1분)마다 실행
+    }
+
+    private void checkAndNotifyLowStock() {
+        try {
+            List<ProductInfoProductWarehouseInfoManufacturingVO> inventoryList = productInfoDAO.getInventoryStatusWithManufacturer();
+            List<ProductInfoProductWarehouseInfoManufacturingVO> lowStockItems = inventoryList.stream()
+                    .filter(item -> item.getStock() < LOW_STOCK_THRESHOLD)
+                    .collect(Collectors.toList());
+
+            if (!lowStockItems.isEmpty()) {
+                StringBuilder message = new StringBuilder("다음 상품의 재고가 부족합니다:\n\n");
+                for (ProductInfoProductWarehouseInfoManufacturingVO item : lowStockItems) {
+                    message.append(String.format("- %s (현재 재고: %d)\n", item.getProduct_name(), item.getStock()));
+                }
+                message.append(String.format("\n총 %d개의 상품의 재고가 부족합니다.", lowStockItems.size()));
+
+                JOptionPane.showMessageDialog(this, message.toString(), "재고 부족 알림", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopAlertTimer() {
+        if (alertTimer != null) {
+            alertTimer.cancel();
+            alertTimer = null;
         }
     }
 }
