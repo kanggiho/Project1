@@ -207,29 +207,46 @@ public class OutgoingConfirmPanel extends JPanel {
 
         // 출고 요청 승인용 패널 생성
         JPanel bottomPanel1 = new JPanel();
-        bottomPanel1.setLayout(new BoxLayout(bottomPanel1, BoxLayout.Y_AXIS));
-        //bottomPanel1.setBackground(new Color(0xA6AEBF));
+        bottomPanel1.setLayout(new BorderLayout());
         bottomPanel1.setBounds(550, 200, 550, 250);
 
-        productCode.setPreferredSize(new Dimension(20, 10));
-        confirmId.setPreferredSize(new Dimension(20, 10));
+        // 1. 라벨 패널 (왼쪽 위 정렬)
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        labelPanel.setBackground(Color.white);
+        JLabel labelForConfirm = new JLabel("출고 요청 승인/거절");
+        labelForConfirm.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 20));
+        labelForConfirm.setForeground(Color.BLACK);
+        labelPanel.add(labelForConfirm);
 
-        bottomPanel1.add(productCode);
-        bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
-        bottomPanel1.add(confirmId);
-        bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
+        // 2. 텍스트 필드 패널 (세로 가운데 정렬)
+        JPanel fieldPanel = new JPanel();
+        fieldPanel.setLayout(new BoxLayout(fieldPanel, BoxLayout.Y_AXIS));
+        fieldPanel.setBackground(Color.WHITE);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        //buttonPanel.setBackground(new Color(0xA6AEBF));
+        productCode.setMaximumSize(new Dimension(400, 30));
+        confirmId.setMaximumSize(new Dimension(400, 30));
+
+        fieldPanel.add(Box.createVerticalStrut(50));
+        fieldPanel.add(productCode);
+        fieldPanel.add(Box.createVerticalStrut(10));
+        fieldPanel.add(confirmId);
+
+        // 3. 버튼 패널 (가로 가운데 정렬)
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.setBackground(Color.white);
         buttonPanel.add(confirmButton);
         buttonPanel.add(rejectButton);
         buttonPanel.add(clearButton);
-        bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
-        bottomPanel1.add(buttonPanel);
 
+        // 4. bottomPanel1에 각 패널 추가
+        bottomPanel1.add(labelPanel, BorderLayout.NORTH);
+        bottomPanel1.add(fieldPanel, BorderLayout.CENTER);
+        bottomPanel1.add(buttonPanel, BorderLayout.SOUTH);
+
+        // 5. 프레임에 bottomPanel1 추가
         add(bottomPanel1);
     }
+
 
     // Label 설정
     private JLabel createLabel(String text, int fontSize, Color color, int alignment) {
@@ -382,6 +399,7 @@ public class OutgoingConfirmPanel extends JPanel {
             model.addRow(row);
         }
     }
+
 
     // ------------------------ 승인 및 거절 버튼 기능 ------------------------------
     // 승인 버튼 기능 (output 테이블 update, product_info 테이블 update)
