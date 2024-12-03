@@ -17,6 +17,7 @@ public class OrderDAO {
         connection();
     }
 
+
     public void connection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
         String url = "jdbc:mysql://localhost:3306/project1";
@@ -193,7 +194,6 @@ public class OrderDAO {
 
 
 
-
     public ArrayList<OrderVO> list(String id) throws Exception {
         String sql = "select * from orderer where id = ?";
         PreparedStatement ps = con.prepareStatement(sql);
@@ -323,4 +323,72 @@ public class OrderDAO {
         }
         return vo_list;
     }
+    // jino생성 메서드
+
+    /**
+     * 특정 등급의 주문자 정보를 조회합니다.
+     * @param grade 조회할 회원 등급
+     * @return 주문자 정보 리스트
+     */
+    public ArrayList<OrderVO> selectByGrade(String grade) throws Exception {
+        String sql = "SELECT id, license, name, tel, email, grade FROM orderer WHERE grade = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, grade);
+        ResultSet table = ps.executeQuery();
+        ArrayList<OrderVO> result = new ArrayList<>();
+
+        while (table.next()) {
+            OrderVO vo = new OrderVO();
+            vo.setId(table.getString("id"));
+            vo.setLicense(table.getString("license"));
+            vo.setName(table.getString("name"));
+            vo.setTel(table.getString("tel"));
+            vo.setEmail(table.getString("email"));
+            vo.setGrade(table.getString("grade"));
+            result.add(vo);
+        }
+
+        ps.close();
+        return result;
+    }
+    /**
+     * 모든 주문자 정보를 조회합니다.
+     * @return 모든 주문자 정보 리스트
+     */
+    public ArrayList<OrderVO> getIdLicenseNameTelEmailGrade() throws Exception {
+        String sql = "SELECT id, license, name, tel, email, grade FROM orderer";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet table = ps.executeQuery();
+        vo_list.clear();
+
+        while (table.next()) {
+            OrderVO vo = new OrderVO();
+            vo.setId(table.getString("id"));
+            vo.setLicense(table.getString("license"));
+            vo.setName(table.getString("name"));
+            vo.setTel(table.getString("tel"));
+            vo.setEmail(table.getString("email"));
+            vo.setGrade(table.getString("grade"));
+            vo_list.add(vo);
+        }
+
+        ps.close();
+        return vo_list;
+    }
+    /**
+     * 주문자의 등급을 업데이트합니다.
+     * @param name 주문자 이름
+     * @param id 주문자 아이디
+     * @return 업데이트된 행의 수
+     */
+    public void updateGrade(String grade, String name, String id) throws Exception {
+        String sql = "UPDATE orderer SET grade = ? WHERE name = ? AND id = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, grade);
+        ps.setString(2, name);
+        ps.setString(3, id);
+        ps.executeUpdate();
+        ps.close();
+    }
+
 }
