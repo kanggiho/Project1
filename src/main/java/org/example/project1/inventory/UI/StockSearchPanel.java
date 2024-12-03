@@ -8,44 +8,31 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * 재고 검색을 위한 패널 클래스
- */
 public class StockSearchPanel extends JPanel {
-    /** 검색 유형 상수 배열 */
     private static final String[] SEARCH_TYPES = {"자재명", "창고ID", "제조업체명"};
+    private JComboBox<String> searchTypeComboBox;
+    private JTextField searchField;
+    private JButton searchButton;
+    private ProductInfoDAO productInfoDAO;
+    private StockStatusPanel stockStatusPanel;
 
-    /** 검색 유형 선택을 위한 콤보박스 */
-    private final JComboBox<String> searchTypeComboBox;
-    /** 검색어 입력을 위한 텍스트 필드 */
-    private final JTextField searchField;
-    /** 데이터베이스 접근을 위한 DAO 객체 */
-    private final ProductInfoDAO productInfoDAO;
-    /** 검색 결과를 표시할 StockStatusPanel 객체 */
-    private final StockStatusPanel stockStatusPanel;
-
-    /**
-     * StockSearchPanel 생성자
-     * @param stockStatusPanel 검색 결과를 표시할 StockStatusPanel 객체
-     */
     public StockSearchPanel(StockStatusPanel stockStatusPanel) {
         this.productInfoDAO = new ProductInfoDAO();
         this.stockStatusPanel = stockStatusPanel;
-        this.searchTypeComboBox = new JComboBox<>(SEARCH_TYPES);
-        this.searchField = new JTextField(15);
-        this.setBackground(Color.WHITE);
-
+        setPanel();
         initUI();
+        addAction();
     }
 
-    /**
-     * UI 초기화 메소드
-     */
-    private void initUI() {
+    private void setPanel() {
+        setBackground(Color.WHITE);
         setLayout(new FlowLayout(FlowLayout.LEFT));
+    }
 
-        JButton searchButton = new JButton("검색");
-        searchButton.addActionListener(e -> performSearch());
+    private void initUI() {
+        searchTypeComboBox = new JComboBox<>(SEARCH_TYPES);
+        searchField = new JTextField(15);
+        searchButton = new JButton("검색");
 
         add(new JLabel("검색 유형:"));
         add(searchTypeComboBox);
@@ -54,9 +41,10 @@ public class StockSearchPanel extends JPanel {
         add(searchButton);
     }
 
-    /**
-     * 검색 수행 메소드
-     */
+    private void addAction() {
+        searchButton.addActionListener(e -> performSearch());
+    }
+
     public void performSearch() {
         String searchType = (String) searchTypeComboBox.getSelectedItem();
         String searchValue = searchField.getText().trim();
@@ -76,13 +64,6 @@ public class StockSearchPanel extends JPanel {
         }
     }
 
-    /**
-     * 검색 유형에 따른 재고 검색 메소드
-     * @param searchType 검색 유형
-     * @param searchValue 검색어
-     * @return 검색 결과 리스트
-     * @throws SQLException SQL 예외 발생 시
-     */
     public List<ProductInfoProductWarehouseInfoManufacturingVO> searchInventory(String searchType, String searchValue) throws SQLException {
         switch (searchType) {
             case "자재명":
@@ -97,11 +78,6 @@ public class StockSearchPanel extends JPanel {
         }
     }
 
-    /**
-     * 에러 메시지 표시 메소드
-     * @param message 에러 메시지
-     * @param title 에러 창 제목
-     */
     public void showErrorMessage(String message, String title) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }

@@ -8,29 +8,36 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.SQLException;
 
-// 재고 수량 업데이트
 public class StockUpdatePanel extends JPanel {
     private ProductInfoDAO productInfoDAO;
     private InventoryManagementPanel parentPanel;
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private PropertyChangeSupport pcs;
+    private JButton orderButton;
 
     public StockUpdatePanel(InventoryManagementPanel parentPanel) {
         this.productInfoDAO = new ProductInfoDAO();
         this.parentPanel = parentPanel;
+        this.pcs = new PropertyChangeSupport(this);
+
+        setPanel();
         initUI();
+        addAction();
+    }
+
+    private void setPanel() {
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
     }
 
     private void initUI() {
-        setLayout(new BorderLayout());
-
-
-
-        JButton orderButton = new JButton("발주하기");
-        orderButton.addActionListener(e -> showOrderDialog());
-
+        orderButton = new JButton("발주하기");
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(orderButton);
         add(buttonPanel, BorderLayout.CENTER);
+    }
+
+    private void addAction() {
+        orderButton.addActionListener(e -> showOrderDialog());
     }
 
     private void showOrderDialog() {

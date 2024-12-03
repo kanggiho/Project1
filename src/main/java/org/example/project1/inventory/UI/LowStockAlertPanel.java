@@ -20,12 +20,19 @@ public class LowStockAlertPanel extends JPanel {
     public LowStockAlertPanel(StockStatusPanel stockStatusPanel) {
         this.productInfoDAO = new ProductInfoDAO();
         this.stockStatusPanel = stockStatusPanel;
+        setPanel();
         initUI();
         startAlertTimer();
     }
 
-    private void initUI() {
+    private void setPanel() {
+        setSize(300, 100);
+        setBackground(Color.WHITE);
+        setLayout(null);
+    }
 
+    private void initUI() {
+        // UI 요소를 추가할 필요가 없어졌으므로 비워둡니다.
     }
 
     public void showLowStockItems() {
@@ -46,6 +53,7 @@ public class LowStockAlertPanel extends JPanel {
             e.printStackTrace();
         }
     }
+
     private void startAlertTimer() {
         alertTimer = new Timer();
         alertTimer.scheduleAtFixedRate(new TimerTask() {
