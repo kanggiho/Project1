@@ -186,14 +186,26 @@ public class OutgoingConfirmPanel extends JPanel {
             }
         });
 
-
+        // 승인, 거절, 초기화 버튼 생성
         JButton confirmButton = new JButton("승인");
         confirmButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
         confirmButton.addActionListener(e -> handleConfirmButton());
+
         JButton rejectButton = new JButton("거절");
         rejectButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
         rejectButton.addActionListener(e -> handleRejectButton());
 
+        JButton clearButton = new JButton("초기화");
+        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                productCode.setText("");
+                confirmId.setText("");
+            }
+        });
+
+        // 출고 요청 승인용 패널 생성
         JPanel bottomPanel1 = new JPanel();
         bottomPanel1.setLayout(new BoxLayout(bottomPanel1, BoxLayout.Y_AXIS));
         //bottomPanel1.setBackground(new Color(0xA6AEBF));
@@ -202,19 +214,17 @@ public class OutgoingConfirmPanel extends JPanel {
         productCode.setPreferredSize(new Dimension(20, 10));
         confirmId.setPreferredSize(new Dimension(20, 10));
 
-
         bottomPanel1.add(productCode);
         bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
         bottomPanel1.add(confirmId);
         bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
-
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         //buttonPanel.setBackground(new Color(0xA6AEBF));
         buttonPanel.add(confirmButton);
         buttonPanel.add(rejectButton);
-
+        buttonPanel.add(clearButton);
         bottomPanel1.add(Box.createRigidArea(new Dimension(0, 30)));
         bottomPanel1.add(buttonPanel);
 
@@ -373,13 +383,27 @@ public class OutgoingConfirmPanel extends JPanel {
         }
     }
 
-
-    OutputInfoVO vo = new OutputInfoVO();
-
+    // ------------------------ 승인 및 거절 버튼 기능 ------------------------------
     // 승인 버튼 기능 (output 테이블 update, product_info 테이블 update)
+    OutputInfoVO vo = new OutputInfoVO();
+    ProductInfoVO vo2 = new ProductInfoVO()
+;
     private void handleConfirmButton() {
+        // output 테이블 update
         String productCodeInput = productCode.getText();
         String confirmIdInput = confirmId.getText();
+        System.out.println("텍스트 추출 완료");
+
+        // '승인' 으로 상태 업데이트
+        vo.setStatus("승인");
+        vo.setProduct_code(Integer.parseInt(productCodeInput));
+        vo.setConfirm_id(Integer.parseInt(confirmIdInput));
+
+        outputInfoDAO.updateStatusForApprove(vo);
+
+        // 재고 수량 업데이트
+        vo2.setProduct_code(Integer.parseInt(productCodeInput));
+        outputInfoDAO.updateInventory(vo2);
     }
 
 
@@ -387,10 +411,12 @@ public class OutgoingConfirmPanel extends JPanel {
     private void handleRejectButton() {
         String productCodeInput = productCode.getText();
         String confirmIdInput = confirmId.getText();
+        System.out.println("텍스트 추출 완료");
 
         vo.setStatus("거절");
         vo.setProduct_code(Integer.parseInt(productCodeInput));
         vo.setConfirm_id(Integer.parseInt(confirmIdInput));
+
         outputInfoDAO.updateStatusForReject(vo);
     }
 }
