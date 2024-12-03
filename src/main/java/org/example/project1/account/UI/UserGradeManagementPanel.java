@@ -1,3 +1,4 @@
+
 package org.example.project1.account.UI;
 
 import org.example.project1._common.utility.ColorSet;
@@ -15,6 +16,7 @@ public class UserGradeManagementPanel extends JPanel {
     private UserTablePanel userTablePanel;
     private UserDataLoadPanel userDataLoadPanel;
     private UserGradeUpdatePanel userGradeUpdatePanel;
+    private GradeSearchPanel gradeSearchPanel;
     private String toss_font = "머니그라피TTF Rounded";
     private OrderDAO orderDAO;
 
@@ -36,7 +38,9 @@ public class UserGradeManagementPanel extends JPanel {
         userTablePanel = new UserTablePanel();
         userDataLoadPanel = new UserDataLoadPanel();
         userGradeUpdatePanel = new UserGradeUpdatePanel();
+        gradeSearchPanel = new GradeSearchPanel();
 
+        gradeSearchPanel.setBounds(50, 10, 700, 100);
         userTablePanel.setBounds(50, 120, 1000, 210);
         userDataLoadPanel.setBounds(800, 10, 100, 30);
         userGradeUpdatePanel.setBounds(50, 350, 1000, 150);
@@ -44,10 +48,12 @@ public class UserGradeManagementPanel extends JPanel {
         add(userTablePanel);
         add(userDataLoadPanel);
         add(userGradeUpdatePanel);
+        add(gradeSearchPanel);
     }
 
     private void addAction() {
         userDataLoadPanel.setLoadButtonListener(e -> loadUserData());
+        gradeSearchPanel.setSearchButtonListener(e -> searchByGrade());
         userTablePanel.setTableSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = userTablePanel.userTable.getSelectedRow();
@@ -62,6 +68,7 @@ public class UserGradeManagementPanel extends JPanel {
         userGradeUpdatePanel.setConfirmButtonListener(e -> updateUserGrade());
     }
 
+
     private void loadUserData() {
         try {
             ArrayList<OrderVO> userList = orderDAO.getIdLicenseNameTelEmailGrade();
@@ -71,6 +78,17 @@ public class UserGradeManagementPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "데이터 로드 중 오류가 발생했습니다: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void searchByGrade() {
+        String selectedGrade = gradeSearchPanel.getSelectedGrade();
+        try {
+            ArrayList<OrderVO> userList = orderDAO.selectByGrade(selectedGrade);
+            userTablePanel.updateTableData(userList);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "등급 조회 중 오류가 발생했습니다: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private void updateUserGrade() {
         String id = userGradeUpdatePanel.getUserId();
@@ -213,6 +231,37 @@ public class UserGradeManagementPanel extends JPanel {
 
         public void setConfirmButtonListener(ActionListener listener) {
             confirmButton.addActionListener(listener);
+        }
+    }
+    // 새로운 내부 클래스 추가
+    private class GradeSearchPanel extends JPanel {
+        private JComboBox<String> gradeComboBox;
+        private JButton searchButton;
+
+        public GradeSearchPanel() {
+            setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
+            initComponents();
+        }
+
+        private void initComponents() {
+            String[] grades = {"BRONZE", "SILVER", "GOLD", "DIAMOND"};
+            gradeComboBox = new JComboBox<>(grades);
+            gradeComboBox.setFont(new Font(toss_font, Font.PLAIN, 14));
+
+            searchButton = new JButton("등급 조회");
+            searchButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+
+            add(new JLabel("등급 선택:"));
+            add(gradeComboBox);
+            add(searchButton);
+        }
+
+        public String getSelectedGrade() {
+            return (String) gradeComboBox.getSelectedItem();
+        }
+
+        public void setSearchButtonListener(ActionListener listener) {
+            searchButton.addActionListener(listener);
         }
     }
 }
