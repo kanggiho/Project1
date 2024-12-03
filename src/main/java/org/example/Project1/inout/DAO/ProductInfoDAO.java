@@ -1,10 +1,8 @@
 package org.example.project1.inout.DAO;
 
-import org.example.project1.order.TableModel.ProductInfoTableModel;
 import org.example.project1.inout.VO.ProductInfoProductVO;
 import org.example.project1.inout.VO.ProductInfoVO;
 
-import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,16 +100,6 @@ public class ProductInfoDAO {
             pstmt.executeUpdate();
         }
     }
-
-
-    // 재고 확인 테이블 갱신 메서드
-    public void refreshInventoryStatus(JTable stockTable) throws SQLException {
-        ProductInfoTableModel model = (ProductInfoTableModel) stockTable.getModel();
-        List<ProductInfoProductVO> productList = getInventoryStatus();
-        model.setData(productList);
-        model.fireTableDataChanged();
-    }
-
 
 
     public ProductInfoVO one(int product_code){

@@ -1,18 +1,18 @@
 package org.example.project1.inout.DAO;
 
+import org.example.project1._common._Ut.HikariCPDataSource;
 import org.example.project1.inout.VO.OutputInfoProductWarehouseInfoOrdererVO;
-import org.example.project1.inout.VO.OutputInfoVO;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OutputInfo2DAO {
+    private final DataSource dataSource;
 
-    private Connection conn;
-
-    public OutputInfo2DAO(Connection connection) {
-        this.conn = connection;
+    public OutputInfo2DAO() {
+        this.dataSource = HikariCPDataSource.getInstance().getDataSource();
     }
 
     // 기본 조인 SQL
@@ -37,26 +37,10 @@ public class OutputInfo2DAO {
             "JOIN \n" +
             "    orderer o ON oi.user_id = o.uid\n";
 
-    // 데이터 삽입 메서드
-    public void insertOutputInfo(OutputInfoVO outputInfo) throws SQLException {
-        String sql = "INSERT INTO output_info (product_code, warehouse_id, user_id, confirm_num, confirm_id, status, unit_price, release_quantity, release_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, outputInfo.getProduct_code());
-            pstmt.setInt(2, outputInfo.getWarehouse_id());
-            pstmt.setInt(3, outputInfo.getUser_id());
-            pstmt.setInt(4, outputInfo.getConfirm_num());
-            pstmt.setInt(5, outputInfo.getConfirm_id());
-            pstmt.setString(6, outputInfo.getStatus());
-            pstmt.setInt(7, outputInfo.getUnit_price());
-            pstmt.setInt(8, outputInfo.getRelease_quantity());
-            pstmt.setDate(9, Date.valueOf(outputInfo.getRelease_date()));
-            pstmt.executeUpdate();
-        }
-    }
 
     // 모든 데이터 조회 메서드
-    public List<OutputInfoProductWarehouseInfoOrdererVO> getAllOutputInfoProductWareHouseInfoOrderer() throws SQLException {
-        List<OutputInfoProductWarehouseInfoOrdererVO> list = new ArrayList<>();
+    public ArrayList<OutputInfoProductWarehouseInfoOrdererVO> getAllData() throws SQLException {
+        ArrayList<OutputInfoProductWarehouseInfoOrdererVO> listForAll = new ArrayList<>();
         String sql = joinSQL +
                 " ORDER BY CASE status " +
                 " WHEN '거절' THEN 1 " +
@@ -64,7 +48,9 @@ public class OutputInfo2DAO {
                 " WHEN '대기중' THEN 3 " +
                 " ELSE 4 END, release_date";
 
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection con = dataSource.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OutputInfoProductWarehouseInfoOrdererVO vo = new OutputInfoProductWarehouseInfoOrdererVO();
                 vo.setProduct_code(rs.getInt("product_code"));
@@ -78,44 +64,20 @@ public class OutputInfo2DAO {
                 vo.setRelease_date(rs.getString("release_date"));
                 vo.setConfirm_id(rs.getInt("confirm_id"));
                 vo.setStatus(rs.getString("status"));
-                list.add(vo);
+                listForAll.add(vo);
             }
         }
-        return list;
+        return listForAll;
     }
 
-    // 조건부 필터링 데이터 조회 메서드
-    public List<OutputInfoProductWarehouseInfoOrdererVO> getFilteredOutputInfo(String statusFilter, String userFilter, String userName) throws SQLException {
-        List<OutputInfoProductWarehouseInfoOrdererVO> list = new ArrayList<>();
-        StringBuilder query = new StringBuilder(joinSQL);
-        query.append(" WHERE 1=1"); // 기본 조건 추가
+    // 조건부 필터링 데이터 조회 메서드 - 승인
+    public ArrayList<OutputInfoProductWarehouseInfoOrdererVO> getApprove () {
+        ArrayList<OutputInfoProductWarehouseInfoOrdererVO> listForApprove = new ArrayList<>();
+        String sqlForApprove = joinSQL + "WHERE status = '승인'";
 
-        // 필터 조건 추가
-        if (statusFilter != null && !statusFilter.isEmpty()) {
-            query.append(" AND oi.status = ?");
-        }
-        if ("user".equals(userFilter)) {
-            query.append(" AND o.name = ?");
-        }
-
-        // 정렬 조건 추가
-        query.append(" ORDER BY CASE status " +
-                "WHEN '거절' THEN 1 " +
-                "WHEN '승인' THEN 2 " +
-                "WHEN '대기중' THEN 3 " +
-                "ELSE 4 END, release_date");
-
-        try (PreparedStatement pstmt = conn.prepareStatement(query.toString())) {
-            int paramIndex = 1;
-            if (statusFilter != null && !statusFilter.isEmpty()) {
-                pstmt.setString(paramIndex++, statusFilter);
-            }
-            if ("user".equals(userFilter)) {
-                pstmt.setString(paramIndex++, userName);
-            }
-
-            int iter = 0;
-            ResultSet rs = pstmt.executeQuery();
+        try (Connection con = dataSource.getConnection();
+        PreparedStatement ps = con.prepareStatement(sqlForApprove)) {
+        ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 OutputInfoProductWarehouseInfoOrdererVO vo = new OutputInfoProductWarehouseInfoOrdererVO();
                 vo.setProduct_code(rs.getInt("product_code"));
@@ -129,31 +91,71 @@ public class OutputInfo2DAO {
                 vo.setRelease_date(rs.getString("release_date"));
                 vo.setConfirm_id(rs.getInt("confirm_id"));
                 vo.setStatus(rs.getString("status"));
-                list.add(vo);
-                iter++;
+                listForApprove.add(vo);
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-        return list;
-    }
-
-    // 특정 데이터 삭제
-    public boolean deleteOutputInfo(int confirmNum) throws SQLException {
-        String query = "DELETE FROM output_info WHERE confirm_num = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, confirmNum);
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        }
-    }
-
-    // '대기중' 상태 데이터 모두 삭제
-    public boolean deleteAllPendingOutputInfo() throws SQLException {
-        String query = "DELETE FROM output_info WHERE status = '대기중'";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        }
+        return listForApprove;
     }
 
 
+    // 조건부 필터링 데이터 조회 메서드 - 거절
+    public ArrayList<OutputInfoProductWarehouseInfoOrdererVO> getReject () {
+        ArrayList<OutputInfoProductWarehouseInfoOrdererVO> listForReject = new ArrayList<>();
+        String sqlForReject = joinSQL + "WHERE status = '거절'";
+
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sqlForReject)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OutputInfoProductWarehouseInfoOrdererVO vo = new OutputInfoProductWarehouseInfoOrdererVO();
+                vo.setProduct_code(rs.getInt("product_code"));
+                vo.setProduct_name(rs.getString("product_name"));
+                vo.setWarehouse_name(rs.getString("warehouse_name"));
+                vo.setId(rs.getString("id"));
+                vo.setOrderer_name(rs.getString("orderer_name"));
+                vo.setUnit_price(rs.getInt("unit_price"));
+                vo.setRelease_quantity(rs.getInt("release_quantity"));
+                vo.setConfirm_num(rs.getInt("confirm_num"));
+                vo.setRelease_date(rs.getString("release_date"));
+                vo.setConfirm_id(rs.getInt("confirm_id"));
+                vo.setStatus(rs.getString("status"));
+                listForReject.add(vo);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listForReject;
+    }
+
+
+    // 조건부 필터링 데이터 조회 메서드 - 대기중
+    public ArrayList<OutputInfoProductWarehouseInfoOrdererVO> getPending () {
+        ArrayList<OutputInfoProductWarehouseInfoOrdererVO> listFoPending = new ArrayList<>();
+        String sqlForPending = joinSQL + "WHERE status = '대기중'";
+
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sqlForPending)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OutputInfoProductWarehouseInfoOrdererVO vo = new OutputInfoProductWarehouseInfoOrdererVO();
+                vo.setProduct_code(rs.getInt("product_code"));
+                vo.setProduct_name(rs.getString("product_name"));
+                vo.setWarehouse_name(rs.getString("warehouse_name"));
+                vo.setId(rs.getString("id"));
+                vo.setOrderer_name(rs.getString("orderer_name"));
+                vo.setUnit_price(rs.getInt("unit_price"));
+                vo.setRelease_quantity(rs.getInt("release_quantity"));
+                vo.setConfirm_num(rs.getInt("confirm_num"));
+                vo.setRelease_date(rs.getString("release_date"));
+                vo.setConfirm_id(rs.getInt("confirm_id"));
+                vo.setStatus(rs.getString("status"));
+                listFoPending.add(vo);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listFoPending;
+    }
 }
