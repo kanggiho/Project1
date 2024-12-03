@@ -37,7 +37,6 @@ public class IncomingManagementPanel extends JPanel {
     static int warehouse_id = 0;
     static String code = "";
     String priceInput = "";
-    String productNameInput = "";
 
     InputDAO inputDAO = new InputDAO();
     ProductDAO productDAO = new ProductDAO();
@@ -68,7 +67,7 @@ public class IncomingManagementPanel extends JPanel {
         add(scrollPane);
 
         // 모드 선택 기능 구현
-        String[] modes = {"전체보기", "자재코드", "제조업체", "입고일"};
+        String[] modes = {"전체보기", "자재명", "제조업체", "입고일"};
         modeSelector = new JComboBox<>(modes);
         modeSelector.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
 
@@ -377,8 +376,8 @@ public class IncomingManagementPanel extends JPanel {
         String selectMode = (String) modeSelector.getSelectedItem();
         if ("전체보기".equals(selectMode)) {
             inputField.setText("전체 내역 조회");
-        } else if ("자재코드".equals(selectMode)) {
-            inputField.setText("자재 코드");
+        } else if ("자재명".equals(selectMode)) {
+            inputField.setText("자재명");
         } else if ("제조업체".equals(selectMode)) {
             inputField.setText("제조업체 코드");
         } else if ("입고일".equals(selectMode)) {
@@ -392,7 +391,7 @@ public class IncomingManagementPanel extends JPanel {
     private void search() {
         String selectMode = (String) modeSelector.getSelectedItem();
         try {
-            if ("자재코드".equals(selectMode)) {
+            if ("자재명".equals(selectMode)) {
                 searchByProductCode();
             } else if ("제조업체".equals(selectMode)) {
                 searchByManufacturer();
@@ -407,21 +406,20 @@ public class IncomingManagementPanel extends JPanel {
         }
     }
 
-    // 자재코드로 검색
+    // 자재명으로 검색
     private void searchByProductCode() {
-        String productCodeInput = inputField.getText().trim();
+        String productNameInput = inputField.getText().trim();
 
-        //todo : 자재명으로 자재코드 찾는 기능 구현
-        // productDAO에서 select로
+        // 자재명으로 자재코드 검색한 결과
+        int productCodeInput = inputDAO.ProductCodesByName(productNameInput);
 
-
-
-        if (productCodeInput.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "자재 코드를 입력하세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
+        // 가져온 자재코드로 2차 검색
+        if (productNameInput.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "자재명을 입력하세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int productCode = Integer.parseInt(productCodeInput);
-        ArrayList<InputProductVO> resultProductCode = inputDAO.listForProductCode(productCode);
+
+        ArrayList<InputProductVO> resultProductCode = inputDAO.listForProductCode(productCodeInput);
 
         if (resultProductCode == null || resultProductCode.isEmpty()) {
             JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.", "결과 없음", JOptionPane.INFORMATION_MESSAGE);

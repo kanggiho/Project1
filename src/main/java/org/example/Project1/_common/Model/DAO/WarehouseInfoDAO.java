@@ -1,4 +1,4 @@
-package org.example.project1.inout.DAO;
+package org.example.project1._common.Model.DAO;
 
 import org.example.project1.inout.VO.WarehouseInfoVO;
 

@@ -1,4 +1,4 @@
-package org.example.project1.inventory.VO;
+package org.example.project1.inout.VO;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package org.example.project1.inout.DAO;
 
-import org.example.project1.inventory.VO.ProductVO;
+import org.example.project1.inout.VO.ProductVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
