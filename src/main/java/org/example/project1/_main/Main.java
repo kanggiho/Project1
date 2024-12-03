@@ -5,7 +5,7 @@ import org.example.project1.mainmenu.UI.UserMenuFrame;
 public class Main {
     public static void main(String[] args) throws Exception {
         //new LoginFrame();
-        //new UserMenuFrame("giho");
+        //new UserMenuFrame("giho");r
         new AdminMenuFrame("hyeseon");
     }
 }

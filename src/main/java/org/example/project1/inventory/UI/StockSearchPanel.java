@@ -33,6 +33,7 @@ public class StockSearchPanel extends JPanel {
         this.stockStatusPanel = stockStatusPanel;
         this.searchTypeComboBox = new JComboBox<>(SEARCH_TYPES);
         this.searchField = new JTextField(15);
+        this.setBackground(Color.WHITE);
 
         initUI();
     }

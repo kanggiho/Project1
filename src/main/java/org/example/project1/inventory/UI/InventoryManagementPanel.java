@@ -20,9 +20,27 @@ public class InventoryManagementPanel extends JPanel {
     private LowStockAlertPanel lowStockAlertPanel;
     private StockSearchPanel stockSearchPanel;
     private StockStatusPanel stockStatusPanel;
+    private String toss_font = "머니그라피TTF Rounded";
 
     public InventoryManagementPanel(String title, Frame frame) {
-        setLayout(new BorderLayout());
+
+        setPanel();
+        initUI();
+        addAction();
+        setVisible(true);
+    }
+
+
+
+    private void setPanel(){
+        setSize(1100,450);
+        setBackground(Color.WHITE);
+        setLayout(null);
+    }
+
+    private void initUI(){
+        // 패널 초기화
+        removeAll();
 
         // StockStatusPanel 초기화 (제목 없이)
         stockStatusPanel = new StockStatusPanel();
@@ -35,9 +53,30 @@ public class InventoryManagementPanel extends JPanel {
 
         // StockSearchPanel 초기화
         stockSearchPanel = new StockSearchPanel(stockStatusPanel);
-        // LowStockAlertPanel 초기화
-        lowStockAlertPanel = new LowStockAlertPanel();
 
+        // LowStockAlertPanel 초기화
+        lowStockAlertPanel = new LowStockAlertPanel(stockStatusPanel);
+
+        // 각 패널 위치 조절
+        stockStatusPanel.setBounds(50,120,1000,210);
+        stockEditPanel.setBounds(30,400,100,100);
+        stockUpdatePanel.setBounds(330,400,100,100);
+        stockSearchPanel.setBounds(300,10,500,30);
+        lowStockAlertPanel.setBounds(630,400,300,100);
+
+
+
+
+        // 메인 패널에 추가
+        add(stockStatusPanel);
+        add(stockEditPanel);
+        add(stockUpdatePanel);
+        add(stockSearchPanel);
+        add(lowStockAlertPanel);
+
+    }
+
+    private void addAction(){
 
         setEditButtonListener(e -> {
             ProductInfoProductVO selectedProduct = stockStatusPanel.getSelectedProduct();
@@ -67,28 +106,8 @@ public class InventoryManagementPanel extends JPanel {
             }
         });
 
-        // 상단 패널 생성 및 구성 (StockSearchPanel 추가)
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(stockSearchPanel, BorderLayout.CENTER);
-
-        // 메인 패널에 상단 패널 추가
-        add(topPanel, BorderLayout.NORTH);
-
-        // 메인 패널에 StockStatusPanel 추가
-        add(stockStatusPanel, BorderLayout.CENTER);
-
-        // 하단 패널 생성 및 구성 (LowStockAlertPanel 추가)
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
-        bottomPanel.add(stockEditPanel);
-        bottomPanel.add(stockUpdatePanel);
-
-
-        // 하단 패널을 메인 패널의 남쪽에 추가
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        // 패널 크기 설정
-        setPreferredSize(new Dimension(800, 600));
     }
+
 
     // 재고 데이터를 로드하는 메서드
     public void loadStockData() {
@@ -126,6 +145,10 @@ public class InventoryManagementPanel extends JPanel {
         stockSearchPanel.showErrorMessage(message, title);
     }
 
+    // LowStockAlertPanel 메서드 추가
 
+    public void refreshLowStockAlert() {
+        lowStockAlertPanel.showLowStockItems();
+    }
     // 기타 필요한 메서드들...
 }

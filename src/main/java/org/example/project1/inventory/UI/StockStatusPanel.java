@@ -117,6 +117,7 @@ public class StockStatusPanel extends JPanel {
     }
 
 
+
     /**
      * 오류 메시지를 표시하는 메소드
      *
