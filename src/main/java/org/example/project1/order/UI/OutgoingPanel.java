@@ -19,6 +19,8 @@ import java.util.List;
 import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.DAO.OrdererDAO;
+import org.example.project1.order.TableModel.OutputRequestTableModel;
+import org.example.project1.order.TableModel.ProductInfoTableModel;
 import org.example.project1.order.VO.OutputInfoVO;
 import org.example.project1.order.VO.OutputRequestVO;
 import org.example.project1.order.VO.ProductInfoProductVO;
@@ -56,6 +58,15 @@ public class OutgoingPanel extends JPanel {
         this.user_name = user_name;
         setPanel();
         initUI();
+        refresh();
+    }
+
+    public void refresh(){
+        try {
+            productInfoDAO.refreshInventoryStatus(stockTable);
+        }catch (Exception e) {
+
+        }
     }
 
     // JPanel 설정
@@ -94,16 +105,16 @@ public class OutgoingPanel extends JPanel {
         JButton deleteButton = new JButton("삭제");
         deleteButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
-        deleteButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteButton.setBounds(130, 240, 70, 25); // 위치와 크기 설정
+        deleteButton.setBorder(new LineBorder(Color.BLACK, 1));
+        deleteButton.setBounds(100, 235, 80, 25); // 위치와 크기 설정
         add(deleteButton);
 
         // "전체삭제" 버튼 생성
         JButton deleteAllButton = new JButton("전체삭제");
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
         deleteAllButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
-        deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
-        deleteAllButton.setBounds(210, 240, 100, 25); // 위치와 크기 설정
+        deleteAllButton.setBorder(new LineBorder(Color.BLACK, 1));
+        deleteAllButton.setBounds(190, 235, 80, 25); // 위치와 크기 설정
         add(deleteAllButton);
 
         // --------------------- 새로운 출고 요청 테이블 ---------------------
@@ -316,7 +327,7 @@ public class OutgoingPanel extends JPanel {
                 // 입력 필드 초기화
                 quantityField.setText("");
 
-                JOptionPane.showMessageDialog(null, "출고 요청이 추가되었습니다.");
+                //JOptionPane.showMessageDialog(null, "출고 요청이 추가되었습니다.");
             }
         });
 

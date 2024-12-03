@@ -3,8 +3,9 @@ package org.example.project1.order.DAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import org.example.project1.order.UI.ProductInfoTableModel;
+import org.example.project1.order.TableModel.ProductInfoTableModel;
 import org.example.project1.order.VO.ProductInfoProductVO;
+import org.example.project1.order.VO.ProductInfoVO;
 
 import javax.swing.*;
 
@@ -90,12 +91,52 @@ public class ProductInfoDAO {
         }
     }
 
+
+    // 제품의 재고 수량 업데이트 (warehouse_id 포함)
+    public void updateProductStock(int productCode, int newStock) throws SQLException {
+        String sql = "UPDATE product_info SET stock = ? WHERE product_code = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newStock);
+            pstmt.setInt(2, productCode);
+            pstmt.executeUpdate();
+        }
+    }
+
+
     // 재고 확인 테이블 갱신 메서드
     public void refreshInventoryStatus(JTable stockTable) throws SQLException {
         ProductInfoTableModel model = (ProductInfoTableModel) stockTable.getModel();
         List<ProductInfoProductVO> productList = getInventoryStatus();
         model.setData(productList);
         model.fireTableDataChanged();
+    }
+
+
+
+    public ProductInfoVO one(int product_code){
+        String sql = "select * from product_info where product_code = ?";
+        try{
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1,product_code);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                ProductInfoVO vo = new ProductInfoVO();
+                vo.setCode(rs.getString("code"));
+                vo.setProduct_code(rs.getInt("product_code"));
+                vo.setManufacturer_code(rs.getString("manufacturer_code"));
+                vo.setWarehouse_id(rs.getInt("warehouse_id"));
+                vo.setPrice(rs.getInt("price"));
+                vo.setStock(rs.getInt("stock"));
+                vo.setStock_date(rs.getString("stock_date"));
+                return vo;
+            }
+
+
+        } catch (SQLException e) {
+
+        }
+        return null;
     }
 
 
