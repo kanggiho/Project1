@@ -1,16 +1,16 @@
 package org.example.project1.inout.UI;
 
-import org.example.project1._common.Model.DAO.ItemClassDAO;
-import org.example.project1._common.Model.DAO.WarehouseInfoDAO;
-import org.example.project1._common.Model.VO.ItemClassVO;
-import org.example.project1._common.Model.VO.WarehouseInfoVO;
+import org.example.project1.inout.DAO.ItemClassDAO;
+import org.example.project1.inout.DAO.WarehouseInfoDAO;
+import org.example.project1.inout.VO.ItemClassVO;
+import org.example.project1.inout.VO.WarehouseInfoVO;
 import org.example.project1.inout.DAO.InputDAO;
 import org.example.project1.inout.DAO.ProductDAO;
 import org.example.project1.inout.VO.InputManuVO;
 import org.example.project1.inout.VO.InputProductVO;
 import org.example.project1.inout.VO.InputVO;
-import org.example.project1.inventory.VO.ProductInfoVO;
-import org.example.project1.inventory.VO.ProductVO;
+import org.example.project1.inout.VO.ProductInfoVO;
+import org.example.project1.inout.VO.ProductVO;
 
 
 import javax.swing.*;
@@ -410,6 +410,12 @@ public class IncomingManagementPanel extends JPanel {
     // 자재코드로 검색
     private void searchByProductCode() {
         String productCodeInput = inputField.getText().trim();
+
+        //todo : 자재명으로 자재코드 찾는 기능 구현
+        // productDAO에서 select로
+
+
+
         if (productCodeInput.isEmpty()) {
             JOptionPane.showMessageDialog(null, "자재 코드를 입력하세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
             return;
