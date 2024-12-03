@@ -328,21 +328,44 @@ public class IncomingManagementPanel extends JPanel {
         });
 
 
+        // 입고 신청 패널
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(productName);
-        bottomPanel.add(manufacturerCode);
-        bottomPanel.add(productCode);
-        bottomPanel.add(askingDate);
-        bottomPanel.add(warehousedDate);
-        bottomPanel.add(warehousedQuantity);
-        bottomPanel.add(application);
-        bottomPanel.add(clearButtonForSearch);
-        bottomPanel.setLayout(new FlowLayout());
+        bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setSize(1100, 145);
-        bottomPanel.setBackground(Color.white);
-        bottomPanel.setBounds(0, 390, 1100, 60);
-        add(bottomPanel);
+        bottomPanel.setBackground(Color.WHITE);
+        bottomPanel.setBounds(0, 390, 1100, 145);
 
+        // 입고 신청 제목 라벨
+        JLabel labelForApply = new JLabel("입고 신청");
+        labelForApply.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 15));
+        labelForApply.setForeground(Color.black);
+
+        // 라벨 (왼쪽 상단)
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        labelPanel.setBackground(Color.WHITE);
+        labelPanel.add(labelForApply);
+
+        // 입력 필드와 버튼 (아래쪽)
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        inputPanel.setBackground(Color.WHITE);
+
+        // 입력 필드와 버튼 추가
+        inputPanel.add(productName);
+        inputPanel.add(manufacturerCode);
+        inputPanel.add(productCode);
+        inputPanel.add(askingDate);
+        inputPanel.add(warehousedDate);
+        inputPanel.add(warehousedQuantity);
+        inputPanel.add(application);
+        inputPanel.add(clearButtonForSearch);
+
+        // 라벨과 입력 필드 패널을 bottomPanel에 추가
+        bottomPanel.add(labelPanel, BorderLayout.NORTH);
+        bottomPanel.add(inputPanel, BorderLayout.CENTER);
+
+        // bottomPanel을 프레임에 추가
+        add(bottomPanel);
 
         setVisible(true);
     }
