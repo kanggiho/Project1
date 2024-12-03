@@ -279,8 +279,8 @@ public class ConfirmListPanel extends JPanel {
         }
 
         int confirmNum = (int) tableModel.getValueAt(selectedRow, 7); // 승인번호 컬럼
-        int product_code = (int) tableModel.getValueAt(selectedRow, 0); // 코드 컬럼
-        int stock = (int) tableModel.getValueAt(selectedRow, 6); // 재고 컬럼
+        int product_code = (int) tableModel.getValueAt(selectedRow, 0); // 승인번호 컬럼
+        int stock = (int) tableModel.getValueAt(selectedRow, 6); //  컬럼
 
         int confirm = JOptionPane.showConfirmDialog(this, "선택한 행을 삭제하시겠습니까?", "삭제 확인", JOptionPane.YES_NO_OPTION);
         if (confirm != JOptionPane.YES_OPTION) {
@@ -315,8 +315,6 @@ public class ConfirmListPanel extends JPanel {
 
         try {
             OutputInfoDAO outputInfoDAO = new OutputInfoDAO(conn);
-
-
             boolean success = outputInfoDAO.deleteAllPendingOutputInfo();
             if (success) {
                 loadTableData(); // Reload table data after deletion
@@ -330,16 +328,16 @@ public class ConfirmListPanel extends JPanel {
         }
     }
 
-    // 메모리 정리를 위한 연결 종료
-    @Override
-    public void removeNotify() {
-        super.removeNotify();
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    // 메모리 정리를 위한 연결 종료
+//    @Override
+//    public void removeNotify() {
+//        super.removeNotify();
+//        try {
+//            if (conn != null && !conn.isClosed()) {
+//                conn.close();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
