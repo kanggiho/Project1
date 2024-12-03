@@ -1,11 +1,14 @@
 package org.example.project1.inout.DAO;
 
 import org.example.project1._common._Ut.HikariCPDataSource;
+import org.example.project1.inout.VO.InputVO;
 import org.example.project1.inout.VO.OutputAdminVO;
 import org.example.project1.inout.VO.OutputOrdererVO;
 import org.example.project1.order.VO.OutputInfoVO;
+import org.example.project1.order.VO.ProductInfoVO;
 
 import javax.sql.DataSource;
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -97,7 +100,7 @@ public class OutputInfoDAO {
     public ArrayList<OutputInfoVO> listForStatus(String status) {
         try (Connection con = dataSource.getConnection();
              PreparedStatement ps = con.prepareStatement
-                     ("select status, confirm_num, product_code, user_id " +
+                     ("select status, confirm_num, product_code, release_quantity, user_id " +
                              "from output_info " +
                              "where status = ?")) {
             ps.setString(1, status);
@@ -111,6 +114,7 @@ public class OutputInfoDAO {
                     vo.setStatus(table.getString("status"));
                     vo.setConfirm_num(table.getInt("confirm_num"));
                     vo.setProduct_code(table.getInt("product_code"));
+                    vo.setRelease_quantity(table.getInt("release_quantity"));
                     vo.setUser_id(table.getInt("user_id"));
                     vo_listForStatus.add(vo);
                 } else {
@@ -121,6 +125,20 @@ public class OutputInfoDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    // 승인 여부 - '거절'로 업데이트
+    public void updateStatusForReject(OutputInfoVO vo) {
+        String updateQuery = "update output_info set status = ?, confirm_id = ? where product_code = ?";
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement updatePs = con.prepareStatement(updateQuery)) {
+            updatePs.setString(1, vo.getStatus());
+            updatePs.setInt(2, vo.getConfirm_id());
+            updatePs.setInt(3, vo.getProduct_code());
+            System.out.println("승인 거절로 업데이트 완료");
+        } catch (Exception e) {
+            System.out.println("승인 거절로 업데이트 실패");
         }
     }
 }
