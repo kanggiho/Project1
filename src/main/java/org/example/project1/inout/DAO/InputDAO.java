@@ -4,7 +4,7 @@ import org.example.project1._common._Ut.HikariCPDataSource;
 import org.example.project1.inout.VO.InputManuVO;
 import org.example.project1.inout.VO.InputProductVO;
 import org.example.project1.inout.VO.InputVO;
-import org.example.project1.inventory.VO.ProductInfoVO;
+import org.example.project1.inout.VO.ProductInfoVO;
 
 import javax.sql.DataSource;
 import javax.swing.*;

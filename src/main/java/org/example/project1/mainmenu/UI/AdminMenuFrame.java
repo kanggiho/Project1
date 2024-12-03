@@ -3,6 +3,7 @@ package org.example.project1.mainmenu.UI;
 import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inout.UI.IncomingManagementPanel;
 import org.example.project1.inout.UI.OutgoingConfirmPanel;
+import org.example.project1.inventory.UI.InventoryManagementPanel;
 import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.user.UI.LoginFrame;
 
@@ -102,13 +103,13 @@ public class AdminMenuFrame extends JFrame {
 
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
         OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
-        StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
+        InventoryManagementPanel inventoryManagementPanel =new InventoryManagementPanel("재고관리",this);
 
 
         // 각 패널 추가
         innerPanel.add(incomingManagementPanel, "입고관리");
         innerPanel.add(outgoingConfirmPanel, "출고요청관리");
-        innerPanel.add(stockStatusPanel, "재고관리");
+        innerPanel.add(inventoryManagementPanel, "재고관리");
 
         innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
         add(innerPanel);
