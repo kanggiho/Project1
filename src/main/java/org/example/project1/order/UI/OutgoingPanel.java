@@ -67,7 +67,6 @@ public class OutgoingPanel extends JPanel {
         }catch (Exception e) {
 
         }
-
     }
 
     // JPanel 설정
