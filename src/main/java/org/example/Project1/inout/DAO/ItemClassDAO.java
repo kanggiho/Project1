@@ -1,6 +1,6 @@
-package org.example.project1._common.Model.DAO;
+package org.example.project1.inout.DAO;
 
-import org.example.project1._common.Model.VO.ItemClassVO;
+import org.example.project1.inout.VO.ItemClassVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

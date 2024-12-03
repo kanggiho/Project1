@@ -28,25 +28,25 @@ public class getComboBox {
         try {
 
             // ---------------------- 창고 정보 콤보박스 ----------------------
-            WarehouseInfoDAO wareDAO = new WarehouseInfoDAO();
-            ArrayList<WarehouseInfoVO> wareList = wareDAO.getAll();
-
-
-            for(WarehouseInfoVO vo : wareList){
-                warehouseComboBox.addItem(vo.getWarehouse_name());
-            }
-            warehouseComboBox.setSelectedIndex(0);
-            warehouseComboBox.setSize(80,30);
-
-            warehouseComboBox.addActionListener(ActionEvent -> {
-                //todo : 해당 콤보박스가 클릭되었을때 수행 할 작업
-                try {
-                    warehouse_id = wareDAO.one(warehouseComboBox.getSelectedItem().toString()).getWarehouse_id();
-                } catch (Exception e) {
-
-                }
-                System.out.println(warehouse_id);
-            });
+//            WarehouseInfoDAO wareDAO = new WarehouseInfoDAO();
+//            ArrayList<WarehouseInfoVO> wareList = wareDAO.getAll();
+//
+//
+//            for(WarehouseInfoVO vo : wareList){
+//                warehouseComboBox.addItem(vo.getWarehouse_name());
+//            }
+//            warehouseComboBox.setSelectedIndex(0);
+//            warehouseComboBox.setSize(80,30);
+//
+//            warehouseComboBox.addActionListener(ActionEvent -> {
+//                //todo : 해당 콤보박스가 클릭되었을때 수행 할 작업
+//                try {
+//                    warehouse_id = wareDAO.one(warehouseComboBox.getSelectedItem().toString()).getWarehouse_id();
+//                } catch (Exception e) {
+//
+//                }
+//                System.out.println(warehouse_id);
+//            });
 
             // ---------------------- 아이템 정보 콤보박스 ----------------------
             ItemClassDAO itemDAO = new ItemClassDAO();
