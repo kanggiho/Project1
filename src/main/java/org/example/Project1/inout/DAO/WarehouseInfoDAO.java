@@ -1,6 +1,6 @@
-package org.example.project1._common.Model.DAO;
+package org.example.project1.inout.DAO;
 
-import org.example.project1._common.Model.VO.WarehouseInfoVO;
+import org.example.project1.inout.VO.WarehouseInfoVO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
