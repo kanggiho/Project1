@@ -13,6 +13,18 @@ public class StockUpdatePanel extends JPanel {
     private InventoryManagementPanel parentPanel;
     private PropertyChangeSupport pcs;
     private JButton orderButton;
+    private Font tossFont = new Font("머니그라피TTF Rounded", Font.PLAIN, 12);
+
+    private void applyTossFont(Container container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof JComponent) {
+                ((JComponent) comp).setFont(tossFont);
+            }
+            if (comp instanceof Container) {
+                applyTossFont((Container) comp);
+            }
+        }
+    }
 
     public StockUpdatePanel(InventoryManagementPanel parentPanel) {
         this.productInfoDAO = new ProductInfoDAO();
@@ -22,18 +34,23 @@ public class StockUpdatePanel extends JPanel {
         setPanel();
         initUI();
         addAction();
+        applyTossFont(this);
     }
 
     private void setPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
+        setBorder(null);  // 테두리 제거
     }
 
     private void initUI() {
         orderButton = new JButton("발주하기");
+        orderButton.setBackground(Color.WHITE);
+        orderButton.setFont(tossFont);
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(orderButton);
-        add(buttonPanel, BorderLayout.CENTER);
+        add(buttonPanel);
     }
 
     private void addAction() {
@@ -49,6 +66,8 @@ public class StockUpdatePanel extends JPanel {
         panel.add(productNameField);
         panel.add(new JLabel("감소 수량:"));
         panel.add(quantityField);
+
+        applyTossFont(panel);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "발주하기",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -84,4 +103,5 @@ public class StockUpdatePanel extends JPanel {
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
+
 }

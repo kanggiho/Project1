@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.plaf.FontUIResource;
 
 public class StockSearchPanel extends JPanel {
     private static final String[] SEARCH_TYPES = {"자재명", "창고ID", "제조업체명"};
@@ -15,13 +16,28 @@ public class StockSearchPanel extends JPanel {
     private JButton searchButton;
     private ProductInfoDAO productInfoDAO;
     private StockStatusPanel stockStatusPanel;
+    private String toss_font = "머니그라피TTF Rounded";
+
 
     public StockSearchPanel(StockStatusPanel stockStatusPanel) {
         this.productInfoDAO = new ProductInfoDAO();
         this.stockStatusPanel = stockStatusPanel;
+        setUIFont();  // 폰트 설정
         setPanel();
         initUI();
         addAction();
+    }
+
+    private void setUIFont() {
+        FontUIResource fontUIResource = new FontUIResource(new Font(toss_font, Font.PLAIN, 12));
+        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, fontUIResource);
+            }
+        }
     }
 
     private void setPanel() {

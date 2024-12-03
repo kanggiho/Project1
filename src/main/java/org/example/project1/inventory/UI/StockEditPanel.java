@@ -12,7 +12,7 @@ public class StockEditPanel extends JPanel {
     private final ProductInfoDAO dao;
     private JButton editButton;
     private ActionListener editButtonListener;
-    private String toss_font = "머니그라피TTF Rounded";
+    private Font tossFont = new Font("머니그라피TTF Rounded", Font.PLAIN, 12);
 
     public StockEditPanel() {
         this.dao = new ProductInfoDAO();
@@ -24,6 +24,7 @@ public class StockEditPanel extends JPanel {
     private void setPanel() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
+        setBorder(null);
     }
 
     private void initUI() {
@@ -37,7 +38,8 @@ public class StockEditPanel extends JPanel {
 
     private JButton createEditButton() {
         JButton button = new JButton("선택 항목 수정");
-        button.setFont(new Font(toss_font, Font.PLAIN, 14));
+        button.setBackground(Color.WHITE);
+        button.setFont(new Font(tossFont.getName(), Font.PLAIN, 14));
         button.setPreferredSize(new Dimension(120, 30));
         button.setEnabled(false);
         return button;
@@ -45,6 +47,7 @@ public class StockEditPanel extends JPanel {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(editButton);
         return buttonPanel;
     }
@@ -76,13 +79,25 @@ public class StockEditPanel extends JPanel {
 
     private JPanel createInputPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 2));
-        panel.add(new JLabel("새 가격:"));
-        panel.add(new JTextField(10));
-        panel.add(new JLabel("새 입고예정일 (YYYY-MM-DD):"));
-        panel.add(new JTextField(10));
-        panel.add(new JLabel("새 창고 ID:"));
-        panel.add(new JTextField(10));
+        panel.add(createLabel("새 가격:"));
+        panel.add(createTextField());
+        panel.add(createLabel("새 입고예정일 (YYYY-MM-DD):"));
+        panel.add(createTextField());
+        panel.add(createLabel("새 창고 ID:"));
+        panel.add(createTextField());
         return panel;
+    }
+
+    private JLabel createLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(tossFont);
+        return label;
+    }
+
+    private JTextField createTextField() {
+        JTextField textField = new JTextField(10);
+        textField.setFont(tossFont);
+        return textField;
     }
 
     private void updateProductInfoInDatabase(ProductInfoProductVO product, String priceText, String stockDate, String warehouseIdText) {
@@ -90,16 +105,23 @@ public class StockEditPanel extends JPanel {
             boolean updated = updatePrice(product, priceText) | updateStockDate(product, stockDate) | updateWarehouseId(product, warehouseIdText);
 
             if (updated) {
-                JOptionPane.showMessageDialog(null, "제품 정보가 성공적으로 업데이트되었습니다.");
+                showMessage("제품 정보가 성공적으로 업데이트되었습니다.");
                 firePropertyChange("editCompleted", false, true);
             } else {
-                JOptionPane.showMessageDialog(null, "업데이트할 정보를 입력해주세요.");
+                showMessage("업데이트할 정보를 입력해주세요.");
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "데이터베이스 오류: " + ex.getMessage());
+            showMessage("데이터베이스 오류: " + ex.getMessage());
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "잘못된 숫자 형식입니다.");
+            showMessage("잘못된 숫자 형식입니다.");
         }
+    }
+
+    private void showMessage(String message) {
+        JOptionPane optionPane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = optionPane.createDialog("알림");
+        dialog.setFont(tossFont);
+        dialog.setVisible(true);
     }
 
     private boolean updatePrice(ProductInfoProductVO product, String priceText) throws SQLException {

@@ -41,8 +41,13 @@ public class InventoryManagementPanel extends JPanel {
     }
 
     private void initUI(){
+        // 폰트 설정
+        Font tossFont = new Font(toss_font, Font.PLAIN, 12);
+
         lowStockButton = new JButton("재고 부족 조회");
+        lowStockButton.setFont(tossFont);
         refreshButton = new JButton("새로고침");
+        refreshButton.setFont(tossFont);
         // 패널 초기화
         removeAll();
 
@@ -63,13 +68,13 @@ public class InventoryManagementPanel extends JPanel {
 
         // 각 패널 위치 조절
         stockStatusPanel.setBounds(50,120,1000,210);
-        stockEditPanel.setBounds(30,400,100,100);
-        stockUpdatePanel.setBounds(330,400,100,100);
+        stockEditPanel.setBounds(150,400,120,100);
+        stockUpdatePanel.setBounds(450,400,100,100);
         stockSearchPanel.setBounds(300,10,500,30);
 
         // 버튼 위치 및 크기 설정
-        lowStockButton.setBounds(630, 400, 150, 30);
-        refreshButton.setBounds(790, 400, 100, 30);
+        lowStockButton.setBounds(750, 400, 150, 30);
+        refreshButton.setBounds(800, 10, 100, 30);
 
 
 
