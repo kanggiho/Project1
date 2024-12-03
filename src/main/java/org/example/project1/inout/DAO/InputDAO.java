@@ -56,9 +56,8 @@ public class InputDAO {
 
             if (rs.next()) {
                 int count = rs.getInt(1); // count(*) 값 가져오기
-                System.out.println("재고가 존재합니다.");
                 return count > 0; // 결과가 1개 이상이면 true 반환
-            }
+            } System.out.println("재고가 존재합니다.");
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "재고 확인 중 데이터베이스 오류가 발생했습니다: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
@@ -78,11 +77,11 @@ public class InputDAO {
              PreparedStatement ps = con.prepareStatement("insert into product_info values (?, ?, ?, ?, ?, ?, ?)")) {
             ps.setString(1, vo.getCode());
             ps.setInt(2, vo.getProduct_code());
-            ps.setInt(3, vo.getWarehouse_id());
-            ps.setString(4, vo.getManufacturer_code());
+            ps.setString(3, vo.getManufacturer_code());
+            ps.setInt(4, vo.getWarehouse_id());
             ps.setInt(5, vo.getPrice());
-            ps.setInt(5, vo.getStock());
-            ps.setDate(5, Date.valueOf(vo.getStock_date()));
+            ps.setInt(6, vo.getStock());
+            ps.setDate(7, Date.valueOf(vo.getStock_date()));
 
             ps.executeUpdate();
             System.out.println("Insert Success");
