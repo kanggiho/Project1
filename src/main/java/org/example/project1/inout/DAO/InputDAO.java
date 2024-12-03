@@ -1,10 +1,7 @@
 package org.example.project1.inout.DAO;
 
 import org.example.project1._common._Ut.HikariCPDataSource;
-import org.example.project1.inout.VO.InputManuVO;
-import org.example.project1.inout.VO.InputProductVO;
-import org.example.project1.inout.VO.InputVO;
-import org.example.project1.inout.VO.ProductInfoVO;
+import org.example.project1.inout.VO.*;
 
 import javax.sql.DataSource;
 import javax.swing.*;
@@ -20,6 +17,7 @@ public class InputDAO {
 
     ArrayList<InputVO> vo_list = new ArrayList<>();
     ArrayList<InputProductVO> vo_listForProduct = new ArrayList<>();
+    ArrayList<InputProductVO> vo_listForProductCode = new ArrayList<>();
     ArrayList<InputManuVO> vo_listForManu = new ArrayList<>();
 
 
@@ -140,6 +138,25 @@ public class InputDAO {
         }
     }
 
+
+    //지재명 기준 검색 결과
+    public int ProductCodesByName(String product_name) {
+        int productCode = 0;
+
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "SELECT product_code FROM product WHERE product_name = ?")) {
+            ps.setString(1, product_name);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                   productCode = rs.getInt("product_code");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return productCode;
+    }
 
     //자재코드 기준 검색 결과
     public ArrayList<InputProductVO> listForProductCode(int product_code) {
