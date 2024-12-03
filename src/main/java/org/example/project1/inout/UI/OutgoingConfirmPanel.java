@@ -2,444 +2,409 @@ package org.example.project1.inout.UI;
 
 import org.example.project1.inout.DAO.OutputInfo2DAO;
 import org.example.project1.inout.DAO.OutputInfoDAO;
-import org.example.project1.inout.VO.OutputAdminVO;
-import org.example.project1.inout.VO.OutputOrdererVO;
-import org.example.project1.inout.DAO.ProductInfoDAO;
-import org.example.project1.inout.VO.ProductInfoVO;
-import org.example.project1.inout.VO.OutputInfoProductWarehouseInfoOrdererVO;
-import org.example.project1.inout.VO.OutputInfoVO;
+import org.example.project1.inout.VO.*;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OutgoingConfirmPanel extends JPanel {
     private Connection conn;
 
     // Filter components
     private JComboBox<String> searchFilterComboBox;
-    private JRadioButton rejectedRadioBtn;
-    private JRadioButton approvedRadioBtn;
-    private JRadioButton pendingRadioBtn;
-    private JRadioButton allRadioBtn; // New "전체" radio button
+    private JButton searchButton;
+    private JRadioButton rejectedRadioBtn, approvedRadioBtn, pendingRadioBtn, allRadioBtn;
     private ButtonGroup statusButtonGroup;
+    private JTextField searchField, productCode, confirmId;
 
-    // Table and its model
-    private JTable outputTable;
+    // Table and model
+    private JTable dataTable;
     private DefaultTableModel tableModel;
 
-    ProductInfoDAO productInfoDAO = new ProductInfoDAO(conn);
-    OutputInfo2DAO outputInfo2DAO = new OutputInfo2DAO(conn);
+    private OutputInfo2DAO outputInfo2DAO;
+    private OutputInfoDAO outputInfoDAO;
+
 
     public OutgoingConfirmPanel() throws Exception {
-        setPanel();
-        initUI();
-
-        try {
-            String url = "jdbc:mysql://localhost:3306/project1";
-            String user = "root";
-            String password = "1234";
-            if (conn == null || conn.isClosed()) {
-                conn = DriverManager.getConnection(url, user, password);
-            }
-            productInfoDAO = new ProductInfoDAO(conn); // 초기화
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        loadTableData(); // Initial data load
+        this.outputInfo2DAO = new OutputInfo2DAO();
+        this.outputInfoDAO = new OutputInfoDAO();
+        initializePanel();
+        loadTableData("전체");
     }
 
-    // JPanel 설정
-    private void setPanel() {
+    // ------------------ JPanel 초기화 ---------------------
+    private void initializePanel() throws Exception {
         setSize(1100, 450);
         setLayout(null);
-        setVisible(true);
+        setBackground(Color.white);
+        initComponents();
     }
 
-    public void loadData() {
-        loadTableData();
+    // ------------------ UI 초기화 ---------------------
+    private void initComponents() throws Exception {
+        addHeaderLabel();
+        addSearchFilterComponents();
+        addDataTable();
+        addBottomPanel();
     }
 
-    // UI 초기화
-    private void initUI() throws Exception {
-        // ------------------ 출고 승인 내역 조회 ---------------------
-        // 기존 UI 제거
-        removeAll();
+    private void addHeaderLabel() {
+        JLabel headerLabel = new JLabel("발주 요청 내역 확인");
+        headerLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
+        headerLabel.setBounds(20, 10, 200, 40);
+        headerLabel.setBackground(Color.WHITE);
+        add(headerLabel);
+    }
 
-        // --------------------- 제목 라벨 ---------------------
-        JLabel outputRequestLabel = new JLabel("발주 요청 내역 확인");
-        outputRequestLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
-        outputRequestLabel.setBounds(20, 20, 150, 40);
-        add(outputRequestLabel);
+    private JPanel filterPanel; // UI 전환을 위한 패널
+    private CardLayout cardLayout; // 라디오 버튼과 텍스트 필드/버튼 전환
 
-        // --------------------- 검색 조건 콤보박스 ---------------------
-        String[] userOptions = {"승인 여부", "결재자"};
-        searchFilterComboBox = new JComboBox<>(userOptions);
+    private void addSearchFilterComponents() {
+        // 콤보 박스 추가
+        searchFilterComboBox = new JComboBox<>(new String[]{"승인 여부", "결재자"});
         searchFilterComboBox.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        searchFilterComboBox.setBounds(180, 25, 100, 30);
-
-        JTextField searchField = new JTextField();
-        searchField = new JTextField();
-        searchField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        searchField.setBounds(220, 25, 120, 30);
-        searchField.setVisible(false); // 초기에는 숨김 상태
-        add(searchField);
-
-        searchFilterComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedOption = (String) searchFilterComboBox.getSelectedItem();
-                if ("승인 여부".equals(selectedOption)) {
-                    // --------------------- 승인 상태 필터 라디오 버튼 ---------------------
-                    rejectedRadioBtn = new JRadioButton("거절");
-                    approvedRadioBtn = new JRadioButton("승인");
-                    pendingRadioBtn = new JRadioButton("대기중");
-                    allRadioBtn = new JRadioButton("전체");
-                    allRadioBtn.setSelected(true); // Default selection
-
-                    rejectedRadioBtn.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-                    approvedRadioBtn.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-                    pendingRadioBtn.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-                    allRadioBtn.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-
-                    // Group the radio buttons
-                    statusButtonGroup = new ButtonGroup();
-                    statusButtonGroup.add(rejectedRadioBtn);
-                    statusButtonGroup.add(approvedRadioBtn);
-                    statusButtonGroup.add(pendingRadioBtn);
-                    statusButtonGroup.add(allRadioBtn);
-
-                    // Position the radio buttons
-                    allRadioBtn.setBounds(300, 25, 60, 30);
-                    approvedRadioBtn.setBounds(370, 25, 60, 30);
-                    pendingRadioBtn.setBounds(440, 25, 70, 30);
-                    rejectedRadioBtn.setBounds(530, 25, 60, 30);
-
-                    allRadioBtn.setBackground(Color.WHITE);
-                    approvedRadioBtn.setBackground(Color.WHITE);
-                    pendingRadioBtn.setBackground(Color.WHITE);
-                    rejectedRadioBtn.setBackground(Color.WHITE);
-
-
-                    add(allRadioBtn);
-                    add(approvedRadioBtn);
-                    add(pendingRadioBtn);
-                    add(rejectedRadioBtn);
-                }
-                if ("결재자".equals(selectedOption)) {
-                    searchField.setVisible(true); // "결재자" 선택 시 검색창 표시
-                } else {
-                    searchField.setVisible(false); // 다른 옵션 선택 시 검색창 숨김
-                }
-                revalidate();
-                repaint();
-            }
-        });
-
+        searchFilterComboBox.setBounds(180, 15, 100, 30);
+        searchFilterComboBox.addActionListener(e -> handleSearchFilterChange()); // 콤보 박스 선택에 따라 동작 변경
         add(searchFilterComboBox);
 
+        // 필터 전환을 위한 CardLayout 패널 생성
+        cardLayout = new CardLayout();
+        filterPanel = new JPanel(cardLayout);
+        filterPanel.setBounds(300, 15, 450, 30); // 라디오 버튼과 텍스트 필드가 들어갈 공간
+        filterPanel.setBackground(Color.WHITE);
 
-        // --------------------- 필터 변경 시 테이블 데이터 로드 ---------------------
-        ActionListener filterListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadTableData();
-            }
-        };
+        // "승인 여부" 패널: 라디오 버튼들 추가
+        JPanel radioButtonPanel = new JPanel();
+        radioButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        radioButtonPanel.setBackground(Color.WHITE);
 
-        searchFilterComboBox.addActionListener(filterListener);
-        rejectedRadioBtn.addActionListener(filterListener);
-        approvedRadioBtn.addActionListener(filterListener);
-        pendingRadioBtn.addActionListener(filterListener);
-        allRadioBtn.addActionListener(filterListener);
+        allRadioBtn = createRadioButton("전체", true, 0);
+        approvedRadioBtn = createRadioButton("승인", false, 0);
+        pendingRadioBtn = createRadioButton("대기중", false, 0);
+        rejectedRadioBtn = createRadioButton("거절", false, 0);
 
+        allRadioBtn.addActionListener(e -> handleRadioBtn("전체"));
+        approvedRadioBtn.addActionListener(e -> handleRadioBtn("승인"));
+        pendingRadioBtn.addActionListener(e -> handleRadioBtn("대기중"));
+        rejectedRadioBtn.addActionListener(e -> handleRadioBtn("거절"));
 
-        // --------------------- 출고 요청 테이블 추가 ---------------------
-        outputTable = createOutputTable();  // 테이블 생성
-        outputTable.setRowHeight(20);
-        outputTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane outputScrollPane = new JScrollPane();
-        outputScrollPane.setBounds(20, 60, 1060, 200);
-        add(outputScrollPane);
+        statusButtonGroup = new ButtonGroup();
+        statusButtonGroup.add(allRadioBtn);
+        statusButtonGroup.add(approvedRadioBtn);
+        statusButtonGroup.add(pendingRadioBtn);
+        statusButtonGroup.add(rejectedRadioBtn);
 
-        // UI 갱신
-        revalidate();
-        repaint();
+        radioButtonPanel.add(allRadioBtn);
+        radioButtonPanel.add(approvedRadioBtn);
+        radioButtonPanel.add(pendingRadioBtn);
+        radioButtonPanel.add(rejectedRadioBtn);
 
-        // 테이블 데이터 로드 및 필터 적용
-        private void loadTableData() {
-            try {
-                // DB 연결 정보
-                String url = "jdbc:mysql://localhost:3306/project1";
-                String user = "root";
-                String password = "1234";
-                if (conn == null || conn.isClosed()) {
-                    conn = DriverManager.getConnection(url, user, password);
-                    //conn.setAutoCommit(false);
-                }
+        // "결재자" 패널: 텍스트 필드와 검색 버튼 추가
+        JPanel searchFieldPanel = new JPanel();
+        searchFieldPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        searchFieldPanel.setBackground(Color.WHITE);
 
-                OutputInfo2DAO outputInfoDAO = new OutputInfo2DAO(conn);
+        searchField = createPlaceholderTextField("결재자 사번 입력");
+        searchField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        searchButton = createButton("검색", e -> handleSearchButtonClick());
 
-                // Determine status filter
-                String statusFilter = "";
-                if (allRadioBtn.isSelected()) {
-                    statusFilter = ""; // 전체 데이터 필터링 없음
-                } else if (rejectedRadioBtn.isSelected()) {
-                    statusFilter = "거절";
-                } else if (approvedRadioBtn.isSelected()) {
-                    statusFilter = "승인";
-                } else if (pendingRadioBtn.isSelected()) {
-                    statusFilter = "대기중";
-                }
+        searchFieldPanel.add(searchField);
+        searchFieldPanel.add(searchButton);
 
-                // 실제 데이터 로드 with filters
-                List<OutputInfoProductWarehouseInfoOrdererVO> outputList =
-                        outputInfo2DAO.getFilteredOutputInfo(statusFilter, userFilter, userName);
+        // CardLayout에 패널 추가
+        filterPanel.add(radioButtonPanel, "승인 여부");
+        filterPanel.add(searchFieldPanel, "결재자");
 
-                // Clear existing data
-                tableModel.setRowCount(0);
+        add(filterPanel); // 메인 패널에 추가
+    }
 
-                // Populate table model with filtered data
-                for (OutputInfoProductWarehouseInfoOrdererVO vo : outputList) {
-                    Object[] rowData = {
-                            vo.getProduct_code(),
-                            vo.getProduct_name(),
-                            vo.getWarehouse_name(),
-                            vo.getId(),
-                            vo.getOrderer_name(),
-                            vo.getUnit_price(),
-                            vo.getRelease_quantity(),
-                            vo.getConfirm_num(),
-                            vo.getRelease_date(),
-                            vo.getConfirm_id(),
-                            vo.getStatus()
-                    };
-                    tableModel.addRow(rowData);
-                }
+    private void handleSearchFilterChange() {
+        // 콤보 박스 선택에 따라 CardLayout 전환
+        String selectedOption = (String) searchFilterComboBox.getSelectedItem();
+        if ("승인 여부".equals(selectedOption)) {
+            cardLayout.show(filterPanel, "승인 여부");
+            allRadioBtn.setSelected(true);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "데이터 로드 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
-            }
+            dataTable.revalidate();
+            dataTable.repaint();
+
+            loadTableData("전체");
+        } else if ("결재자".equals(selectedOption)) {
+            cardLayout.show(filterPanel, "결재자");
+            searchField.setText("결재자 사번 입력");
         }
+    }
 
+    private JRadioButton createRadioButton(String label, boolean isSelected, int xPosition) {
+        JRadioButton radioButton = new JRadioButton(label);
+        radioButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        radioButton.setSelected(isSelected);
+        radioButton.setBackground(Color.WHITE);
 
-        // ------------------ 출고 승인, 거절 ---------------------
-        // 자재 코드 입력창
-        JLabel productCodelabel = new JLabel();
+        radioButton.addActionListener(e -> loadTableData(label));
+        return radioButton;
+    }
 
-        // 결재자 사번 입력창
-         confirmId = new JTextField(10);
-
-        confirmId.setText("결재자 사번 입력");
-        confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-        confirmId.setForeground(Color.GRAY);
-
-        confirmId.addFocusListener(new FocusListener() {
+    private JTextField createPlaceholderTextField(String placeholder) {
+        JTextField textField = new JTextField(placeholder, 15);
+        textField.setForeground(Color.GRAY);
+        textField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (confirmId.getForeground().equals(Color.GRAY) && confirmId.getText().equals("결재자 사번 입력")) {
-                    confirmId.setText("");
-                    confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-                    confirmId.setForeground(Color.BLACK);
+                if (textField.getForeground().equals(Color.GRAY)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (confirmId.getText().isEmpty()) {
-                    confirmId.setText("결재자 사번 입력");
-                    confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-                    confirmId.setForeground(Color.GRAY);
+                if (textField.getText().isEmpty()) {
+                    textField.setText(placeholder);
+                    textField.setForeground(Color.GRAY);
                 }
             }
         });
+        return textField;
+    }
 
-        // 승인, 거절, 초기화 버튼 생성
-        JButton confirmButton = new JButton("승인");
-        confirmButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-        confirmButton.addActionListener(e -> handleConfirmButton());
-
-        JButton rejectButton = new JButton("거절");
-        rejectButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-        rejectButton.addActionListener(e -> handleRejectButton());
-
-        JButton clearButton = new JButton("초기화");
-        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-
-        // 출고 요청 승인용 패널 생성
-        JPanel bottomPanel1 = new JPanel();
-        bottomPanel1.setLayout(new BorderLayout());
-        bottomPanel1.setBounds(550, 200, 550, 250);
-
-        // 1. 라벨 패널 (왼쪽 위 정렬)
-        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        labelPanel.setBackground(Color.white);
-        JLabel labelForConfirm = new JLabel("출고 요청 승인/거절");
-        labelForConfirm.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 20));
-        labelForConfirm.setForeground(Color.BLACK);
-        labelPanel.add(labelForConfirm);
-
-        // 2. 텍스트 필드 패널 (세로 가운데 정렬)
-        JPanel fieldPanel = new JPanel();
-        fieldPanel.setLayout(new BoxLayout(fieldPanel, BoxLayout.Y_AXIS));
-        fieldPanel.setBackground(Color.WHITE);
-
-        productCode.setMaximumSize(new Dimension(400, 30));
-        confirmId.setMaximumSize(new Dimension(400, 30));
-
-        fieldPanel.add(Box.createVerticalStrut(50));
-        fieldPanel.add(productCode);
-        fieldPanel.add(Box.createVerticalStrut(10));
-        fieldPanel.add(confirmId);
-
-        // 3. 버튼 패널 (가로 가운데 정렬)
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        buttonPanel.setBackground(Color.white);
-        buttonPanel.add(confirmButton);
-        buttonPanel.add(rejectButton);
-        buttonPanel.add(clearButton);
-
-        // 4. bottomPanel1에 각 패널 추가
-        bottomPanel1.add(labelPanel, BorderLayout.NORTH);
-        bottomPanel1.add(fieldPanel, BorderLayout.CENTER);
-        bottomPanel1.add(buttonPanel, BorderLayout.SOUTH);
-
-        // 5. 프레임에 bottomPanel1 추가
-        add(bottomPanel1);
+    private JButton createButton(String label, ActionListener listener) {
+        JButton button = new JButton(label);
+        button.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        button.addActionListener(listener);
+        return button;
     }
 
 
-    // 모드 선택시 입력 필드 초기화
-    private void handleModeSelectorAction() {
-        String selectMode = (String) modeSelector.getSelectedItem();
-        if ("주문자명".equals(selectMode)) {
-            inputField.setText("주문자 아이디");
-            inputField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-        } else if ("승인 여부".equals(selectMode)) {
-            inputField.setText("승인 여부(승인/거절/대기중)");
-            inputField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-        } else if ("결재자".equals(selectMode)) {
-            inputField.setText("결재자 사번");
-            inputField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-        }
-        inputField.setForeground(Color.GRAY);
+    private void addDataTable() {
+        String[] columnNames = {"자재코드", "자재명", "창고이름", "아이디", "주문자 이름",
+                "단가", "발주량", "승인번호", "발주날짜", "결재자", "승인여부"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        dataTable = new JTable(tableModel);
+        dataTable.setRowHeight(20);
+        dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        dataTable.getSelectionModel().addListSelectionListener(e -> handleTableSelection(e));
+        JScrollPane scrollPane = new JScrollPane(dataTable);
+        scrollPane.setBounds(20, 60, 1060, 300);
+        scrollPane.setBackground(Color.WHITE);
+        add(scrollPane);
+
+
     }
 
+    private void addBottomPanel() {
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        bottomPanel.setBounds(20, 380, 1060, 50);
+        bottomPanel.setBackground(Color.WHITE);
+
+        JLabel bottomLabel = new JLabel("발주 요청 승인");
+        bottomLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
+
+        productCode = createPlaceholderTextField("자재 코드 입력");
+        productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        confirmId = createPlaceholderTextField("결재자 사번");
+        confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+
+        JButton confirmButton = createButtonForConfirm("승인", e -> handleConfirmAction("승인"));
+        JButton rejectButton = createButtonForConfirm("거절", e -> handleConfirmAction("거절"));
+        JButton clearButton = createButtonForConfirm("초기화", e -> clearFields());
+
+        bottomPanel.add(bottomLabel);
+        bottomPanel.add(productCode);
+        bottomPanel.add(confirmId);
+        bottomPanel.add(confirmButton);
+        bottomPanel.add(rejectButton);
+        bottomPanel.add(clearButton);
+
+        add(bottomPanel);
+    }
+
+    private JButton createButtonForConfirm(String label, ActionListener listener) {
+        JButton button = new JButton(label);
+        button.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        button.addActionListener(listener);
+        return button;
+    }
+
+    // ------------------ 이벤트 핸들러 ---------------------
     // 검색 버튼 클릭시 처리
     private void handleSearchButtonClick() {
         System.out.println("버튼 클릭");
-
-        String selectMode = (String) modeSelector.getSelectedItem();
+        String selectedOption = (String) searchFilterComboBox.getSelectedItem();
         try {
             DefaultTableModel model = new DefaultTableModel();
-            if ("주문자명".equals(selectMode)) {
-                handleOrdererSearch(model);
-            } else if ("승인 여부".equals(selectMode)) {
-                handleStatusSearch(model);
-            } else if ("결재자".equals(selectMode)) {
+             if ("결재자".equals(selectedOption)) {
                 handleConfirmSearch(model);
-            }
-
-            // 테이블 모델 업데이트
-            resultTableForSearch.setModel(model);
-            revalidate();  // 레이아웃 갱신
-            repaint();     // 화면 갱신
-
+             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "데이터 검색 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
 
+    // 라디오버튼 클릭 시 처리
+    private void handleRadioBtn(String filter) {
+        switch (filter) {
+            case "전체" :
+                loadTableData("전체");
+                break;
+            case "승인" :
+                loadTableData("승인");
+                break;
+            case "대기중" :
+                loadTableData("대기중");
+                break;
+            case "거절" :
+                loadTableData("거절");
+                break;
+        }
+    }
+
+
+    // 테이블 목록 선택 시 자재코드 textField 에 채움
+    private void handleTableSelection(ListSelectionEvent e) {
+        if (!e.getValueIsAdjusting()) {
+            int selectedRow = dataTable.getSelectedRow();
+            if (selectedRow != -1) {
+                Object selected = tableModel.getValueAt(selectedRow, 0);
+                String selectedProductCode = selected != null ? selected.toString() : "";
+                productCode.setText(selectedProductCode);
+                productCode.setForeground(Color.BLACK);
+            }
+        }
+    }
+
+
     // 결재자 기준 검색
     private void handleConfirmSearch(DefaultTableModel model) throws Exception {
-        String confirmInput = inputField.getText().trim();
+        String confirmInput = searchField.getText().trim();
+        // 입력값 확인
         if (confirmInput.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "결재자 사번을 입력하세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "결재자 사번을 입력하세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        int confirmID = Integer.parseInt(confirmInput);
-        ArrayList<OutputAdminVO> resultAdmin = outputInfoDAO.listForConfirm(confirmID);
 
+        // 숫자 확인
+        int confirmID;
+        try {
+            confirmID = Integer.parseInt(confirmInput);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "결재자 사번은 숫자여야 합니다.", "입력 오류", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // DAO 호출 및 결과 처리
+        ArrayList<OutputAdminVO> resultAdmin;
+        try {
+            resultAdmin = outputInfoDAO.listForConfirm(confirmID);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "데이터 검색 중 오류가 발생했습니다: " + e.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return;
+        }
+
+        // 결과가 없는 경우 처리
         if (resultAdmin == null || resultAdmin.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "검색 결과가 없습니다.", "결과 없음", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "검색 결과가 없습니다.", "결과 없음", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
+        // 테이블 데이터 업데이트
         String[] columnNames = {"결재자 사번", "승인 번호", "결재자명", "결재자 전화번호", "주문자명", "승인 여부", "출고일"};
         model.setColumnIdentifiers(columnNames);
+
+        // 기존 데이터 삭제
+        model.setRowCount(0);
+
         for (OutputAdminVO vo : resultAdmin) {
-            Object[] row = {vo.getConfirm_id(), vo.getConfirm_num(), vo.getName(), vo.getTel(),
-                    vo.getUser_id(), vo.getStatus(), vo.getRelease_date()};
+            Object[] row = {
+                    vo.getConfirm_id(),
+                    vo.getConfirm_num(),
+                    vo.getName(),
+                    vo.getTel(),
+                    vo.getUser_id(),
+                    vo.getStatus(),
+                    vo.getRelease_date()
+            };
             model.addRow(row);
+        }
+        // 테이블에 새 모델 적용
+        dataTable.setModel(model);
+
+        // 테이블 및 패널 재렌더링
+        dataTable.revalidate();
+        dataTable.repaint();
+    }
+
+    private void loadTableData(String filter) {
+        try {
+            ArrayList<?> data;
+            if ("전체".equals(filter)) data = outputInfo2DAO.getAllData();
+            else if ("승인".equals(filter)) data = outputInfo2DAO.getApprove();
+            else if ("대기중".equals(filter)) data = outputInfo2DAO.getPending();
+            else data = outputInfo2DAO.getReject();
+
+            updateTable(data);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "데이터 로드 실패: " + e.getMessage());
         }
     }
 
-
-    // ------------------------ 승인 및 거절 버튼 기능 ------------------------------
-    // 승인 버튼 기능 (output 테이블 update, product_info 테이블 update)
-    OutputInfoVO vo = new OutputInfoVO();
-    ProductInfoVO vo2 = new ProductInfoVO()
-            ;
-    private void handleConfirmButton() {
-        // output 테이블 update
-        String productCodeInput = productCode.getText();
-        String confirmIdInput = confirmId.getText();
-        System.out.println("텍스트 추출 완료");
-
-        // '승인' 으로 상태 업데이트
-        vo.setStatus("승인");
-        vo.setProduct_code(Integer.parseInt(productCodeInput));
-        vo.setConfirm_id(Integer.parseInt(confirmIdInput));
-
-        outputInfoDAO.updateStatusForApprove(vo);
-
-        // 재고 수량 업데이트
-        vo2.setProduct_code(Integer.parseInt(productCodeInput));
-        outputInfoDAO.updateInventory(vo2);
+    private void updateTable(ArrayList<?> data) {
+        tableModel.setRowCount(0); // Clear the table
+        for (Object row : data) {
+            tableModel.addRow(extractRowData(row));
+        }
+        dataTable.revalidate();
+        dataTable.repaint();
     }
 
-
-    // 거절 버튼 기능 (output 테이블 update)
-    private void handleRejectButton() {
-        String productCodeInput = productCode.getText();
-        String confirmIdInput = confirmId.getText();
-        System.out.println("텍스트 추출 완료");
-
-        vo.setStatus("거절");
-        vo.setProduct_code(Integer.parseInt(productCodeInput));
-        vo.setConfirm_id(Integer.parseInt(confirmIdInput));
-
-        outputInfoDAO.updateStatusForReject(vo);
+    private Object[] extractRowData(Object data) {
+        if (data instanceof OutputInfoProductWarehouseInfoOrdererVO vo) {
+            return new Object[]{vo.getProduct_code(), vo.getProduct_name(), vo.getWarehouse_name(),
+                    vo.getId(), vo.getOrderer_name(), vo.getUnit_price(), vo.getRelease_date(),
+                    vo.getConfirm_num(), vo.getRelease_date(), vo.getConfirm_id(), vo.getStatus()};
+        }
+        return new Object[0];
     }
-    // 출고 요청 테이블 생성
-    private JTable createOutputTable() {
-        // Table column names
-        String[] columnNames = {
-                "자재코드", "자재명", "창고이름", "아이디", "주문자 이름",
-                "단가", "발주량", "승인번호", "발주신청날짜", "결재자", "승인여부"
-        };
 
-        // Initialize table model with column names and no data
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make cells non-editable
+    private void handleConfirmAction(String status) {
+        try {
+            String productCodeInput = productCode.getText();
+            String confirmIdInput = confirmId.getText();
+
+            OutputInfoVO vo = new OutputInfoVO();
+            ProductInfoVO vo2 = new ProductInfoVO();
+
+            vo.setProduct_code(Integer.parseInt(productCodeInput));
+            vo.setConfirm_id(Integer.parseInt(confirmIdInput));
+            vo.setStatus(status);
+
+            vo2.setProduct_code(Integer.parseInt(productCodeInput));
+            outputInfoDAO.updateInventory(vo2);
+
+            if ("승인".equals(status)) {
+                outputInfoDAO.updateStatusForApprove(vo);
+                outputInfoDAO.updateInventory(vo2);
+            } else {
+                outputInfoDAO.updateStatusForReject(vo);
             }
-        };
 
-        return new JTable(tableModel);
+            JOptionPane.showMessageDialog(this, status + " 처리 완료");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "처리 실패: " + e.getMessage());
+        }
+    }
+
+    private void clearFields() {
+        productCode.setText("자재코드 입력");
+        confirmId.setText("결재자 사번 입력");
     }
 }
