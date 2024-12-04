@@ -7,6 +7,7 @@ public class DashboardMainPanel extends JPanel {
 
     private RandomProductRecommendationPanel recommendationPanel;
     private TopSellingProductsPanel topSellingProductsPanel;
+    private TodayInventoryPanel todayInventoryPanel;
 
 
     public DashboardMainPanel() {
@@ -20,6 +21,8 @@ public class DashboardMainPanel extends JPanel {
     private void initComponents() {
         recommendationPanel = new RandomProductRecommendationPanel();
         topSellingProductsPanel = new TopSellingProductsPanel();
+        todayInventoryPanel = new TodayInventoryPanel();
+
     }
 
     private void layoutComponents() {
@@ -28,5 +31,7 @@ public class DashboardMainPanel extends JPanel {
         add(recommendationPanel);
         topSellingProductsPanel.setBounds(0, 150, 550, 150);
         add(topSellingProductsPanel);
+        todayInventoryPanel.setBounds(0, 300, 550, 150);
+        add(todayInventoryPanel);
     }
 }
