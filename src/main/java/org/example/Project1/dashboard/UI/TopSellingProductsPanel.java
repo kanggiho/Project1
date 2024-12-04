@@ -54,7 +54,7 @@ public class TopSellingProductsPanel extends JPanel {
 
         // 스크롤페인 설정 및 크기 지정
         scrollPane = new JScrollPane(topSellingTable);
-        scrollPane.setBounds(50, 30, 350, 80);  // y좌표 30, 높이 80으로 수정
+        scrollPane.setBounds(50, 30, 350, 123);  // y좌표 30, 높이 80으로 수정
         add(scrollPane);
 
         // 새로고침 버튼 생성
