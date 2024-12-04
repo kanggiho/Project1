@@ -1,6 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.account.UI.UserGradeManagementPanel;
 import org.example.project1.inout.UI.IncomingManagementPanel;
 import org.example.project1.inout.UI.OutgoingConfirmPanel;
 import org.example.project1.inventory.UI.InventoryManagementPanel;
@@ -105,14 +106,14 @@ public class AdminMenuFrame extends JFrame {
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
         OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
         InventoryManagementPanel inventoryManagementPanel =new InventoryManagementPanel("재고관리",this);
+        UserGradeManagementPanel userGradeManagementPanel =new UserGradeManagementPanel("회원등급수정");
 
 
         // 각 패널 추가
         innerPanel.add(incomingManagementPanel, "입고관리");
         innerPanel.add(outgoingConfirmPanel, "출고요청관리");
         innerPanel.add(inventoryManagementPanel, "재고관리");
-
-        innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
+        innerPanel.add(userGradeManagementPanel, "회원등급수정");
         add(innerPanel);
 
         // 버튼 클릭 이벤트

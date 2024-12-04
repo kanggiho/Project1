@@ -8,6 +8,5 @@ public class Main {
         //new LoginFrame();
         //new UserMenuFrame("giho");
         new AdminMenuFrame("hyeseon");
-        //new getComboBox();
     }
 }

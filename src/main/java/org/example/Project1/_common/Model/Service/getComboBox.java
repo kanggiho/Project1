@@ -1,9 +1,9 @@
 package org.example.project1._common.Model.Service;
 
-import org.example.project1._common.Model.DAO.ItemClassDAO;
-import org.example.project1._common.Model.DAO.WarehouseInfoDAO;
-import org.example.project1._common.Model.VO.ItemClassVO;
-import org.example.project1._common.Model.VO.WarehouseInfoVO;
+import org.example.project1.inout.DAO.ItemClassDAO;
+import org.example.project1.inout.DAO.WarehouseInfoDAO;
+import org.example.project1.inout.VO.ItemClassVO;
+import org.example.project1.inout.VO.WarehouseInfoVO;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ public class getComboBox {
 
     static int warehouse_id = 0;
     static String code = "";
+    static String manufacturer_code = "";
+
 
     public getComboBox() {
         init();
