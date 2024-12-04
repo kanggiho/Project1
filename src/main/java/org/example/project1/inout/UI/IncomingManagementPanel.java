@@ -7,10 +7,9 @@ import org.example.project1.inout.VO.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
@@ -45,7 +44,6 @@ public class IncomingManagementPanel extends JPanel {
     // UI 초기화
     private void initUI() {
         // ------------------- 입고 신청 내역 검색 ---------------------
-
         // 제목 라벨 생성
         JLabel labelForSearch = new JLabel("입고 신청 내역   ");
         labelForSearch.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
@@ -128,7 +126,7 @@ public class IncomingManagementPanel extends JPanel {
         // 입고 신청 내용 입력창 생성
         // 제조 업체 코드 입력창
         manufacturerCode = new JTextField(15);
-        String placeholderText3 = "제조 업체 코드";
+        String placeholderText3 = "제조업체 코드";
         Font placeholderFont3 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
         Color placeholderColor3 = Color.GRAY;
         Color inputTextColor3 = Color.BLACK;
@@ -159,11 +157,9 @@ public class IncomingManagementPanel extends JPanel {
 
         // 자재명 입력창
         productName = new JTextField(15);
-
         productName.setText("자재명");
         productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         productName.setForeground(Color.GRAY);
-
         productName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -186,15 +182,13 @@ public class IncomingManagementPanel extends JPanel {
 
         // 자재코드 입력창
         productCode = new JTextField(15);
-
-        productCode.setText("자재 코드");
+        productCode.setText("자재코드");
         productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         productCode.setForeground(Color.GRAY);
-
         productCode.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (productCode.getForeground().equals(Color.GRAY) && productCode.getText().equals("자재 코드")) {
+                if (productCode.getForeground().equals(Color.GRAY) && productCode.getText().equals("자재코드")) {
                     productCode.setText("");
                     productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
                     productCode.setForeground(Color.BLACK);
@@ -204,7 +198,7 @@ public class IncomingManagementPanel extends JPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 if (productCode.getText().isEmpty()) {
-                    productCode.setText("자재 코드");
+                    productCode.setText("자재코드");
                     productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
                     productCode.setForeground(Color.GRAY);
                 }
@@ -213,11 +207,9 @@ public class IncomingManagementPanel extends JPanel {
 
         // 입고신청일 입력 창
         askingDate = new JTextField(15);
-
         askingDate.setText("입고신청일");
         askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         askingDate.setForeground(Color.GRAY);
-
         askingDate.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -240,11 +232,9 @@ public class IncomingManagementPanel extends JPanel {
 
         // 입고 수량 입력 창
         warehousedQuantity = new JTextField(15);
-
         warehousedQuantity.setText("입고 수량");
         warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         warehousedQuantity.setForeground(Color.GRAY);
-
         warehousedQuantity.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -265,14 +255,7 @@ public class IncomingManagementPanel extends JPanel {
             }
         });
 
-        // 입고일 입력 창
-        warehousedDate = new JTextField(15);
-
-        warehousedDate.setText("입고일");
-        warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-        warehousedDate.setForeground(Color.GRAY);
-
-
+        // ----------------------- 버튼 ------------------------
         // 입고 신청 버튼 생성
         JButton application = new JButton("입고 신청");
         application.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
@@ -289,17 +272,26 @@ public class IncomingManagementPanel extends JPanel {
         clearButtonForSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                productName.setText("");
-                manufacturerCode.setText("");
-                productCode.setText("");
-                askingDate.setText("");
-                warehousedDate.setText("");
-                warehousedQuantity.setText("");
+                productName.setText("자재명");
+                productName.setForeground(Color.GRAY);
+                productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                manufacturerCode.setText("제조업체 코드");
+                manufacturerCode.setForeground(Color.GRAY);
+                manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                productCode.setText("자재코드");
+                productCode.setForeground(Color.GRAY);
+                productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                askingDate.setText("입고신청일");
+                askingDate.setForeground(Color.GRAY);
+                askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                warehousedQuantity.setText("입고 수량");
+                warehousedQuantity.setForeground(Color.GRAY);
+                warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
             }
         });
 
 
-        // 입고 신청 패널
+        // ------------------------- 입고 신청 패널 -------------------------------
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setSize(1100, 145);
@@ -398,6 +390,21 @@ public class IncomingManagementPanel extends JPanel {
             return;
         }
         populateTable(resultProductCode, new String[]{"자재코드", "자재명", "입고번호", "제조업체 코드", "입고신청일", "입고 수량", "입고일"});
+
+        // 행 클릭하면 자동으로 입고 신청 패널 텍스트 필드에 데이터 삽입
+        resultTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int row = resultTable.getSelectedRow();
+                if (row >= 0) {
+                    productCode.setText(resultTable.getValueAt(row, 0).toString());
+                    productCode.setForeground(Color.BLACK);
+                    productName.setText(resultTable.getValueAt(row, 1).toString());
+                    productName.setForeground(Color.BLACK);
+                    manufacturerCode.setText(resultTable.getValueAt(row, 3).toString());
+                    manufacturerCode.setForeground(Color.BLACK);
+                }
+            }
+        });
     }
 
     // 제조업체 코드로 검색
@@ -477,40 +484,46 @@ public class IncomingManagementPanel extends JPanel {
         String productCodeInput = productCode.getText().trim();
         String askingDateInput = askingDate.getText().trim();
         String warehousedQuantityInput = warehousedQuantity.getText().trim();
-        String warehousedDateInput = warehousedDate.getText().trim();
 
         System.out.println("텍스트 추출");
 
         if (manufacturerCodeInput.isEmpty() || productCodeInput.isEmpty() ||
-                askingDateInput.isEmpty() || warehousedQuantityInput.isEmpty() || warehousedDateInput.isEmpty()) {
+                askingDateInput.isEmpty() || warehousedQuantityInput.isEmpty() ) {
             JOptionPane.showMessageDialog(null, "모든 필드를 입력해주세요.", "입력 오류", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        // 입고일(=입고예정일) - 오늘 날짜 가져오기
+        String warehousedDate = getToday();
 
         InputVO vo1 = new InputVO();
         vo1.setManufacturerCode(manufacturerCodeInput);
         vo1.setProductCode(Integer.parseInt(productCodeInput));
         vo1.setAskingDate(askingDateInput);
         vo1.setWarehousedQuantity(Integer.parseInt(warehousedQuantityInput));
-        vo1.setWarehousedDate(warehousedDateInput);
+        vo1.setWarehousedDate(warehousedDate);
 
 
         ProductInfoVO vo2 = new ProductInfoVO();
         vo2.setProduct_code(Integer.parseInt(productCodeInput));
         vo2.setManufacturer_code(manufacturerCodeInput);
         vo2.setStock(Integer.parseInt(warehousedQuantityInput));
-        vo2.setStock_date(warehousedDateInput);
+        vo2.setStock_date(warehousedDate);
 
         ProductVO vo3 = new ProductVO();
         vo3.setProduct_code(Integer.parseInt(productCodeInput));
         vo3.setProduct_name(productNameInput);
 
         try {
-            // 기존 재고에 물품 있는지 확인하고
-            // 있으면 업데이트, 없으면 추가
+            // 기존 재고에 물품 있는지 확인하고 있으면 업데이트
+            // 없으면 추가 입고 기능(버튼) 사용
             if (inputDAO.checkInventory(vo2)) {
                 JOptionPane.showMessageDialog(null, "기존 재고가 존재합니다. 재고가 업데이트 됩니다.");
+                // 입고 신청 내역에 데이터 추가
+                inputDAO.insertToInput(vo1);
+                System.out.println("입고 내역 업데이트 완료");
                 inputDAO.updateInventory(vo2);
+                System.out.println("재고 내역 업데이트 완료");
             } else {
                 // 자재 정보 테이블 업데이트
                 try {
@@ -518,22 +531,31 @@ public class IncomingManagementPanel extends JPanel {
                 } catch (Exception ex) {
                     System.out.println("자재 정보 업데이트 실패" + ex.getMessage());
                 }
-                System.out.println("자재 정보 업데이트 완료");
-
-                JOptionPane.showMessageDialog(null, "기존 재고가 없습니다. 추가 데이터를 입력해주세요.");
+                JOptionPane.showMessageDialog(null, "기존 재고가 없습니다. 추가 입고해주세요.");
             }
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "입고 신청에 실패했습니다.");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "자재 정보 업데이트에 실패했습니다.");
         }
-
-        // 입고 신청 내역에 데이터 추가
-        inputDAO.insertToInput(vo1);
-        System.out.println("입고 내역 업데이트 완료");
     }
 
-    private void handleAddButton() {
+    // 추가 입고 버튼 기능
+    private void handleAddButton () {
         InputIncomingFrame inputIncomingFrame = new InputIncomingFrame();
+    }
+
+    // 입고일에 오늘 날짜 가져오기
+    private String getToday(){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+
+        // 날짜 형식 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 형식에 맞게 변환
+        String formattedDate = today.format(formatter);
+
+        return formattedDate;
     }
 }
