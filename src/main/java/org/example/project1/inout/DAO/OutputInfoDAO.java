@@ -90,12 +90,15 @@ public class OutputInfoDAO {
 
     // 승인 여부 - '승인'으로 업데이트
     public void updateStatusForApprove(OutputInfoVO vo) {
-        String updateQuery = "update output_info set status = ?, confirm_id = ? where product_code = ?";
+        String updateQuery = "update output_info set status = ?, confirm_id = ?, confirm_num = ?, release_date = ?" +
+                "where product_code = ?";
         try (Connection con = dataSource.getConnection();
              PreparedStatement updatePs = con.prepareStatement(updateQuery)) {
             updatePs.setString(1, vo.getStatus());
             updatePs.setInt(2, vo.getConfirm_id());
-            updatePs.setInt(3, vo.getProduct_code());
+            updatePs.setInt(3, vo.getConfirm_num());
+            updatePs.setDate(4, Date.valueOf(vo.getRelease_date()));
+            updatePs.setInt(5, vo.getProduct_code());
             updatePs.executeUpdate();
             System.out.println("승인으로 업데이트 완료");
         } catch (Exception e) {
@@ -154,7 +157,6 @@ public class OutputInfoDAO {
                 int rowsAffected = updateStmt.executeUpdate();
                 if (rowsAffected > 0) {
                     System.out.println("재고 업데이트 완료");
-                    JOptionPane.showMessageDialog(null, "재고가 성공적으로 업데이트되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null, "재고 업데이트에 실패했습니다. 확인 후 다시 시도해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
                 }
