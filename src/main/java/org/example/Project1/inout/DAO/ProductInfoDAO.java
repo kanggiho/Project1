@@ -128,10 +128,6 @@ public class ProductInfoDAO {
         }
         return null;
     }
-
-
-
-
 }
 
 //     private final DataSource dataSource;
@@ -157,4 +153,4 @@ public class ProductInfoDAO {
 //             System.out.println("Insert Success");
 //         }
 //     }
-}
+
