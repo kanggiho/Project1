@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardDAO {
-
     // 오늘 입고된 상품 정보를 조회하는 메서드
     public List<InputProductWarehouseInfoVO> getTodayInputProducts() {
         List<InputProductWarehouseInfoVO> todayInputProducts = new ArrayList<>();
@@ -112,5 +111,4 @@ public class DashboardDAO {
         // 조회된 랜덤 추천 상품 리스트 반환
         return recommendedProducts;
     }
-
 }

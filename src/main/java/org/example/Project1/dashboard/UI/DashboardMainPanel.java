@@ -14,6 +14,7 @@ public class DashboardMainPanel extends JPanel {
 
         initComponents();
         layoutComponents();
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -22,18 +23,10 @@ public class DashboardMainPanel extends JPanel {
 
     private void layoutComponents() {
         // RandomProductRecommendationPanel 배치
-        recommendationPanel.setBounds(50, 50, 400, 200);  // x, y, width, height 조절
+        recommendationPanel.setBounds(0, 0, 550, 150);  // x, y, width, height 조절
         add(recommendationPanel);
 
 
-        // 테이블 배치
-        JScrollPane scrollPane = new JScrollPane(recommendationPanel.getRecommendationTable());
-        scrollPane.setBounds(50, 50, 350, 150);  // x, y, width, height 조절
-        add(scrollPane);
 
-        // 새로고침 버튼 배치
-        JButton refreshButton = recommendationPanel.getRefreshButton();
-        refreshButton.setBounds(200, 210, 100, 30);  // x, y, width, height 조절
-        add(refreshButton);
     }
 }
