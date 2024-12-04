@@ -44,7 +44,7 @@ public class StockUpdatePanel extends JPanel {
     }
 
     private void initUI() {
-        orderButton = new JButton("발주하기");
+        orderButton = new JButton("물건 수량 수정");
         orderButton.setBackground(Color.WHITE);
         orderButton.setFont(tossFont);
         JPanel buttonPanel = new JPanel();
