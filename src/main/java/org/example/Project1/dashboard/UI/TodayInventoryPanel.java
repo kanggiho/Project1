@@ -1,7 +1,8 @@
 package org.example.project1.dashboard.UI;
 
 import org.example.project1.dashboard.DAO.DashboardDAO;
-import org.example.project1.dashboard.VO.InputProductWarehouseInfoVO;
+import org.example.project1.dashboard.VO.InputProductProductInfoVO;
+
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -62,12 +63,12 @@ public class TodayInventoryPanel extends JPanel {
 
     public void loadTodayInventory() {
         tableModel.setRowCount(0); // 기존 데이터 제거
-        List<InputProductWarehouseInfoVO> todayInputProducts = dashboardDAO.getTodayInputProducts();
-        for (InputProductWarehouseInfoVO product : todayInputProducts) {
+        List<InputProductProductInfoVO> todayInputProducts = dashboardDAO.getTodayInputProducts();
+        for (InputProductProductInfoVO product : todayInputProducts) {
             Object[] row = {
                     product.getProductName(),
                     product.getWarehousingQuantity(),
-                    product.getWarehouseName()
+                    product.getPrice()
             };
             tableModel.addRow(row);
         }
