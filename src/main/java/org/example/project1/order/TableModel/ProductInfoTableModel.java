@@ -1,10 +1,9 @@
-package org.example.project1.order.UI;
+package org.example.project1.order.TableModel;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.example.project1.order.VO.OutputRequestVO;
 import org.example.project1.order.VO.ProductInfoProductVO;
 
 public class ProductInfoTableModel extends AbstractTableModel {

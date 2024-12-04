@@ -1,11 +1,10 @@
-package org.example.project1.order.UI;
+package org.example.project1.inout.UI;
 
 import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.VO.OutputInfoProductWarehouseInfoOrdererVO;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;

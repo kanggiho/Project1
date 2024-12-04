@@ -1,4 +1,4 @@
-package org.example.project1.order.UI;
+package org.example.project1.order.TableModel;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

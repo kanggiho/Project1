@@ -1,10 +1,10 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
-import org.example.project1.inventory.UI.InventoryManagementPanel;
+import org.example.project1.dashboard.UI.DashboardMainPanel;
 import org.example.project1.order.UI.ConfirmListPanel;
 import org.example.project1.order.UI.OutgoingPanel;
-import org.example.project1.account.UI.UserDataUpdate;
+import org.example.project1.account.UI.UserDataUpdatePanel;
 import org.example.project1.user.UI.LoginFrame;
 
 import javax.swing.*;
@@ -61,7 +61,7 @@ public class UserMenuFrame extends JFrame {
 
 
         JLabel myPageLabel = new JLabel("마이페이지");
-        myPageLabel.setBounds(980,27,70,30);
+        myPageLabel.setBounds(980, 27, 70, 30);
         myPageLabel.setForeground(Color.WHITE);
         topBar.add(myPageLabel);
         myPageLabel.setFont(new Font(toss_font, Font.PLAIN, 14));
@@ -76,7 +76,7 @@ public class UserMenuFrame extends JFrame {
 
 
         JLabel logoutLabel = new JLabel("로그아웃");
-        logoutLabel.setBounds(1080,27,70,30);
+        logoutLabel.setBounds(1080, 27, 70, 30);
         logoutLabel.setForeground(Color.WHITE);
         topBar.add(logoutLabel);
         logoutLabel.setFont(new Font(toss_font, Font.PLAIN, 14));
@@ -101,15 +101,15 @@ public class UserMenuFrame extends JFrame {
         add(buttonBar);
 
         // 버튼 생성 및 추가
-        JButton btnIncoming = createButton("발주관리", ColorSet.color1_light[1]);
-        JButton btnOutgoing = createButton("발주내역확인", ColorSet.color1_light[1]);
-        JButton btnInventory = createButton("대시보드", ColorSet.color1_light[1]);
-        JButton btnHistory = createButton("창고위치찾기", ColorSet.color1_light[1]);
+        JButton btnOutgoing = createButton("발주관리", ColorSet.color1_light[1]);
+        JButton btnOutgoingConfirm = createButton("발주내역확인", ColorSet.color1_light[1]);
+        JButton btnDashBoard = createButton("대시보드", ColorSet.color1_light[1]);
+        JButton btnUpdateData = createButton("회원정보수정", ColorSet.color1_light[1]);
 
-        buttonBar.add(btnIncoming);
         buttonBar.add(btnOutgoing);
-        buttonBar.add(btnInventory);
-        buttonBar.add(btnHistory);
+        buttonBar.add(btnOutgoingConfirm);
+        buttonBar.add(btnDashBoard);
+        buttonBar.add(btnUpdateData);
 
         // InnerPanel 생성
         innerPanel = new JPanel();
@@ -120,32 +120,52 @@ public class UserMenuFrame extends JFrame {
 
 
         // 본인 패널 객체 생성
-        OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리",name);
-        ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인",name);
+        OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리", name);
+        ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인", name);
+        UserDataUpdatePanel userDataUpdatePanel = new UserDataUpdatePanel("회원 정보 수정",name,this);
+        DashboardMainPanel dashboardMainPanel = new DashboardMainPanel();
 
 
         // 각 패널 추가
-        innerPanel.add(outgoingPanel,"발주관리");
+        innerPanel.add(outgoingPanel, "발주관리");
         innerPanel.add(confirmListPanel, "발주내역확인");
-        innerPanel.add(createPanel("대시보드 화면"), "대시보드");
-        innerPanel.add(createPanel("창고위치찾기 화면"), "창고위치찾기");
+        innerPanel.add(dashboardMainPanel, "대시보드");
+        innerPanel.add(userDataUpdatePanel, "회원정보수정");
         add(innerPanel);
 
         // 버튼 클릭 이벤트
-        btnIncoming.addActionListener(new UserMenuFrame.ButtonActionListener(btnIncoming, "발주관리"));
-        btnOutgoing.addActionListener(new UserMenuFrame.ButtonActionListener(btnOutgoing, "발주내역확인"));
+        btnOutgoing.addActionListener(new UserMenuFrame.ButtonActionListener(btnOutgoing, "발주관리"));
         btnOutgoing.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outgoingPanel.refresh();
+            }
+        });
+        btnOutgoingConfirm.addActionListener(new UserMenuFrame.ButtonActionListener(btnOutgoingConfirm, "발주내역확인"));
+        btnOutgoingConfirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 confirmListPanel.loadData();
             }
         });
-        btnInventory.addActionListener(new UserMenuFrame.ButtonActionListener(btnInventory, "대시보드"));
-        btnHistory.addActionListener(new UserMenuFrame.ButtonActionListener(btnHistory, "창고위치찾기"));
+        btnDashBoard.addActionListener(new UserMenuFrame.ButtonActionListener(btnDashBoard, "대시보드"));
+        btnDashBoard.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        btnUpdateData.addActionListener(new UserMenuFrame.ButtonActionListener(btnUpdateData, "회원정보수정"));
+        btnUpdateData.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userDataUpdatePanel.setData();
+            }
+        });
 
         // 초기 선택된 버튼 설정
-        currentSelectedButton = btnIncoming;
-        btnIncoming.setBackground(ColorSet.color1_bold[1]);
+        currentSelectedButton = btnOutgoing;
+        btnOutgoing.setBackground(ColorSet.color1_bold[1]);
         setVisible(true);
     }
 
@@ -158,18 +178,6 @@ public class UserMenuFrame extends JFrame {
         button.setBorderPainted(false); // 버튼 테두리 제거
         button.setForeground(Color.WHITE); // 글자색 흰색
         return button;
-    }
-
-    // 패널 생성 메서드
-    private JPanel createPanel(String text) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font(toss_font, Font.BOLD, 20));
-        label.setForeground(Color.WHITE);
-        panel.add(label, BorderLayout.CENTER);
-        panel.setBackground(ColorSet.color1_light[0]);
-        return panel;
     }
 
     // 버튼 액션 리스너 클래스

@@ -1,8 +1,10 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.account.UI.UserGradeManagementPanel;
 import org.example.project1.inout.UI.IncomingManagementPanel;
 import org.example.project1.inout.UI.OutgoingConfirmPanel;
+import org.example.project1.inventory.UI.InventoryManagementPanel;
 import org.example.project1.inventory.UI.StockStatusPanel;
 import org.example.project1.user.UI.LoginFrame;
 
@@ -12,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
 
 public class AdminMenuFrame extends JFrame {
     private CardLayout cardLayout;
@@ -101,16 +104,16 @@ public class AdminMenuFrame extends JFrame {
 
 
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
-        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
-        StockStatusPanel stockStatusPanel = new StockStatusPanel("재고관리");
+        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel(name);
+        InventoryManagementPanel inventoryManagementPanel =new InventoryManagementPanel("재고관리",this);
+        UserGradeManagementPanel userGradeManagementPanel =new UserGradeManagementPanel("회원등급수정");
 
 
         // 각 패널 추가
         innerPanel.add(incomingManagementPanel, "입고관리");
         innerPanel.add(outgoingConfirmPanel, "출고요청관리");
-        innerPanel.add(stockStatusPanel, "재고관리");
-
-        innerPanel.add(createPanel("회원등급수정 화면"), "회원등급수정");
+        innerPanel.add(inventoryManagementPanel, "재고관리");
+        innerPanel.add(userGradeManagementPanel, "회원등급수정");
         add(innerPanel);
 
         // 버튼 클릭 이벤트

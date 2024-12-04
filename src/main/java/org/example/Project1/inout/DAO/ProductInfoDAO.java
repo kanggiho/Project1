@@ -1,21 +1,38 @@
-package org.example.project1.order.DAO;
+package org.example.project1.inout.DAO;
+
+
+import org.example.project1.inout.VO.ProductInfoProductVO;
+import org.example.project1.inout.VO.ProductInfoVO;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import org.example.project1.order.TableModel.ProductInfoTableModel;
-import org.example.project1.order.VO.ProductInfoProductVO;
-import org.example.project1.order.VO.ProductInfoVO;
-
-import javax.swing.*;
 
 public class ProductInfoDAO {
 
-    private Connection connection;
 
-    public ProductInfoDAO(Connection connection) {
-        this.connection = connection;
+    private Connection con;
+
+    public ProductInfoDAO() {
+        connection();
     }
+
+
+    public void connection() {
+        try {
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/project1";
+            String id = "root";
+            String pw = "1234";
+            con = DriverManager.getConnection(url, id, pw);
+        } catch (Exception e) {
+
+        }
+    }
+
+
+
 
     public List<ProductInfoProductVO> getInventoryStatus() throws SQLException {
         List<ProductInfoProductVO> list = new ArrayList<>();
@@ -25,7 +42,7 @@ public class ProductInfoDAO {
                 "JOIN product p ON pi.product_code = p.product_code " +
                 "ORDER BY pi.product_code";
 
-        try (Statement stmt = connection.createStatement();
+        try (Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -58,7 +75,7 @@ public class ProductInfoDAO {
 
 
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmt.setInt(1, productCode);
             pstmt.setInt(2, warehouseId);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -82,7 +99,7 @@ public class ProductInfoDAO {
     // 제품의 재고 수량 업데이트 (warehouse_id 포함)
     public void updateProductStock(int productCode, int warehouseId, int newStock) throws SQLException {
         String sql = "UPDATE product_info SET stock = ? WHERE product_code = ? AND warehouse_id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             pstmt.setInt(1, newStock);
             pstmt.setInt(2, productCode);
@@ -95,7 +112,7 @@ public class ProductInfoDAO {
     // 제품의 재고 수량 업데이트 (warehouse_id 포함)
     public void updateProductStock(int productCode, int newStock) throws SQLException {
         String sql = "UPDATE product_info SET stock = ? WHERE product_code = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             pstmt.setInt(1, newStock);
             pstmt.setInt(2, productCode);
@@ -104,20 +121,10 @@ public class ProductInfoDAO {
     }
 
 
-    // 재고 확인 테이블 갱신 메서드
-    public void refreshInventoryStatus(JTable stockTable) throws SQLException {
-        ProductInfoTableModel model = (ProductInfoTableModel) stockTable.getModel();
-        List<ProductInfoProductVO> productList = getInventoryStatus();
-        model.setData(productList);
-        model.fireTableDataChanged();
-    }
-
-
-
     public ProductInfoVO one(int product_code){
         String sql = "select * from product_info where product_code = ?";
         try{
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+            PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setInt(1,product_code);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -139,7 +146,35 @@ public class ProductInfoDAO {
         return null;
     }
 
+    // ProductInfoVO 객체를 데이터베이스에 삽입하는 메서드
+    public void insert(ProductInfoVO vo) throws SQLException {
+        String sql = "INSERT INTO product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) VALUES (?,?,?,?,?,?,?)";
+        try {
+            Connection con = this.con;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, vo.getCode());
+            ps.setInt(2, vo.getProduct_code());
+            ps.setString(3, vo.getManufacturer_code());
+            ps.setInt(4, vo.getWarehouse_id());
+            ps.setInt(5, vo.getPrice());
+            ps.setInt(6, vo.getStock());
+            ps.setString(7, vo.getStock_date());
+            ps.executeUpdate();
+            System.out.println("Insert Success");
+        } catch (Exception e) {
 
+        }
+    }
 
 
 }
+
+//     private final DataSource dataSource;
+
+//     // 생성자: HikariCP를 통해 DataSource를 초기화합니다.
+//     public ProductInfoDAO() {
+//         this.dataSource = HikariCPDataSource.getInstance().getDataSource();
+//     }
+
+
+
