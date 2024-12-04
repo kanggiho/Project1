@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class InputProductWarehouseInfoVO {
+public class InputProductProductInfoVO {
     // input 테이블 정보
     private int inputNum;
     private String manufacturerCode;
@@ -21,9 +21,12 @@ public class InputProductWarehouseInfoVO {
     private int productCode;
     private String productName;
 
-    // warehouse_info 테이블 정보
-    private int warehouseId;
-    private String warehouseName;
-    private String warehouseLocation;
-    private String warehouseTemperature;
+    // product_info 테이블 정보
+    private String code; // 분류코드
+    private int product_code; // 자재코드
+    private String manufacturer_code; // 제조업체
+    private int warehouse_id; // 창고번호
+    private int price; // 단가
+    private int stock; // 재고수량
+    private String stock_date; // 입고예정일
 }
