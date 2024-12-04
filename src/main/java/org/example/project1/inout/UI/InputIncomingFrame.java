@@ -36,7 +36,6 @@ public class InputIncomingFrame extends JFrame {
         setUI();
         setComboBox();
         setVisible(true);
-
     }
 
     public void setFrame() {
@@ -161,6 +160,7 @@ public class InputIncomingFrame extends JFrame {
             makeProduct();
             makeInput();
             makeProductInfo();
+            dispose();
         });
     }
 
