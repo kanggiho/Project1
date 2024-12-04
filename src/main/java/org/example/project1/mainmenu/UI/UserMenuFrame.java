@@ -152,7 +152,7 @@ public class UserMenuFrame extends JFrame {
         btnDashBoard.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                dashboardMainPanel.updateChart();
             }
         });
         btnUpdateData.addActionListener(new UserMenuFrame.ButtonActionListener(btnUpdateData, "회원정보수정"));

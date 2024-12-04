@@ -12,7 +12,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashboardDAO {
+public class DashboardDAO implements AutoCloseable {
+    private Connection conn;
+
+    // 생성자에서 Connection 초기화
+    public DashboardDAO() {
+        initConnection();
+    }
+
+    // HikariCP를 사용하여 Connection 초기화하는 메서드
+    private void initConnection() {
+        try {
+            this.conn = HikariCPDataSource.getInstance().getDataSource().getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 예외 처리: 필요한 경우 재throw하거나 커스텀 예외로 변환
+        }
+    }
+
     // 오늘 입고된 상품 정보를 조회하는 메서드
     public List<InputProductWarehouseInfoVO> getTodayInputProducts() {
         List<InputProductWarehouseInfoVO> todayInputProducts = new ArrayList<>();
@@ -24,9 +41,8 @@ public class DashboardDAO {
                 "JOIN warehouse_info w ON i.warehouse_id = w.warehouse_id " +
                 "WHERE i.warehoused_date = CURDATE()";
 
-        // HikariCP를 사용하여 데이터베이스 연결 및 쿼리 실행
-        try (Connection conn = HikariCPDataSource.getInstance().getDataSource().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
+        // PreparedStatement와 ResultSet을 try-with-resources로 관리
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             // 결과 집합을 순회하며 VO 객체에 데이터 설정
@@ -38,13 +54,14 @@ public class DashboardDAO {
                 todayInputProducts.add(vo);
             }
         } catch (SQLException e) {
-            // SQL 예외 발생 시 스택 트레이스 출력
             e.printStackTrace();
+            // 예외 처리: 필요한 경우 로깅 또는 재throw
         }
 
         // 조회된 오늘의 입고 상품 리스트 반환
         return todayInputProducts;
     }
+
     // 인기 품목 Top 5를 조회하는 메서드
     public List<ProductOutputInfoVO> getTopSellingProducts() {
         List<ProductOutputInfoVO> topSellingProducts = new ArrayList<>();
@@ -58,9 +75,7 @@ public class DashboardDAO {
                 "ORDER BY total_quantity DESC " +
                 "LIMIT 5";
 
-        // HikariCP를 사용하여 데이터베이스 연결 및 쿼리 실행
-        try (Connection conn = HikariCPDataSource.getInstance().getDataSource().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             // 결과 집합을 순회하며 VO 객체에 데이터 설정
@@ -71,13 +86,14 @@ public class DashboardDAO {
                 topSellingProducts.add(vo);
             }
         } catch (SQLException e) {
-            // SQL 예외 발생 시 스택 트레이스 출력
             e.printStackTrace();
+            // 예외 처리
         }
 
         // 조회된 인기 품목 리스트 반환
         return topSellingProducts;
     }
+
     // 랜덤으로 5개의 상품을 추천하는 메서드
     public List<ProductProductInfoManufacturingInfoVO> getRandomRecommendedProducts() {
         List<ProductProductInfoManufacturingInfoVO> recommendedProducts = new ArrayList<>();
@@ -90,9 +106,7 @@ public class DashboardDAO {
                 "ORDER BY RAND() " +
                 "LIMIT 5";
 
-        // HikariCP를 사용하여 데이터베이스 연결 및 쿼리 실행
-        try (Connection conn = HikariCPDataSource.getInstance().getDataSource().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
             // 결과 집합을 순회하며 VO 객체에 데이터 설정
@@ -104,11 +118,24 @@ public class DashboardDAO {
                 recommendedProducts.add(vo);
             }
         } catch (SQLException e) {
-            // SQL 예외 발생 시 스택 트레이스 출력
             e.printStackTrace();
+            // 예외 처리
         }
 
         // 조회된 랜덤 추천 상품 리스트 반환
         return recommendedProducts;
+    }
+
+    // Connection을 닫는 메서드
+    @Override
+    public void close() {
+        if (this.conn != null) {
+            try {
+                this.conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // 예외 처리
+            }
+        }
     }
 }
