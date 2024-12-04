@@ -5,11 +5,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-
+//오늘 입고상품 조회시 사용
 @Getter
 @Setter
 @ToString
-public class InpuProductWarehouseInfoVO {
+public class InputProductWarehouseInfoVO {
     // input 테이블 정보
     private int inputNum;
     private String manufacturerCode;
