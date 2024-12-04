@@ -1,5 +1,6 @@
 package org.example.project1.inout.UI;
 
+import org.example.project1.inout.DAO.AdminDAO;
 import org.example.project1.inout.DAO.OutputInfo2DAO;
 import org.example.project1.inout.DAO.OutputInfoDAO;
 import org.example.project1.inout.VO.*;
@@ -15,13 +16,15 @@ import java.util.ArrayList;
 
 public class OutgoingConfirmPanel extends JPanel {
     private Connection conn;
+    private String name;
 
     // Filter components
     private JComboBox<String> searchFilterComboBox;
     private JButton searchButton;
     private JRadioButton rejectedRadioBtn, approvedRadioBtn, pendingRadioBtn, allRadioBtn;
     private ButtonGroup statusButtonGroup;
-    private JTextField searchField, productCode, confirmId;
+    private JTextField searchField, productCode;
+    private JLabel confirmId;
 
     // Table and model
     private JTable dataTable;
@@ -31,9 +34,10 @@ public class OutgoingConfirmPanel extends JPanel {
     private OutputInfoDAO outputInfoDAO;
 
 
-    public OutgoingConfirmPanel() throws Exception {
+    public OutgoingConfirmPanel(String name) throws Exception {
         this.outputInfo2DAO = new OutputInfo2DAO();
         this.outputInfoDAO = new OutputInfoDAO();
+        this.name = name;
         initializePanel();
         loadTableData("전체");
     }
@@ -225,8 +229,13 @@ public class OutgoingConfirmPanel extends JPanel {
 
         productCode = createPlaceholderTextField("자재 코드 입력");
         productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        confirmId = createPlaceholderTextField("결재자 사번");
-        confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        try {
+
+            confirmId = new JLabel("결재자 : " + name);
+        } catch (Exception e) {
+
+        }
+        confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
 
         JButton confirmButton = createButtonForConfirm("승인", e -> handleConfirmAction("승인"));
         JButton rejectButton = createButtonForConfirm("거절", e -> handleConfirmAction("거절"));
@@ -256,9 +265,9 @@ public class OutgoingConfirmPanel extends JPanel {
         String selectedOption = (String) searchFilterComboBox.getSelectedItem();
         try {
             DefaultTableModel model = new DefaultTableModel();
-             if ("결재자".equals(selectedOption)) {
+            if ("결재자".equals(selectedOption)) {
                 handleConfirmSearch(model);
-             }
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "데이터 검색 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -391,16 +400,16 @@ public class OutgoingConfirmPanel extends JPanel {
     }
 
     private void clearTable() {
-            tableModel.setRowCount(0); // 기존 데이터 제거
-            dataTable.setModel(new DefaultTableModel()); // 새 모델로 테이블 초기화
-            dataTable.revalidate();
-            dataTable.repaint();
+        tableModel.setRowCount(0); // 기존 데이터 제거
+        dataTable.setModel(new DefaultTableModel()); // 새 모델로 테이블 초기화
+        dataTable.revalidate();
+        dataTable.repaint();
     }
 
     private Object[] extractRowData(Object data) {
         if (data instanceof OutputInfoProductWarehouseInfoOrdererVO vo) {
             return new Object[]{vo.getProduct_code(), vo.getProduct_name(), vo.getWarehouse_name(),
-                    vo.getId(), vo.getOrderer_name(), vo.getUnit_price(), vo.getRelease_date(),
+                    vo.getId(), vo.getOrderer_name(), vo.getUnit_price(), vo.getRelease_quantity(),
                     vo.getConfirm_num(), vo.getRelease_date(), vo.getConfirm_id(), vo.getStatus()};
         }
         return new Object[0];
@@ -408,8 +417,9 @@ public class OutgoingConfirmPanel extends JPanel {
 
     private void handleConfirmAction(String status) {
         try {
+            AdminDAO adminDAO = new AdminDAO();
             String productCodeInput = productCode.getText();
-            String confirmIdInput = confirmId.getText();
+            String confirmIdInput = String.valueOf(adminDAO.one(name).getId());
 
             OutputInfoVO vo = new OutputInfoVO();
             ProductInfoVO vo2 = new ProductInfoVO();
@@ -436,6 +446,6 @@ public class OutgoingConfirmPanel extends JPanel {
 
     private void clearFields() {
         productCode.setText("자재코드 입력");
-        confirmId.setText("결재자 사번 입력");
+        //confirmId.setText("결재자 사번 입력");
     }
 }

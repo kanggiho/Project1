@@ -11,11 +11,28 @@ import java.util.List;
 public class ProductInfoDAO {
 
 
-    private Connection connection;
+    private Connection con;
 
-    public ProductInfoDAO(Connection connection) {
-        this.connection = connection;
+    public ProductInfoDAO() {
+        connection();
     }
+
+
+    public void connection() {
+        try {
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String url = "jdbc:mysql://localhost:3306/project1";
+            String id = "root";
+            String pw = "1234";
+            con = DriverManager.getConnection(url, id, pw);
+        } catch (Exception e) {
+
+        }
+    }
+
+
+
 
     public List<ProductInfoProductVO> getInventoryStatus() throws SQLException {
         List<ProductInfoProductVO> list = new ArrayList<>();
@@ -25,7 +42,7 @@ public class ProductInfoDAO {
                 "JOIN product p ON pi.product_code = p.product_code " +
                 "ORDER BY pi.product_code";
 
-        try (Statement stmt = connection.createStatement();
+        try (Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -58,7 +75,7 @@ public class ProductInfoDAO {
 
 
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmt.setInt(1, productCode);
             pstmt.setInt(2, warehouseId);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -82,7 +99,7 @@ public class ProductInfoDAO {
     // 제품의 재고 수량 업데이트 (warehouse_id 포함)
     public void updateProductStock(int productCode, int warehouseId, int newStock) throws SQLException {
         String sql = "UPDATE product_info SET stock = ? WHERE product_code = ? AND warehouse_id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             pstmt.setInt(1, newStock);
             pstmt.setInt(2, productCode);
@@ -95,7 +112,7 @@ public class ProductInfoDAO {
     // 제품의 재고 수량 업데이트 (warehouse_id 포함)
     public void updateProductStock(int productCode, int newStock) throws SQLException {
         String sql = "UPDATE product_info SET stock = ? WHERE product_code = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             pstmt.setInt(1, newStock);
             pstmt.setInt(2, productCode);
@@ -107,7 +124,7 @@ public class ProductInfoDAO {
     public ProductInfoVO one(int product_code){
         String sql = "select * from product_info where product_code = ?";
         try{
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+            PreparedStatement pstmt = con.prepareStatement(sql);
             pstmt.setInt(1,product_code);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -130,7 +147,25 @@ public class ProductInfoDAO {
     }
 
 
+    // ProductInfoVO 객체를 데이터베이스에 삽입하는 메서드
+    public void insert(ProductInfoVO vo) throws SQLException {
+        String sql = "INSERT INTO product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) VALUES (?,?,?,?,?,?,?)";
+        try {
+            Connection con = this.con;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, vo.getCode());
+            ps.setInt(2, vo.getProduct_code());
+            ps.setString(3, vo.getManufacturer_code());
+            ps.setInt(4, vo.getWarehouse_id());
+            ps.setInt(5, vo.getPrice());
+            ps.setInt(6, vo.getStock());
+            ps.setString(7, vo.getStock_date());
+            ps.executeUpdate();
+            System.out.println("Insert Success");
+        } catch (Exception e) {
 
+        }
+    }
 
 }
 
@@ -141,20 +176,5 @@ public class ProductInfoDAO {
 //         this.dataSource = HikariCPDataSource.getInstance().getDataSource();
 //     }
 
-//     // ProductInfoVO 객체를 데이터베이스에 삽입하는 메서드
-//     public void insert(ProductInfoVO vo) throws SQLException {
-//         String sql = "INSERT INTO product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) VALUES (?,?,?,?,?,?,?)";
-//         try (Connection con = dataSource.getConnection();
-//              PreparedStatement ps = con.prepareStatement(sql)) {
-//             ps.setString(1, vo.getCode());
-//             ps.setInt(2, vo.getProduct_code());
-//             ps.setString(3, vo.getManufacturer_code());
-//             ps.setInt(4, vo.getWarehouse_id());
-//             ps.setInt(5, vo.getPrice());
-//             ps.setInt(6, vo.getStock());
-//             ps.setString(7, vo.getStock_date());
-//             ps.executeUpdate();
-//             System.out.println("Insert Success");
-//         }
-//     }
-}
+
+
