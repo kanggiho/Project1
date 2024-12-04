@@ -1,8 +1,10 @@
 package org.example.project1.inventory.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -45,8 +47,12 @@ public class StockUpdatePanel extends JPanel {
 
     private void initUI() {
         orderButton = new JButton("물건 수량 수정");
-        orderButton.setBackground(Color.WHITE);
-        orderButton.setFont(tossFont);
+        orderButton.setBackground(ColorSet.color_button[2]);
+        orderButton.setBorder(new LineBorder(Color.GRAY, 1));
+        orderButton.setFont(new Font(tossFont.getName(), Font.PLAIN, 14));
+        orderButton.setForeground(Color.BLACK);
+        orderButton.setPreferredSize(new Dimension(110, 30));
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         buttonPanel.add(orderButton);

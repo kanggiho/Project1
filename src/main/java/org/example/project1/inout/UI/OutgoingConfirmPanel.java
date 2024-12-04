@@ -1,5 +1,6 @@
 package org.example.project1.inout.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inout.DAO.AdminDAO;
 import org.example.project1.inout.DAO.OutputInfo2DAO;
 import org.example.project1.inout.DAO.OutputInfoDAO;
@@ -256,8 +257,16 @@ public class OutgoingConfirmPanel extends JPanel {
         confirmId.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
 
         JButton confirmButton = createButtonForConfirm("승인", e -> handleConfirmAction("승인"));
+        confirmButton.setBackground(ColorSet.color_button[1]);
+        confirmButton.setForeground(Color.WHITE);
+
         JButton rejectButton = createButtonForConfirm("거절", e -> handleConfirmAction("거절"));
+        rejectButton.setBackground(ColorSet.color_button[0]);
+        rejectButton.setForeground(Color.WHITE);
+
         JButton clearButton = createButtonForConfirm("초기화", e -> clearFields());
+        clearButton.setBackground(ColorSet.color_button[2]);
+        clearButton.setForeground(Color.BLACK);
 
         bottomPanel.add(bottomLabel);
         bottomPanel.add(productCode);

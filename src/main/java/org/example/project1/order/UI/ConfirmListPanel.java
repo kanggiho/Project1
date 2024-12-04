@@ -1,5 +1,6 @@
 package org.example.project1.order.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.VO.OutputInfoProductWarehouseInfoOrdererVO;
@@ -139,15 +140,17 @@ public class ConfirmListPanel extends JPanel {
         // --------------------- 버튼 추가 ---------------------
         JButton deleteButton = new JButton("취소");
         deleteButton.setFont(new Font(toss_font, Font.PLAIN, 14));
-        deleteButton.setBackground(new Color(255, 182, 193));
-        //deleteButton.setBorder(new LineBorder(Color.BLACK, 2));
+        deleteButton.setBackground(ColorSet.color_button[0]);
+        deleteButton.setForeground(Color.white);
+        deleteButton.setBorder(new LineBorder(Color.GRAY, 1));
         deleteButton.setBounds(780,400 , 110, 40);
         add(deleteButton);
 
         JButton deleteAllButton = new JButton("전체취소");
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
-        deleteAllButton.setBackground(new Color(255, 182, 193));
-        //deleteAllButton.setBorder(new LineBorder(Color.BLACK, 2));
+        deleteAllButton.setBackground(Color.RED);
+        deleteAllButton.setForeground(Color.white);
+        deleteAllButton.setBorder(new LineBorder(Color.GRAY, 1));
         deleteAllButton.setBounds(900, 400, 110, 40);
         add(deleteAllButton);
 

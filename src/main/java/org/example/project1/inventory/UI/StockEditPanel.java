@@ -1,9 +1,11 @@
 package org.example.project1.inventory.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -38,9 +40,10 @@ public class StockEditPanel extends JPanel {
 
     private JButton createEditButton() {
         JButton button = new JButton("선택 항목 수정");
-        button.setBackground(Color.WHITE);
+        button.setBackground(ColorSet.color_button[2]);
+        button.setBorder(new LineBorder(Color.GRAY, 1));
         button.setFont(new Font(tossFont.getName(), Font.PLAIN, 14));
-        button.setPreferredSize(new Dimension(120, 30));
+        button.setPreferredSize(new Dimension(110, 30));
         button.setEnabled(false);
         return button;
     }
