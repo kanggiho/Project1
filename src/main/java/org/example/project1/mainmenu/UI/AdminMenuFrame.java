@@ -104,7 +104,7 @@ public class AdminMenuFrame extends JFrame {
 
 
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
-        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
+        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel(name);
         InventoryManagementPanel inventoryManagementPanel =new InventoryManagementPanel("재고관리",this);
         UserGradeManagementPanel userGradeManagementPanel =new UserGradeManagementPanel("회원등급수정");
 
