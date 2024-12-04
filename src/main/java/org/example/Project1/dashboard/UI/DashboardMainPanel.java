@@ -6,6 +6,8 @@ import java.awt.*;
 public class DashboardMainPanel extends JPanel {
 
     private RandomProductRecommendationPanel recommendationPanel;
+    private TopSellingProductsPanel topSellingProductsPanel;
+    private TodayInventoryPanel todayInventoryPanel;
 
     private PieChartPanel pieChartPanel;
 
@@ -23,14 +25,9 @@ public class DashboardMainPanel extends JPanel {
         layoutComponents();
         setVisible(true);
     }
+
     private void init() {
         font = new Font("머니그라피TTF Rounded", Font.PLAIN, 20);
-    }
-
-    private void initComponents() {
-        recommendationPanel = new RandomProductRecommendationPanel();
-
-
     }
 
     public void initChart(){
@@ -43,6 +40,12 @@ public class DashboardMainPanel extends JPanel {
         add(chartTitleLabel);
         add(pieChartPanel);
     }
+  
+    private void initComponents() {
+        recommendationPanel = new RandomProductRecommendationPanel();
+        topSellingProductsPanel = new TopSellingProductsPanel();
+        todayInventoryPanel = new TodayInventoryPanel();
+    }
 
     private void layoutComponents() {
         // RandomProductRecommendationPanel 배치
@@ -52,5 +55,9 @@ public class DashboardMainPanel extends JPanel {
 
     public void updateChart(){
         pieChartPanel.getNew();
+        topSellingProductsPanel.setBounds(0, 150, 550, 150);
+        add(topSellingProductsPanel);
+        todayInventoryPanel.setBounds(0, 300, 550, 150);
+        add(todayInventoryPanel);
     }
 }
