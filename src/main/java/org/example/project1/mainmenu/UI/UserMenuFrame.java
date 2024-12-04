@@ -1,6 +1,7 @@
 package org.example.project1.mainmenu.UI;
 
 import org.example.project1._common.utility.ColorSet;
+import org.example.project1.dashboard.UI.DashboardMainPanel;
 import org.example.project1.order.UI.ConfirmListPanel;
 import org.example.project1.order.UI.OutgoingPanel;
 import org.example.project1.account.UI.UserDataUpdatePanel;
@@ -122,12 +123,13 @@ public class UserMenuFrame extends JFrame {
         OutgoingPanel outgoingPanel = new OutgoingPanel("발주 관리", name);
         ConfirmListPanel confirmListPanel = new ConfirmListPanel("발주 내역 확인", name);
         UserDataUpdatePanel userDataUpdatePanel = new UserDataUpdatePanel("회원 정보 수정",name,this);
+        DashboardMainPanel dashboardMainPanel = new DashboardMainPanel();
 
 
         // 각 패널 추가
         innerPanel.add(outgoingPanel, "발주관리");
         innerPanel.add(confirmListPanel, "발주내역확인");
-        innerPanel.add(createPanel("대시보드 화면"), "대시보드");
+        innerPanel.add(dashboardMainPanel, "대시보드");
         innerPanel.add(userDataUpdatePanel, "회원정보수정");
         add(innerPanel);
 
@@ -176,18 +178,6 @@ public class UserMenuFrame extends JFrame {
         button.setBorderPainted(false); // 버튼 테두리 제거
         button.setForeground(Color.WHITE); // 글자색 흰색
         return button;
-    }
-
-    // 패널 생성 메서드
-    private JPanel createPanel(String text) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setFont(new Font(toss_font, Font.BOLD, 20));
-        label.setForeground(Color.WHITE);
-        panel.add(label, BorderLayout.CENTER);
-        panel.setBackground(ColorSet.color1_light[0]);
-        return panel;
     }
 
     // 버튼 액션 리스너 클래스
