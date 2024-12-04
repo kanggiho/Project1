@@ -1,7 +1,7 @@
 package org.example.project1.dashboard.DAO;
 
 import org.example.project1._common._Ut.HikariCPDataSource;
-import org.example.project1.dashboard.VO.InputProductWarehouseInfoVO;
+import org.example.project1.dashboard.VO.InputProductProductInfoVO;
 import org.example.project1.dashboard.VO.ProductOutputInfoVO;
 import org.example.project1.dashboard.VO.ProductProductInfoManufacturingInfoVO;
 
@@ -31,14 +31,14 @@ public class DashboardDAO implements AutoCloseable {
     }
 
     // 오늘 입고된 상품 정보를 조회하는 메서드
-    public List<InputProductWarehouseInfoVO> getTodayInputProducts() {
-        List<InputProductWarehouseInfoVO> todayInputProducts = new ArrayList<>();
+    public List<InputProductProductInfoVO> getTodayInputProducts() {
+        List<InputProductProductInfoVO> todayInputProducts = new ArrayList<>();
 
-        // SQL 쿼리: 오늘 날짜로 입고된 상품의 이름, 수량, 창고 이름을 조회
-        String sql = "SELECT p.product_name, i.warehoused_quantity, w.warehouse_name " +
+        // SQL 쿼리: 오늘 날짜로 입고된 상품의 이름, 수량, 가격을 조회
+        String sql = "SELECT p.product_name, i.warehoused_quantity, pi.price " +
                 "FROM input i " +
                 "JOIN product p ON i.product_code = p.product_code " +
-                "JOIN warehouse_info w ON i.warehouse_id = w.warehouse_id " +
+                "JOIN product_info pi ON i.product_code = pi.product_code " +
                 "WHERE i.warehoused_date = CURDATE()";
 
         // PreparedStatement와 ResultSet을 try-with-resources로 관리
@@ -47,10 +47,10 @@ public class DashboardDAO implements AutoCloseable {
 
             // 결과 집합을 순회하며 VO 객체에 데이터 설정
             while (rs.next()) {
-                InputProductWarehouseInfoVO vo = new InputProductWarehouseInfoVO();
+                InputProductProductInfoVO vo = new InputProductProductInfoVO();
                 vo.setProductName(rs.getString("product_name"));
                 vo.setWarehousingQuantity(rs.getInt("warehoused_quantity"));
-                vo.setWarehouseName(rs.getString("warehouse_name"));
+                vo.setPrice(rs.getInt("price")); // 가격 정보 추가
                 todayInputProducts.add(vo);
             }
         } catch (SQLException e) {
@@ -61,7 +61,6 @@ public class DashboardDAO implements AutoCloseable {
         // 조회된 오늘의 입고 상품 리스트 반환
         return todayInputProducts;
     }
-
     // 인기 품목 Top 5를 조회하는 메서드
     public List<ProductOutputInfoVO> getTopSellingProducts() {
         List<ProductOutputInfoVO> topSellingProducts = new ArrayList<>();
