@@ -10,8 +10,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class OutgoingConfirmPanel extends JPanel {
@@ -39,7 +40,22 @@ public class OutgoingConfirmPanel extends JPanel {
         this.outputInfoDAO = new OutputInfoDAO();
         this.name = name;
         initializePanel();
+        initializeDatabaseConnection();
         loadTableData("전체");
+    }
+
+    // ------------------ 데이터베이스 연결 초기화 ---------------------
+    private void initializeDatabaseConnection() throws SQLException {
+        String dbUrl = "jdbc:mysql://localhost:3306/project1";
+        String dbUser = "root";
+        String dbPassword = "1234";
+        conn = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+        if (conn != null) {
+            System.out.println("Database connection established successfully.");
+        } else {
+            throw new SQLException("Database connection failed.");
+        }
     }
 
     // ------------------ JPanel 초기화 ---------------------
@@ -426,9 +442,14 @@ public class OutgoingConfirmPanel extends JPanel {
             OutputInfoVO vo = new OutputInfoVO();
             ProductInfoVO vo2 = new ProductInfoVO();
 
+
+            int newApprovalNumber = generateApprovalNumber(conn);
+
             vo.setProduct_code(Integer.parseInt(productCodeInput));
             vo.setConfirm_id(Integer.parseInt(confirmIdInput));
             vo.setStatus(status);
+            vo.setConfirm_num(newApprovalNumber);
+            vo.setRelease_date(LocalDate.parse(getToday()));
 
             vo2.setProduct_code(Integer.parseInt(productCodeInput));
             outputInfoDAO.updateInventory(vo2);
@@ -449,5 +470,31 @@ public class OutgoingConfirmPanel extends JPanel {
     private void clearFields() {
         productCode.setText("자재코드 입력");
         //confirmId.setText("결재자 사번 입력");
+    }
+
+    // 출고 날짜에 오늘 날짜 가져오기
+    private String getToday(){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+
+        // 날짜 형식 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 형식에 맞게 변환
+        String formattedDate = today.format(formatter);
+
+        return formattedDate;
+    }
+
+    // 10000 이상의 승인 번호 자동으로 생성
+    private static int generateApprovalNumber(Connection conn) throws SQLException {
+        String query = "SELECT IFNULL(MAX(confirm_num), 10020) + 1 AS nextConfirmNumber FROM output_info";
+        try (PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("nextConfirmNumber");
+            }
+        }
+        throw new SQLException("승인 번호를 생성할 수 없습니다.");
     }
 }
