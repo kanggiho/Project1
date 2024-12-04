@@ -41,7 +41,6 @@ public class InputIncomingFrame extends JFrame {
     public void setFrame() {
         setSize(600, 340);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
     }
 
