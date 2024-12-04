@@ -5,6 +5,8 @@ import org.example.project1.inout.VO.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -231,6 +233,18 @@ public class InputIncomingFrame extends JFrame {
 
         }
     }
+    private String getToday(){
+        // 오늘 날짜 가져오기
+        LocalDate today = LocalDate.now();
+
+        // 날짜 형식 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 형식에 맞게 변환
+        String formattedDate = today.format(formatter);
+
+        return formattedDate;
+    }
 
     private void makeProduct() {
         try {
@@ -253,9 +267,9 @@ public class InputIncomingFrame extends JFrame {
             inputVO.setInputNum(-1);
             inputVO.setProductCode(newProductCode);
             inputVO.setManufacturerCode(manufacturer_code);
-            inputVO.setAskingDate("2024-12-03");
+            inputVO.setAskingDate(askingDateField.getText());
             inputVO.setWarehousedQuantity(Integer.parseInt(quantityField.getText()));
-            inputVO.setWarehousedDate("2024-12-03");
+            inputVO.setWarehousedDate(getToday());
             inputDAO.insertToInput(inputVO);
         } catch (Exception e) {
 
@@ -274,24 +288,12 @@ public class InputIncomingFrame extends JFrame {
             productInfoVO.setManufacturer_code(manufacturer_code);
             productInfoVO.setPrice(Integer.parseInt(priceField.getText()));
             productInfoVO.setStock(Integer.parseInt(quantityField.getText()));
-            productInfoVO.setStock_date("2024-12-03");
+            productInfoVO.setStock_date(getToday());
             productInfoDAO.insert(productInfoVO);
         } catch (Exception e) {
 
         }
 
 
-    }
-
-
-    public static void main(String[] args) {
-        // 폰트가 제대로 설정되지 않은 경우 기본 폰트 사용
-        try {
-            Font testFont = new Font("머니그라피TTF Rounded", Font.PLAIN, 14);
-        } catch (Exception e) {
-            System.out.println("Custom font not found. Using default font.");
-        }
-
-        SwingUtilities.invokeLater(() -> new InputIncomingFrame());
     }
 }

@@ -1,17 +1,8 @@
 package org.example.project1.inout.UI;
 
-import org.example.project1.inout.DAO.ItemClassDAO;
-import org.example.project1.inout.DAO.WarehouseInfoDAO;
-import org.example.project1.inout.VO.ItemClassVO;
-import org.example.project1.inout.VO.WarehouseInfoVO;
 import org.example.project1.inout.DAO.InputDAO;
 import org.example.project1.inout.DAO.ProductDAO;
-import org.example.project1.inout.VO.InputManuVO;
-import org.example.project1.inout.VO.InputProductVO;
-import org.example.project1.inout.VO.InputVO;
-import org.example.project1.inout.VO.ProductInfoVO;
-import org.example.project1.inout.VO.ProductVO;
-
+import org.example.project1.inout.VO.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -34,42 +25,45 @@ public class IncomingManagementPanel extends JPanel {
     private JTextField warehousedQuantity;
     private JTextField warehousedDate;
 
-    static int warehouse_id = 0;
-    static String code = "";
-    String priceInput = "";
-
     InputDAO inputDAO = new InputDAO();
     ProductDAO productDAO = new ProductDAO();
 
     public IncomingManagementPanel() throws Exception {
         setPanel();
         initUI(); // UI 초기화
+        searchAll();
     }
 
     // Panel 설정
     private void setPanel() {
         setSize(1100, 450);
-        setBackground(Color.decode("#97A6A0"));
+        setBackground(Color.white);
         setLayout(null);
         setVisible(true);
     }
 
     // UI 초기화
     private void initUI() {
-
         // ------------------- 입고 신청 내역 검색 ---------------------
+
+        // 제목 라벨 생성
+        JLabel labelForSearch = new JLabel("입고 신청 내역   ");
+        labelForSearch.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
+        labelForSearch.setForeground(Color.BLACK);
+
         // 검색창 생성
         inputField = new JTextField(20);
 
         // 데이터 테이블 생성
         resultTable = new JTable(new DefaultTableModel());
         JScrollPane scrollPane = new JScrollPane(resultTable);
+        scrollPane.setBounds(20, 40, 1060, 350);
         add(scrollPane);
 
         // 모드 선택 기능 구현
         String[] modes = {"전체보기", "자재명", "제조업체", "입고일"};
         modeSelector = new JComboBox<>(modes);
-        modeSelector.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        modeSelector.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
 
         inputField.addFocusListener(new FocusListener() {
             @Override
@@ -97,7 +91,7 @@ public class IncomingManagementPanel extends JPanel {
 
         // '검색' 버튼 기능 구현
         JButton searchButton = new JButton("검색");
-        searchButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        searchButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,7 +101,7 @@ public class IncomingManagementPanel extends JPanel {
 
         // '초기화' 버튼 추가
         JButton clearButton = new JButton("초기화");
-        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -120,22 +114,14 @@ public class IncomingManagementPanel extends JPanel {
         // 생성된 검색 기능 추가
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(labelForSearch);
         topPanel.add(modeSelector);
         topPanel.add(inputField);
         topPanel.add(searchButton);
         topPanel.add(clearButton);
         topPanel.setBackground(Color.white);
-        topPanel.setBounds(0, 0, 1100, 30);
+        topPanel.setBounds(0, 0, 1100, 40);
         add(topPanel);
-
-        // 테이블 추가
-        JPanel middlePanel = new JPanel();
-        middlePanel.setLayout(new BorderLayout());
-        middlePanel.add(scrollPane, BorderLayout.CENTER);
-        middlePanel.setBackground(Color.white);
-        middlePanel.setBounds(0, 30, 1100, 360);
-        add(middlePanel);
-
 
 
         // ----------------------- 입고 신청 기능 --------------------------
@@ -286,30 +272,16 @@ public class IncomingManagementPanel extends JPanel {
         warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         warehousedDate.setForeground(Color.GRAY);
 
-        warehousedDate.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (warehousedDate.getForeground().equals(Color.GRAY) && warehousedDate.getText().equals("입고일")) {
-                    warehousedDate.setText("");
-                    warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
-                    warehousedDate.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (warehousedDate.getText().isEmpty()) {
-                    warehousedDate.setText("입고일");
-                    warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                    warehousedDate.setForeground(Color.GRAY);
-                }
-            }
-        });
 
         // 입고 신청 버튼 생성
         JButton application = new JButton("입고 신청");
         application.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
         application.addActionListener(e -> handleApplyButton());
+
+        // 추가 입고 버튼 생성
+        JButton addApply = new JButton("추가 입고");
+        addApply.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        addApply.addActionListener(e -> handleAddButton());
 
         // 초기화 버튼
         JButton clearButtonForSearch = new JButton("초기화");
@@ -336,7 +308,7 @@ public class IncomingManagementPanel extends JPanel {
 
         // 입고 신청 제목 라벨
         JLabel labelForApply = new JLabel("입고 신청");
-        labelForApply.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 15));
+        labelForApply.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         labelForApply.setForeground(Color.black);
 
         // 라벨 (왼쪽 상단)
@@ -354,9 +326,9 @@ public class IncomingManagementPanel extends JPanel {
         inputPanel.add(manufacturerCode);
         inputPanel.add(productCode);
         inputPanel.add(askingDate);
-        inputPanel.add(warehousedDate);
         inputPanel.add(warehousedQuantity);
         inputPanel.add(application);
+        inputPanel.add(addApply);
         inputPanel.add(clearButtonForSearch);
 
         // 라벨과 입력 필드 패널을 bottomPanel에 추가
@@ -549,130 +521,6 @@ public class IncomingManagementPanel extends JPanel {
                 System.out.println("자재 정보 업데이트 완료");
 
                 JOptionPane.showMessageDialog(null, "기존 재고가 없습니다. 추가 데이터를 입력해주세요.");
-
-                // ----------------------- 추가 데이터 입력 창 ------------------------------
-                // 입력 창 생성 및 입력 텍스트 추출
-                // 새로운 창 생성
-                JFrame extraFrame = new JFrame("추가 데이터 입력");
-
-                // 창고 번호 및 분류 코드 입력 콤보박스 생성
-                JComboBox<String> warehouseComboBox = new JComboBox<>();
-                warehouseComboBox.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                JComboBox<String> itemclassComboBox = new JComboBox<>();
-                itemclassComboBox.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                try {
-                    WarehouseInfoDAO wareDAO = new WarehouseInfoDAO();
-                    ArrayList<WarehouseInfoVO> wareList = wareDAO.getAll();
-
-
-                    for (WarehouseInfoVO vo : wareList) {
-                        warehouseComboBox.addItem(vo.getWarehouse_name());
-                    }
-                    warehouseComboBox.setSelectedIndex(0);
-                    warehouseComboBox.setSize(80, 30);
-
-                    warehouseComboBox.addActionListener(ActionEvent -> {
-                        //todo : 해당 콤보박스가 클릭되었을때 수행 할 작업
-                        try {
-                            warehouse_id = wareDAO.one(warehouseComboBox.getSelectedItem().toString()).getWarehouse_id();
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "창고 정보를 가져오지 못했습니다.");
-                        }
-                        System.out.println(warehouse_id);
-                    });
-
-                    ItemClassDAO itemDAO = new ItemClassDAO();
-                    ArrayList<ItemClassVO> itemList = itemDAO.getAll();
-
-                    for (ItemClassVO vo : itemList) {
-                        itemclassComboBox.addItem(vo.getItem_classification());
-                    }
-
-                    itemclassComboBox.setSelectedIndex(0);
-                    itemclassComboBox.setSize(120, 30);
-
-                    itemclassComboBox.addActionListener(ActionEvent -> {
-                        //todo : 해당 콤보박스가 클릭되었을때 수행 할 작업
-                        try {
-                            code = itemDAO.one(itemclassComboBox.getSelectedItem().toString()).getCode();
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "물품 분류 정보를 가져오지 못했습니다.");
-                        }
-                        System.out.println(code);
-                    });
-
-                    warehouseComboBox.setBounds(10, 10, 80, 30);
-                    itemclassComboBox.setBounds(100, 10, 120, 30);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-
-                // 단가 입력 창
-                JTextField price = new JTextField(10);
-                price.setText("단가");
-                price.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                price.setForeground(Color.GRAY);
-
-                price.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        if (price.getForeground().equals(Color.GRAY) && price.getText().equals("단가")) {
-                            price.setText("");
-                            price.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                            price.setForeground(Color.BLACK);
-                        }
-                    }
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (price.getText().isEmpty()) {
-                            price.setText("단가");
-                            price.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                            price.setForeground(Color.GRAY);
-                        }
-                    }
-                });
-
-
-                // 입력 버튼 - 입력 데이터 추출
-                JButton inputButton = new JButton("입력");
-                inputButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                inputButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        priceInput = price.getText();
-                    }
-                });
-
-
-                JButton updateButton = new JButton("업데이트");
-                updateButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                updateButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // 재고 정보 테이블 업데이트
-                        vo2.setCode(code);
-                        vo2.setWarehouse_id(warehouse_id);
-                        vo2.setPrice(Integer.parseInt(priceInput));
-
-                        inputDAO.insertToInventory(vo2);
-                        System.out.println("재고 정보 업데이트 완료");
-
-                        extraFrame.dispose();
-                    }
-                });
-
-                extraFrame.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
-                extraFrame.setLayout(new FlowLayout());
-                extraFrame.setSize(300, 200);
-                extraFrame.add(itemclassComboBox);
-                extraFrame.add(warehouseComboBox);
-                extraFrame.add(price);
-                extraFrame.add(inputButton);
-                extraFrame.add(updateButton);
-
-
-                extraFrame.setVisible(true);
             }
         } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(null, "입고 신청에 실패했습니다.");
@@ -685,4 +533,7 @@ public class IncomingManagementPanel extends JPanel {
         System.out.println("입고 내역 업데이트 완료");
     }
 
+    private void handleAddButton() {
+        InputIncomingFrame inputIncomingFrame = new InputIncomingFrame();
+    }
 }

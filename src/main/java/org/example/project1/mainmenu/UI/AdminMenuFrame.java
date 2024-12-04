@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
 
 public class AdminMenuFrame extends JFrame {
     private CardLayout cardLayout;
@@ -103,7 +104,7 @@ public class AdminMenuFrame extends JFrame {
 
 
         IncomingManagementPanel incomingManagementPanel = new IncomingManagementPanel();
-        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel();
+        OutgoingConfirmPanel outgoingConfirmPanel = new OutgoingConfirmPanel(name);
         InventoryManagementPanel inventoryManagementPanel =new InventoryManagementPanel("재고관리",this);
         UserGradeManagementPanel userGradeManagementPanel =new UserGradeManagementPanel("회원등급수정");
 
