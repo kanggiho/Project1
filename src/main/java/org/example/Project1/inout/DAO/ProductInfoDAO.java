@@ -146,7 +146,6 @@ public class ProductInfoDAO {
         return null;
     }
 
-
     // ProductInfoVO 객체를 데이터베이스에 삽입하는 메서드
     public void insert(ProductInfoVO vo) throws SQLException {
         String sql = "INSERT INTO product_info(code, product_code, manufacturer_code, warehouse_id, price, stock, stock_date) VALUES (?,?,?,?,?,?,?)";
@@ -166,6 +165,7 @@ public class ProductInfoDAO {
 
         }
     }
+
 
 }
 

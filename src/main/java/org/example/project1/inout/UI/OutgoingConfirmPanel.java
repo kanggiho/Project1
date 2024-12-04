@@ -58,6 +58,7 @@ public class OutgoingConfirmPanel extends JPanel {
         addBottomPanel();
     }
 
+    // ------------------ 발주 요청 내역 확인 제목 라벨 ---------------------
     private void addHeaderLabel() {
         JLabel headerLabel = new JLabel("발주 요청 내역 확인");
         headerLabel.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 18));
@@ -69,6 +70,7 @@ public class OutgoingConfirmPanel extends JPanel {
     private JPanel filterPanel; // UI 전환을 위한 패널
     private CardLayout cardLayout; // 라디오 버튼과 텍스트 필드/버튼 전환
 
+    // ------------------ 콤보 박스 추가 ---------------------
     private void addSearchFilterComponents() {
         // 콤보 박스 추가
         searchFilterComboBox = new JComboBox<>(new String[]{"승인 여부", "결재자"});
