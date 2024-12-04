@@ -127,17 +127,33 @@ public class OutgoingConfirmPanel extends JPanel {
     private void handleSearchFilterChange() {
         // 콤보 박스 선택에 따라 CardLayout 전환
         String selectedOption = (String) searchFilterComboBox.getSelectedItem();
+        System.out.println("Filter Changed: " + selectedOption); // 디버깅 로그
+
         if ("승인 여부".equals(selectedOption)) {
             cardLayout.show(filterPanel, "승인 여부");
             allRadioBtn.setSelected(true);
-
-            dataTable.revalidate();
-            dataTable.repaint();
-
             loadTableData("전체");
         } else if ("결재자".equals(selectedOption)) {
             cardLayout.show(filterPanel, "결재자");
-            searchField.setText("결재자 사번 입력");
+            searchField.setText("결재자 사번");
+            searchField.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    if (searchField.getForeground().equals(Color.GRAY)) {
+                        searchField.setText("");
+                        searchField.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (searchField.getText().isEmpty()) {
+                        searchField.setText("결재자 사번");
+                        searchField.setForeground(Color.GRAY);
+                    }
+                }
+            });
+            clearTable();
         }
     }
 
@@ -251,20 +267,8 @@ public class OutgoingConfirmPanel extends JPanel {
 
     // 라디오버튼 클릭 시 처리
     private void handleRadioBtn(String filter) {
-        switch (filter) {
-            case "전체" :
-                loadTableData("전체");
-                break;
-            case "승인" :
-                loadTableData("승인");
-                break;
-            case "대기중" :
-                loadTableData("대기중");
-                break;
-            case "거절" :
-                loadTableData("거절");
-                break;
-        }
+        System.out.println("Radio Button Selected: " + filter); // 디버깅 로그
+        loadTableData(filter);
     }
 
 
@@ -346,16 +350,36 @@ public class OutgoingConfirmPanel extends JPanel {
     private void loadTableData(String filter) {
         try {
             ArrayList<?> data;
-            if ("전체".equals(filter)) data = outputInfo2DAO.getAllData();
-            else if ("승인".equals(filter)) data = outputInfo2DAO.getApprove();
-            else if ("대기중".equals(filter)) data = outputInfo2DAO.getPending();
-            else data = outputInfo2DAO.getReject();
+            if ("전체".equals(filter)) {
+                data = outputInfo2DAO.getAllData();
+            } else if ("승인".equals(filter)) {
+                data = outputInfo2DAO.getApprove();
+            } else if ("대기중".equals(filter)) {
+                data = outputInfo2DAO.getPending();
+            } else {
+                data = outputInfo2DAO.getReject();
+            }
 
-            updateTable(data);
+            // 새로운 모델로 테이블 초기화
+            String[] columnNames = {"자재코드", "자재명", "창고이름", "아이디", "주문자 이름",
+                    "단가", "발주량", "승인번호", "발주날짜", "결재자", "승인여부"};
+            tableModel = new DefaultTableModel(columnNames, 0);
+
+            for (Object row : data) {
+                tableModel.addRow(extractRowData(row));
+            }
+
+            // 테이블에 새 모델 적용
+            dataTable.setModel(tableModel);
+
+            // UI 재렌더링
+            dataTable.revalidate();
+            dataTable.repaint();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "데이터 로드 실패: " + e.getMessage());
         }
     }
+
 
     private void updateTable(ArrayList<?> data) {
         tableModel.setRowCount(0); // Clear the table
@@ -364,6 +388,13 @@ public class OutgoingConfirmPanel extends JPanel {
         }
         dataTable.revalidate();
         dataTable.repaint();
+    }
+
+    private void clearTable() {
+            tableModel.setRowCount(0); // 기존 데이터 제거
+            dataTable.setModel(new DefaultTableModel()); // 새 모델로 테이블 초기화
+            dataTable.revalidate();
+            dataTable.repaint();
     }
 
     private Object[] extractRowData(Object data) {
