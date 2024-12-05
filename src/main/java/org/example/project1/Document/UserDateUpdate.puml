@@ -1,0 +1,46 @@
+@startuml
+actor 사용자
+participant UserMenuFrame
+participant OutgoingPanel
+participant ConfirmListPanel
+participant DashboardMainPanel
+participant UserDataUpdatePanel
+participant LoginFrame
+
+사용자 -> UserMenuFrame: 생성(이름)
+activate UserMenuFrame
+
+UserMenuFrame -> UserMenuFrame: 프레임 설정
+UserMenuFrame -> UserMenuFrame: TopBar 생성
+UserMenuFrame -> UserMenuFrame: ButtonBar 생성
+UserMenuFrame -> UserMenuFrame: InnerPanel 생성
+
+UserMenuFrame -> OutgoingPanel: 생성("발주 관리", 이름)
+UserMenuFrame -> ConfirmListPanel: 생성("발주 내역 확인", 이름)
+UserMenuFrame -> UserDataUpdatePanel: 생성("회원 정보 수정", 이름, this)
+UserMenuFrame -> DashboardMainPanel: 생성()
+
+UserMenuFrame -> UserMenuFrame: 버튼 이벤트 리스너 추가
+
+사용자 -> UserMenuFrame: 발주관리 버튼 클릭
+UserMenuFrame -> OutgoingPanel: refresh()
+UserMenuFrame -> UserMenuFrame: 패널 전환
+
+사용자 -> UserMenuFrame: 발주내역확인 버튼 클릭
+UserMenuFrame -> ConfirmListPanel: loadData()
+UserMenuFrame -> UserMenuFrame: 패널 전환
+
+사용자 -> UserMenuFrame: 대시보드 버튼 클릭
+UserMenuFrame -> DashboardMainPanel: updateChart()
+UserMenuFrame -> UserMenuFrame: 패널 전환
+
+사용자 -> UserMenuFrame: 회원정보수정 버튼 클릭
+UserMenuFrame -> UserDataUpdatePanel: setData()
+UserMenuFrame -> UserMenuFrame: 패널 전환
+
+사용자 -> UserMenuFrame: 로그아웃 레이블 클릭
+UserMenuFrame -> LoginFrame: 생성()
+UserMenuFrame -> UserMenuFrame: dispose()
+
+deactivate UserMenuFrame
+@enduml

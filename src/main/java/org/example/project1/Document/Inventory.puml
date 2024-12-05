@@ -1,0 +1,97 @@
+@startuml
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+skinparam sequenceParticipant underline
+
+actor 관리자
+participant "AdminMenuFrame" as AMF
+participant "InventoryManagementPanel" as IMP
+participant "StockStatusPanel" as SSP
+participant "StockEditPanel" as SEP
+participant "StockUpdatePanel" as SUP
+participant "LowStockAlertPanel" as LSAP
+participant "ProductInfoDAO" as PIDAO
+database "데이터베이스" as DB
+
+관리자 -> AMF: 재고관리 버튼 클릭
+activate AMF
+
+AMF -> IMP: 생성
+activate IMP
+
+IMP -> SSP: 생성
+activate SSP
+
+IMP -> SEP: 생성
+activate SEP
+
+IMP -> SUP: 생성
+activate SUP
+
+IMP -> LSAP: 생성
+activate LSAP
+
+SSP -> PIDAO: 재고 데이터 요청
+activate PIDAO
+
+PIDAO -> DB: 쿼리 실행
+activate DB
+
+DB --> PIDAO: 결과 반환
+deactivate DB
+
+PIDAO --> SSP: 재고 데이터 반환
+deactivate PIDAO
+
+SSP -> SSP: 테이블 업데이트
+
+관리자 -> SSP: 제품 선택
+SSP -> SEP: 선택된 제품 정보 전달
+
+관리자 -> SEP: 제품 정보 수정
+SEP -> PIDAO: 수정 요청
+activate PIDAO
+
+PIDAO -> DB: 업데이트 쿼리 실행
+activate DB
+
+DB --> PIDAO: 결과 반환
+deactivate DB
+
+PIDAO --> SEP: 수정 결과 반환
+deactivate PIDAO
+
+SEP -> SSP: 테이블 갱신 요청
+
+관리자 -> SUP: 재고 수량 수정
+SUP -> PIDAO: 수량 감소 요청
+activate PIDAO
+
+PIDAO -> DB: 업데이트 쿼리 실행
+activate DB
+
+DB --> PIDAO: 결과 반환
+deactivate DB
+
+PIDAO --> SUP: 수정 결과 반환
+deactivate PIDAO
+
+SUP -> SSP: 테이블 갱신 요청
+
+관리자 -> LSAP: 재고 부족 조회
+LSAP -> PIDAO: 재고 부족 상품 요청
+activate PIDAO
+
+PIDAO -> DB: 쿼리 실행
+activate DB
+
+DB --> PIDAO: 결과 반환
+deactivate DB
+
+PIDAO --> LSAP: 재고 부족 상품 목록 반환
+deactivate PIDAO
+
+LSAP -> SSP: 재고 부족 상품 표시
+
+@enduml
