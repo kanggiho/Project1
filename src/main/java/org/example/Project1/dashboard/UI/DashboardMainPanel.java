@@ -55,7 +55,7 @@ public class DashboardMainPanel extends JPanel {
 
     public void updateChart(){
         pieChartPanel.getNew();
-        topSellingProductsPanel.setBounds(0, 150, 550, 150);
+        topSellingProductsPanel.setBounds(0, 150, 550, 152);
         add(topSellingProductsPanel);
         todayInventoryPanel.setBounds(0, 300, 550, 150);
         add(todayInventoryPanel);

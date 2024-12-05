@@ -49,7 +49,7 @@ public class StockUpdatePanel extends JPanel {
         orderButton = new JButton("물건 수량 수정");
         orderButton.setBackground(ColorSet.color_button[2]);
         orderButton.setBorder(new LineBorder(Color.GRAY, 1));
-        orderButton.setFont(new Font(tossFont.getName(), Font.PLAIN, 14));
+        orderButton.setFont(new Font(tossFont.getName(), Font.PLAIN, 18));
         orderButton.setForeground(Color.BLACK);
         orderButton.setPreferredSize(new Dimension(110, 30));
 

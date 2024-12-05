@@ -58,7 +58,7 @@ public class TopSellingProductsPanel extends JPanel {
         add(scrollPane);
 
         // 새로고침 버튼 생성
-        refreshButton = new JButton("인기 순위 조회");
+        refreshButton = new JButton("인기 순위");
         refreshButton.setFont(tossFont);
         refreshButton.addActionListener(e -> loadTopSellingProducts());
         refreshButton.setBackground(Color.BLACK);

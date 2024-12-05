@@ -397,8 +397,8 @@ public class OutgoingPanel extends JPanel {
                         outputInfo.setProduct_code(request.getProduct_code());
                         outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
                         outputInfo.setUser_id(userId);
-                        outputInfo.setConfirm_num(confirmNum);
-                        outputInfo.setConfirm_id(19981114);
+                        outputInfo.setConfirm_num(0);
+                        outputInfo.setConfirm_id(0);
                         outputInfo.setStatus("대기중");
                         outputInfo.setUnit_price(request.getPrice());
                         outputInfo.setRelease_quantity(request.getRelease_quantity());

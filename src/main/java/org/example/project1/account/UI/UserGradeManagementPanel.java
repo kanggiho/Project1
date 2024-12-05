@@ -40,11 +40,12 @@ public class UserGradeManagementPanel extends JPanel {
         userGradeUpdatePanel = new UserGradeUpdatePanel();
         gradeSearchPanel = new GradeSearchPanel();
 
-        gradeSearchPanel.setBounds(50, 10, 700, 100);
-        userTablePanel.setBounds(50, 120, 1000, 210);
-        userDataLoadPanel.setBounds(800, 10, 100, 30);
+        gradeSearchPanel.setBounds(50, 10, 700, 40);
+        userTablePanel.setBounds(50, 100, 1000, 210);
+        userDataLoadPanel.setBounds(400, 15, 100, 40);
         userGradeUpdatePanel.setBounds(50, 350, 1000, 150);
 
+        userDataLoadPanel.setBackground(Color.WHITE);
         add(userTablePanel);
         add(userDataLoadPanel);
         add(userGradeUpdatePanel);
@@ -116,8 +117,8 @@ public class UserGradeManagementPanel extends JPanel {
             String[] columnNames = {"ID", "라이센스", "이름", "전화번호", "이메일", "등급"};
             tableModel = new DefaultTableModel(columnNames, 0);
             userTable = new JTable(tableModel);
-            userTable.setFont(new Font(toss_font, Font.PLAIN, 14));
-            userTable.getTableHeader().setFont(new Font(toss_font, Font.BOLD, 16));
+            userTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            userTable.setRowHeight(18);
             JScrollPane scrollPane = new JScrollPane(userTable);
             add(scrollPane, BorderLayout.CENTER);
         }
@@ -142,6 +143,7 @@ public class UserGradeManagementPanel extends JPanel {
             loadButton = new JButton("새로고침");
             loadButton.setBackground(ColorSet.color_button[2]);
             loadButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            loadButton.setForeground(Color.BLACK);
             add(loadButton);
         }
 
@@ -171,6 +173,13 @@ public class UserGradeManagementPanel extends JPanel {
             silverRadio = new JRadioButton("SILVER");
             goldRadio = new JRadioButton("GOLD");
             diamondRadio = new JRadioButton("DIAMOND");
+
+            bronzeRadio.setBackground(Color.WHITE);
+            silverRadio.setBackground(Color.WHITE);
+            goldRadio.setBackground(Color.WHITE);
+            diamondRadio.setBackground(Color.WHITE);
+
+
 
             gradeGroup = new ButtonGroup();
             gradeGroup.add(bronzeRadio);
@@ -257,7 +266,10 @@ public class UserGradeManagementPanel extends JPanel {
             searchButton.setFont(new Font(toss_font, Font.PLAIN, 14));
             searchButton.setBackground(ColorSet.color_button[1]);
 
-            add(new JLabel("등급 선택:"));
+            JLabel selLabel = new JLabel("등급 선택:");
+            selLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
+
+            add(selLabel);
             add(gradeComboBox);
             add(searchButton);
         }
