@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.order.DAO.OutputInfoDAO;
 import org.example.project1.order.DAO.ProductInfoDAO;
 import org.example.project1.order.DAO.OrdererDAO;
@@ -96,7 +97,7 @@ public class OutgoingPanel extends JPanel {
 
         // --------------------- 출고 요청 섹션 ---------------------
         // 출고 요청 레이블 생성
-        JLabel outputRequestLabel = new JLabel("출고 요청");
+        JLabel outputRequestLabel = new JLabel("발주 요청");
         outputRequestLabel.setFont(new Font(toss_font, Font.PLAIN, 18));
         outputRequestLabel.setBounds(20, 230, 100, 40); // 위치와 크기 설정
         add(outputRequestLabel);
@@ -104,16 +105,18 @@ public class OutgoingPanel extends JPanel {
         // "삭제" 버튼 생성
         JButton deleteButton = new JButton("삭제");
         deleteButton.setFont(new Font(toss_font, Font.PLAIN, 14));
-        deleteButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
-        deleteButton.setBorder(new LineBorder(Color.BLACK, 1));
+        deleteButton.setBackground(ColorSet.color_button[0]); // 연한 빨간색 (Pink)
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setBorder(new LineBorder(Color.GRAY, 1));
         deleteButton.setBounds(100, 235, 80, 25); // 위치와 크기 설정
         add(deleteButton);
 
         // "전체삭제" 버튼 생성
         JButton deleteAllButton = new JButton("전체삭제");
         deleteAllButton.setFont(new Font(toss_font, Font.PLAIN, 14));
-        deleteAllButton.setBackground(new Color(255, 182, 193)); // 연한 빨간색 (Pink)
-        deleteAllButton.setBorder(new LineBorder(Color.BLACK, 1));
+        deleteAllButton.setBackground(Color.RED);
+        deleteAllButton.setForeground(Color.WHITE);
+        deleteAllButton.setBorder(new LineBorder(Color.GRAY, 1));
         deleteAllButton.setBounds(190, 235, 80, 25); // 위치와 크기 설정
         add(deleteAllButton);
 
@@ -128,7 +131,7 @@ public class OutgoingPanel extends JPanel {
         add(outputRequestScrollPane);
 
         // --------------------- 총 출고 비용 라벨 ---------------------
-        JLabel totalCostTextLabel = new JLabel("총 출고 비용:");
+        JLabel totalCostTextLabel = new JLabel("총 발주 비용:");
         totalCostTextLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
         totalCostTextLabel.setBounds(840, 240, 100, 30);
         add(totalCostTextLabel);
@@ -162,7 +165,7 @@ public class OutgoingPanel extends JPanel {
         add(productPriceLabel);
 
         // 수량 입력 필드
-        JLabel quantityLabel = new JLabel("출고 수량:");
+        JLabel quantityLabel = new JLabel("발주 수량:");
         quantityLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
         quantityLabel.setBounds(840, 140, 100, 30);
         add(quantityLabel);
@@ -172,20 +175,21 @@ public class OutgoingPanel extends JPanel {
         quantityField.setBounds(940, 140, 150, 30);
         add(quantityField);
 
-        // "출고하기" 버튼 생성
-        releaseButton = new JButton("출고하기");
+        // "발주하기" 버튼 생성
+        releaseButton = new JButton("발주하기");
         releaseButton.setFont(new Font(toss_font, Font.PLAIN, 16));
-        releaseButton.setBackground(new Color(144, 238, 144)); // 연한 녹색 (Light Green)
-        releaseButton.setBorder(new LineBorder(Color.BLACK, 2));
+        releaseButton.setBackground(ColorSet.color_button[2]); // 연한 녹색 (Light Green)
+        releaseButton.setForeground(Color.white);
+        releaseButton.setBorder(new LineBorder(Color.GRAY, 1));
         releaseButton.setBounds(840, 190, 250, 40);
         add(releaseButton);
 
-        // --------------------- 최종 출고하기 버튼 ---------------------
-        finalReleaseButton = new JButton("최종 출고");
+        // --------------------- 최종 발주하기 버튼 ---------------------
+        finalReleaseButton = new JButton("최종 발주");
         finalReleaseButton.setFont(new Font(toss_font, Font.PLAIN, 20));
         finalReleaseButton.setBackground(new Color(19, 102, 19)); // 짙은 녹색
         finalReleaseButton.setForeground(Color.WHITE);
-        finalReleaseButton.setBorder(new LineBorder(Color.BLACK, 2));
+        finalReleaseButton.setBorder(new LineBorder(Color.GRAY, 1));
         finalReleaseButton.setBounds(840, 300, 250, 100);
         add(finalReleaseButton);
 
@@ -231,7 +235,7 @@ public class OutgoingPanel extends JPanel {
                     // 출고 요청 테이블에서 삭제
                     outputRequestTableModel.removeRow(selectedRow);
                 } else {
-                    JOptionPane.showMessageDialog(null, "삭제할 출고 요청을 선택해주세요.");
+                    JOptionPane.showMessageDialog(null, "삭제할 발주 요청을 선택해주세요.");
                 }
             }
         });
@@ -241,7 +245,7 @@ public class OutgoingPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 모든 출고 요청 삭제 로직 구현
-                int confirm = JOptionPane.showConfirmDialog(null, "모든 출고 요청을 삭제하시겠습니까?", "전체삭제", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(null, "모든 발주 요청을 삭제하시겠습니까?", "전체삭제", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     // 모든 출고 요청을 재고에 반영
                     List<OutputRequestVO> allRequests = outputRequestTableModel.getAllRequests();
@@ -271,13 +275,13 @@ public class OutgoingPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (selectedProduct == null) {
-                    JOptionPane.showMessageDialog(null, "출고할 제품을 선택해주세요.");
+                    JOptionPane.showMessageDialog(null, "발주할 제품을 선택해주세요.");
                     return;
                 }
 
                 String quantityText = quantityField.getText().trim();
                 if (quantityText.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "출고 수량을 입력해주세요.");
+                    JOptionPane.showMessageDialog(null, "발주 수량을 입력해주세요.");
                     return;
                 }
 
@@ -295,7 +299,7 @@ public class OutgoingPanel extends JPanel {
 
                 // 재고 수량 확인 로직 추가
                 if (quantity > selectedProduct.getStock()) {
-                    JOptionPane.showMessageDialog(null, "출고 수량이 재고 수량을 초과합니다.");
+                    JOptionPane.showMessageDialog(null, "발주 수량이 재고 수량을 초과합니다.");
                     return;
                 }
 
@@ -393,8 +397,8 @@ public class OutgoingPanel extends JPanel {
                         outputInfo.setProduct_code(request.getProduct_code());
                         outputInfo.setWarehouse_id(stockProduct.getWarehouse_id());
                         outputInfo.setUser_id(userId);
-                        outputInfo.setConfirm_num(confirmNum);
-                        outputInfo.setConfirm_id(19981114);
+                        outputInfo.setConfirm_num(0);
+                        outputInfo.setConfirm_id(0);
                         outputInfo.setStatus("대기중");
                         outputInfo.setUnit_price(request.getPrice());
                         outputInfo.setRelease_quantity(request.getRelease_quantity());
@@ -410,7 +414,7 @@ public class OutgoingPanel extends JPanel {
                     // 트랜잭션 커밋
                     conn.commit();
 
-                    JOptionPane.showMessageDialog(null, "출고가 완료되었습니다.");
+                    JOptionPane.showMessageDialog(null, "발주가 완료되었습니다.");
                     // 출고 요청 테이블 초기화
                     outputRequestTableModel.clearAll();
                     productInfoDAO.refreshInventoryStatus(stockTable);
@@ -424,7 +428,7 @@ public class OutgoingPanel extends JPanel {
                     } catch (SQLException rollbackEx) {
                         rollbackEx.printStackTrace();
                     }
-                    JOptionPane.showMessageDialog(null, "출고 중 오류가 발생했습니다: " + ex.getMessage());
+                    JOptionPane.showMessageDialog(null, "발주 중 오류가 발생했습니다: " + ex.getMessage());
                 } finally {
                     try {
                         if (conn != null) {
@@ -468,7 +472,7 @@ public class OutgoingPanel extends JPanel {
                     int availableStock = stockProduct.getStock() + currentReleaseQuantity;
 
                     if (newQuantity > availableStock) {
-                        JOptionPane.showMessageDialog(null, "출고 수량이 재고 수량을 초과합니다.");
+                        JOptionPane.showMessageDialog(null, "발주 수량이 재고 수량을 초과합니다.");
                         return false;
                     }
 

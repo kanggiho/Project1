@@ -33,7 +33,7 @@ public class UserMenuFrame extends JFrame {
         // TopBar 생성
         JPanel topBar = new JPanel();
         topBar.setBounds(0, 0, 1200, 60);
-        topBar.setBackground(ColorSet.color1_bold[0]);
+        topBar.setBackground(ColorSet.color1_bold[1]);
         topBar.setLayout(null); // 절대 위치 설정
 
         // 이미지 로고 추가
@@ -47,7 +47,7 @@ public class UserMenuFrame extends JFrame {
 
         // 큰 텍스트 레이블 (40px)
         JLabel largeTextLabel = new JLabel("My 웨하스");
-        largeTextLabel.setFont(new Font(toss_font, Font.BOLD, 30));
+        largeTextLabel.setFont(new Font(toss_font, Font.PLAIN, 24));
         largeTextLabel.setForeground(Color.WHITE);
         largeTextLabel.setBounds(70, 8, 300, 50); // 텍스트 위치 조정
         topBar.add(largeTextLabel);
@@ -58,21 +58,6 @@ public class UserMenuFrame extends JFrame {
         smallTextLabel.setForeground(Color.WHITE);
         smallTextLabel.setBounds(230, 23, 200, 30);
         topBar.add(smallTextLabel);
-
-
-        JLabel myPageLabel = new JLabel("마이페이지");
-        myPageLabel.setBounds(980, 27, 70, 30);
-        myPageLabel.setForeground(Color.WHITE);
-        topBar.add(myPageLabel);
-        myPageLabel.setFont(new Font(toss_font, Font.PLAIN, 14));
-
-        myPageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //todo : 마이페이지 기능 추가하기
-                super.mouseClicked(e);
-            }
-        });
 
 
         JLabel logoutLabel = new JLabel("로그아웃");
@@ -152,7 +137,7 @@ public class UserMenuFrame extends JFrame {
         btnDashBoard.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                dashboardMainPanel.updateChart();
             }
         });
         btnUpdateData.addActionListener(new UserMenuFrame.ButtonActionListener(btnUpdateData, "회원정보수정"));

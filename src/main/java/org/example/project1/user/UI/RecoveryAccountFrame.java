@@ -1,5 +1,6 @@
 package org.example.project1.user.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.user.DAO.OrdererDAO;
 import org.example.project1.user.VO.OrdererVO;
 
@@ -86,7 +87,7 @@ public class RecoveryAccountFrame extends JFrame {
 
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(80, 113, 158));
+        topPanel.setBackground(ColorSet.color1_bold[1]);
         topPanel.setBounds(0, 0, 1200, 60);
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
 
@@ -112,8 +113,8 @@ public class RecoveryAccountFrame extends JFrame {
         radioPanel.setBounds(400, 170, 400, 50);
         radioPanel.setLayout(new GridLayout(1, 2, 20, 0));
 
-        findIdButton = createStyledRadioButton("아이디 찾기", Color.DARK_GRAY, Color.LIGHT_GRAY);
-        findPwButton = createStyledRadioButton("비밀번호 찾기", Color.LIGHT_GRAY, Color.DARK_GRAY);
+        findIdButton = createStyledRadioButton("아이디 찾기", Color.BLACK, Color.WHITE);
+        findPwButton = createStyledRadioButton("비밀번호 찾기", Color.WHITE, Color.BLACK);
 
         findIdButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -148,10 +149,10 @@ public class RecoveryAccountFrame extends JFrame {
     }
 
     private void selectStyledRadioButton(JLabel selected, JLabel other) {
-        selected.setBackground(Color.DARK_GRAY);
-        selected.setForeground(Color.LIGHT_GRAY);
-        other.setBackground(Color.LIGHT_GRAY);
-        other.setForeground(Color.DARK_GRAY);
+        selected.setBackground(Color.BLACK);
+        selected.setForeground(Color.WHITE);
+        other.setBackground(Color.WHITE);
+        other.setForeground(Color.BLACK);
     }
 
     private JPanel createInputPanel() {
@@ -193,16 +194,16 @@ public class RecoveryAccountFrame extends JFrame {
 
         completeButton = new JButton("완료");
         completeButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        completeButton.setBackground(Color.BLACK);
-        completeButton.setForeground(Color.WHITE);
+        completeButton.setBackground(Color.WHITE);
+        completeButton.setForeground(Color.BLACK);
         completeButton.setFocusPainted(false);
         completeButton.setPreferredSize(new Dimension(290, 41));
         completeButton.addActionListener(e -> handleRecoveryAction());
 
         cancelButton = new JButton("취소");
         cancelButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
-        cancelButton.setBackground(Color.BLACK);
-        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setBackground(Color.WHITE);
+        cancelButton.setForeground(Color.BLACK);
         cancelButton.setFocusPainted(false);
         cancelButton.setPreferredSize(new Dimension(290, 41));
         cancelButton.addActionListener(e -> dispose());

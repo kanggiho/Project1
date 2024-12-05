@@ -36,13 +36,11 @@ public class InputIncomingFrame extends JFrame {
         setUI();
         setComboBox();
         setVisible(true);
-
     }
 
     public void setFrame() {
         setSize(600, 340);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
     }
 
@@ -161,6 +159,7 @@ public class InputIncomingFrame extends JFrame {
             makeProduct();
             makeInput();
             makeProductInfo();
+            dispose();
         });
     }
 

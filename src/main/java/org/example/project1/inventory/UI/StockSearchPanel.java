@@ -1,5 +1,6 @@
 package org.example.project1.inventory.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
 
@@ -49,6 +50,7 @@ public class StockSearchPanel extends JPanel {
         searchTypeComboBox = new JComboBox<>(SEARCH_TYPES);
         searchField = new JTextField(15);
         searchButton = new JButton("검색");
+        searchButton.setBackground(ColorSet.color_button[1]);
 
         add(new JLabel("검색 유형:"));
         add(searchTypeComboBox);

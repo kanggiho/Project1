@@ -1,10 +1,12 @@
 package org.example.project1.inout.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inout.DAO.InputDAO;
 import org.example.project1.inout.DAO.ProductDAO;
 import org.example.project1.inout.VO.*;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -47,21 +49,24 @@ public class IncomingManagementPanel extends JPanel {
         // 제목 라벨 생성
         JLabel labelForSearch = new JLabel("입고 신청 내역   ");
         labelForSearch.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
+        labelForSearch.setBounds(10, 20, 0, 0);
         labelForSearch.setForeground(Color.BLACK);
 
         // 검색창 생성
-        inputField = new JTextField(20);
+        inputField = new JTextField(15);
 
         // 데이터 테이블 생성
         resultTable = new JTable(new DefaultTableModel());
         JScrollPane scrollPane = new JScrollPane(resultTable);
-        scrollPane.setBounds(20, 40, 1060, 350);
+        scrollPane.setBounds(20, 50, 1060, 200);
         add(scrollPane);
 
         // 모드 선택 기능 구현
         String[] modes = {"전체보기", "자재명", "제조업체", "입고일"};
         modeSelector = new JComboBox<>(modes);
         modeSelector.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        modeSelector.setForeground(Color.BLACK);
+        modeSelector.setBackground(ColorSet.color1_light[3]);
 
         inputField.addFocusListener(new FocusListener() {
             @Override
@@ -90,6 +95,8 @@ public class IncomingManagementPanel extends JPanel {
         // '검색' 버튼 기능 구현
         JButton searchButton = new JButton("검색");
         searchButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        searchButton.setForeground(Color.BLACK);
+        searchButton.setBackground(ColorSet.color1_light[1]);
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -99,7 +106,9 @@ public class IncomingManagementPanel extends JPanel {
 
         // '초기화' 버튼 추가
         JButton clearButton = new JButton("초기화");
-        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));
+        clearButton.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 14));;
+        clearButton.setForeground(Color.WHITE);
+        clearButton.setBackground(ColorSet.color_button[0]);
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -125,9 +134,9 @@ public class IncomingManagementPanel extends JPanel {
         // ----------------------- 입고 신청 기능 --------------------------
         // 입고 신청 내용 입력창 생성
         // 제조 업체 코드 입력창
-        manufacturerCode = new JTextField(15);
+        manufacturerCode = new JTextField(10);
         String placeholderText3 = "제조업체 코드";
-        Font placeholderFont3 = new Font("머니그라피TTF Rounded", Font.PLAIN, 10);
+        Font placeholderFont3 = new Font("머니그라피TTF Rounded", Font.PLAIN, 16);
         Color placeholderColor3 = Color.GRAY;
         Color inputTextColor3 = Color.BLACK;
 
@@ -140,7 +149,7 @@ public class IncomingManagementPanel extends JPanel {
             public void focusGained(FocusEvent e) {
                 if (manufacturerCode.getForeground().equals(placeholderColor3) && manufacturerCode.getText().equals(placeholderText3)) {
                     manufacturerCode.setText("");
-                    manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     manufacturerCode.setForeground(inputTextColor3);
                 }
             }
@@ -156,16 +165,16 @@ public class IncomingManagementPanel extends JPanel {
         });
 
         // 자재명 입력창
-        productName = new JTextField(15);
+        productName = new JTextField(10);
         productName.setText("자재명");
-        productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         productName.setForeground(Color.GRAY);
         productName.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (productName.getForeground().equals(Color.GRAY) && productName.getText().equals("자재명")) {
                     productName.setText("");
-                    productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     productName.setForeground(Color.BLACK);
                 }
             }
@@ -174,23 +183,23 @@ public class IncomingManagementPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (productName.getText().isEmpty()) {
                     productName.setText("자재명");
-                    productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                    productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     productName.setForeground(Color.GRAY);
                 }
             }
         });
 
         // 자재코드 입력창
-        productCode = new JTextField(15);
+        productCode = new JTextField(10);
         productCode.setText("자재코드");
-        productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         productCode.setForeground(Color.GRAY);
         productCode.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (productCode.getForeground().equals(Color.GRAY) && productCode.getText().equals("자재코드")) {
                     productCode.setText("");
-                    productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     productCode.setForeground(Color.BLACK);
                 }
             }
@@ -199,23 +208,23 @@ public class IncomingManagementPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (productCode.getText().isEmpty()) {
                     productCode.setText("자재코드");
-                    productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                    productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     productCode.setForeground(Color.GRAY);
                 }
             }
         });
 
         // 입고신청일 입력 창
-        askingDate = new JTextField(15);
+        askingDate = new JTextField(10);
         askingDate.setText("입고신청일");
-        askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         askingDate.setForeground(Color.GRAY);
         askingDate.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (askingDate.getForeground().equals(Color.GRAY) && askingDate.getText().equals("입고신청일")) {
                     askingDate.setText("");
-                    askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     askingDate.setForeground(Color.BLACK);
                 }
             }
@@ -224,23 +233,23 @@ public class IncomingManagementPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (askingDate.getText().isEmpty()) {
                     askingDate.setText("입고신청일");
-                    askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                    askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     askingDate.setForeground(Color.GRAY);
                 }
             }
         });
 
         // 입고 수량 입력 창
-        warehousedQuantity = new JTextField(15);
+        warehousedQuantity = new JTextField(10);
         warehousedQuantity.setText("입고 수량");
-        warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         warehousedQuantity.setForeground(Color.GRAY);
         warehousedQuantity.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (warehousedQuantity.getForeground().equals(Color.GRAY) && warehousedQuantity.getText().equals("입고 수량")) {
                     warehousedQuantity.setText("");
-                    warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 12));
+                    warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     warehousedQuantity.setForeground(Color.BLACK);
                 }
             }
@@ -249,7 +258,7 @@ public class IncomingManagementPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (warehousedQuantity.getText().isEmpty()) {
                     warehousedQuantity.setText("입고 수량");
-                    warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                    warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                     warehousedQuantity.setForeground(Color.GRAY);
                 }
             }
@@ -259,34 +268,40 @@ public class IncomingManagementPanel extends JPanel {
         // 입고 신청 버튼 생성
         JButton application = new JButton("입고 신청");
         application.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        application.setForeground(Color.BLACK);
+        application.setBackground(ColorSet.color_button[1]);
         application.addActionListener(e -> handleApplyButton());
 
         // 추가 입고 버튼 생성
         JButton addApply = new JButton("추가 입고");
         addApply.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        addApply.setForeground(Color.BLACK);
+        addApply.setBackground(ColorSet.color_button[1]);
         addApply.addActionListener(e -> handleAddButton());
 
         // 초기화 버튼
         JButton clearButtonForSearch = new JButton("초기화");
         clearButtonForSearch.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        clearButtonForSearch.setForeground(Color.WHITE);
+        clearButtonForSearch.setBackground(ColorSet.color_button[0]);
         clearButtonForSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 productName.setText("자재명");
                 productName.setForeground(Color.GRAY);
-                productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                productName.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                 manufacturerCode.setText("제조업체 코드");
                 manufacturerCode.setForeground(Color.GRAY);
-                manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                manufacturerCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                 productCode.setText("자재코드");
                 productCode.setForeground(Color.GRAY);
-                productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                productCode.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                 askingDate.setText("입고신청일");
                 askingDate.setForeground(Color.GRAY);
-                askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                askingDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
                 warehousedQuantity.setText("입고 수량");
                 warehousedQuantity.setForeground(Color.GRAY);
-                warehousedDate.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+                warehousedQuantity.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
             }
         });
 
@@ -294,9 +309,9 @@ public class IncomingManagementPanel extends JPanel {
         // ------------------------- 입고 신청 패널 -------------------------------
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
-        bottomPanel.setSize(1100, 145);
+        bottomPanel.setSize(1100, 200);
         bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.setBounds(0, 390, 1100, 145);
+        bottomPanel.setBounds(0, 280, 1100, 250);
 
         // 입고 신청 제목 라벨
         JLabel labelForApply = new JLabel("입고 신청");
@@ -348,7 +363,7 @@ public class IncomingManagementPanel extends JPanel {
             inputField.setText("YYYY-MM-DD");
         }
         inputField.setForeground(Color.GRAY);
-        inputField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 10));
+        inputField.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
     }
 
     // 검색 기능 구현

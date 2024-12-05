@@ -40,11 +40,12 @@ public class UserGradeManagementPanel extends JPanel {
         userGradeUpdatePanel = new UserGradeUpdatePanel();
         gradeSearchPanel = new GradeSearchPanel();
 
-        gradeSearchPanel.setBounds(50, 10, 700, 100);
-        userTablePanel.setBounds(50, 120, 1000, 210);
-        userDataLoadPanel.setBounds(800, 10, 100, 30);
+        gradeSearchPanel.setBounds(50, 10, 700, 40);
+        userTablePanel.setBounds(50, 100, 1000, 210);
+        userDataLoadPanel.setBounds(400, 15, 100, 40);
         userGradeUpdatePanel.setBounds(50, 350, 1000, 150);
 
+        userDataLoadPanel.setBackground(Color.WHITE);
         add(userTablePanel);
         add(userDataLoadPanel);
         add(userGradeUpdatePanel);
@@ -116,8 +117,8 @@ public class UserGradeManagementPanel extends JPanel {
             String[] columnNames = {"ID", "라이센스", "이름", "전화번호", "이메일", "등급"};
             tableModel = new DefaultTableModel(columnNames, 0);
             userTable = new JTable(tableModel);
-            userTable.setFont(new Font(toss_font, Font.PLAIN, 14));
-            userTable.getTableHeader().setFont(new Font(toss_font, Font.BOLD, 16));
+            userTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            userTable.setRowHeight(18);
             JScrollPane scrollPane = new JScrollPane(userTable);
             add(scrollPane, BorderLayout.CENTER);
         }
@@ -139,9 +140,10 @@ public class UserGradeManagementPanel extends JPanel {
         private JButton loadButton;
 
         public UserDataLoadPanel() {
-            setLayout(new FlowLayout());
             loadButton = new JButton("새로고침");
-            loadButton.setFont(new Font(toss_font, Font.PLAIN, 16));
+            loadButton.setBackground(ColorSet.color_button[2]);
+            loadButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            loadButton.setForeground(Color.BLACK);
             add(loadButton);
         }
 
@@ -172,6 +174,13 @@ public class UserGradeManagementPanel extends JPanel {
             goldRadio = new JRadioButton("GOLD");
             diamondRadio = new JRadioButton("DIAMOND");
 
+            bronzeRadio.setBackground(Color.WHITE);
+            silverRadio.setBackground(Color.WHITE);
+            goldRadio.setBackground(Color.WHITE);
+            diamondRadio.setBackground(Color.WHITE);
+
+
+
             gradeGroup = new ButtonGroup();
             gradeGroup.add(bronzeRadio);
             gradeGroup.add(silverRadio);
@@ -180,6 +189,8 @@ public class UserGradeManagementPanel extends JPanel {
 
             confirmButton = new JButton("변경");
             confirmButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            confirmButton.setBackground(ColorSet.color_button[1]);
+            confirmButton.setForeground(Color.WHITE);
 
             add(idLabel);
             add(nameLabel);
@@ -227,6 +238,7 @@ public class UserGradeManagementPanel extends JPanel {
             silverRadio.setVisible(true);
             goldRadio.setVisible(true);
             diamondRadio.setVisible(true);
+            setBackground(Color.WHITE);
         }
 
         public void setConfirmButtonListener(ActionListener listener) {
@@ -241,17 +253,23 @@ public class UserGradeManagementPanel extends JPanel {
         public GradeSearchPanel() {
             setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
             initComponents();
+            setBackground(Color.WHITE);
         }
 
         private void initComponents() {
             String[] grades = {"BRONZE", "SILVER", "GOLD", "DIAMOND"};
             gradeComboBox = new JComboBox<>(grades);
             gradeComboBox.setFont(new Font(toss_font, Font.PLAIN, 14));
+            gradeComboBox.setBackground(Color.WHITE);
 
             searchButton = new JButton("등급 조회");
             searchButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            searchButton.setBackground(ColorSet.color_button[1]);
 
-            add(new JLabel("등급 선택:"));
+            JLabel selLabel = new JLabel("등급 선택:");
+            selLabel.setFont(new Font(toss_font, Font.PLAIN, 16));
+
+            add(selLabel);
             add(gradeComboBox);
             add(searchButton);
         }
