@@ -75,12 +75,12 @@ public class InventoryManagementPanel extends JPanel {
 
         // 각 패널 위치 조절
         stockStatusPanel.setBounds(50,120,1000,210);
-        stockEditPanel.setBounds(150,400,120,100);
-        stockUpdatePanel.setBounds(450,400,100,100);
+        stockEditPanel.setBounds(250,400,120,100);
+        stockUpdatePanel.setBounds(500,400,120,100);
         stockSearchPanel.setBounds(300,10,500,30);
 
         // 버튼 위치 및 크기 설정
-        lowStockButton.setBounds(750, 400, 150, 30);
+        lowStockButton.setBounds(700, 405, 120, 30);
         refreshButton.setBounds(800, 10, 100, 30);
 
 
