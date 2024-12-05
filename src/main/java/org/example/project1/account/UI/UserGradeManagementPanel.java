@@ -139,9 +139,9 @@ public class UserGradeManagementPanel extends JPanel {
         private JButton loadButton;
 
         public UserDataLoadPanel() {
-            setLayout(new FlowLayout());
             loadButton = new JButton("새로고침");
-            loadButton.setFont(new Font(toss_font, Font.PLAIN, 16));
+            loadButton.setBackground(ColorSet.color_button[2]);
+            loadButton.setFont(new Font(toss_font, Font.PLAIN, 14));
             add(loadButton);
         }
 
@@ -180,6 +180,8 @@ public class UserGradeManagementPanel extends JPanel {
 
             confirmButton = new JButton("변경");
             confirmButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            confirmButton.setBackground(ColorSet.color_button[1]);
+            confirmButton.setForeground(Color.WHITE);
 
             add(idLabel);
             add(nameLabel);
@@ -227,6 +229,7 @@ public class UserGradeManagementPanel extends JPanel {
             silverRadio.setVisible(true);
             goldRadio.setVisible(true);
             diamondRadio.setVisible(true);
+            setBackground(Color.WHITE);
         }
 
         public void setConfirmButtonListener(ActionListener listener) {
@@ -241,15 +244,18 @@ public class UserGradeManagementPanel extends JPanel {
         public GradeSearchPanel() {
             setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
             initComponents();
+            setBackground(Color.WHITE);
         }
 
         private void initComponents() {
             String[] grades = {"BRONZE", "SILVER", "GOLD", "DIAMOND"};
             gradeComboBox = new JComboBox<>(grades);
             gradeComboBox.setFont(new Font(toss_font, Font.PLAIN, 14));
+            gradeComboBox.setBackground(Color.WHITE);
 
             searchButton = new JButton("등급 조회");
             searchButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+            searchButton.setBackground(ColorSet.color_button[1]);
 
             add(new JLabel("등급 선택:"));
             add(gradeComboBox);

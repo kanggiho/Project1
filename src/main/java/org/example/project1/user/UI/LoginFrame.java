@@ -1,5 +1,6 @@
 package org.example.project1.user.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.mainmenu.UI.AdminMenuFrame;
 import org.example.project1.mainmenu.UI.UserMenuFrame;
 import org.example.project1.user.DAO.AdminDAO;
@@ -37,17 +38,18 @@ public class LoginFrame extends JFrame {
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         topPanel.setBounds(0, 0, 1200, 60);
-        topPanel.setBackground(Color.WHITE);
+        topPanel.setBackground(ColorSet.color1_bold[1]);
 
         ImageIcon resizedIcon = new ImageIcon(new ImageIcon("src/main/resources/image/MainLogo.png")
                 .getImage().getScaledInstance(45, 45, Image.SCALE_SMOOTH));
         JLabel logoLabel = new JLabel(resizedIcon);
 
         JLabel programTitle = new JLabel("My 웨하스");
-        programTitle.setFont(new Font("머니그라피TTF Rounded", Font.BOLD, 30));
-        programTitle.setForeground(Color.BLACK);
+        programTitle.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 24));
+        programTitle.setForeground(Color.WHITE);
 
-        JLabel versionTitle = new JLabel("ver 1.0.0");
+        JLabel versionTitle = new JLabel("ver - 1.0.0");
+
         versionTitle.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 16));
         versionTitle.setForeground(Color.GRAY);
 
