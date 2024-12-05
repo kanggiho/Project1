@@ -1,0 +1,54 @@
+@startuml
+autoactivate on
+title 입고관리 프로세스
+actor 관리자 as admin
+box "AdminMenuFrame"
+participant AdminMenuFrame
+end box
+box "IncomingManagementPanel"
+participant IncomingManagementPanel
+end box
+box "DAO"
+participant InputDAO
+participant ProductDAO
+end box
+admin -> AdminMenuFrame : 입고관리 버튼 클릭
+AdminMenuFrame -> IncomingManagementPanel : 입고관리 패널 표시
+IncomingManagementPanel -> IncomingManagementPanel : 초기화
+IncomingManagementPanel -> InputDAO : 전체 입고 내역 요청
+InputDAO --> IncomingManagementPanel : 입고 내역 반환
+IncomingManagementPanel --> AdminMenuFrame : 입고 내역 표시
+alt 입고 신청 검색
+admin -> IncomingManagementPanel : 검색 조건 입력
+IncomingManagementPanel -> InputDAO : 검색 조건에 따른 입고 내역 요청
+InputDAO --> IncomingManagementPanel : 검색 결과 반환
+IncomingManagementPanel --> admin : 검색 결과 표시
+end
+alt 입고 신청
+admin -> IncomingManagementPanel : 입고 정보 입력
+IncomingManagementPanel -> InputDAO : 재고 확인 요청
+InputDAO --> IncomingManagementPanel : 재고 확인 결과 반환
+alt 기존 재고 존재
+IncomingManagementPanel -> InputDAO : 입고 내역 추가 요청
+InputDAO --> IncomingManagementPanel : 입고 내역 추가 완료
+IncomingManagementPanel -> InputDAO : 재고 업데이트 요청
+InputDAO --> IncomingManagementPanel : 재고 업데이트 완료
+IncomingManagementPanel --> admin : 입고 완료 메시지 표시
+else 신규 재고
+IncomingManagementPanel -> ProductDAO : 자재 정보 추가 요청
+ProductDAO --> IncomingManagementPanel : 자재 정보 추가 완료
+IncomingManagementPanel --> admin : 추가 입고 요청 메시지 표시
+end
+end
+alt 추가 입고
+admin -> IncomingManagementPanel : 추가 입고 버튼 클릭
+IncomingManagementPanel -> InputIncomingFrame : 추가 입고 창 열기
+InputIncomingFrame --> admin : 추가 입고 정보 입력 요청
+admin -> InputIncomingFrame : 추가 입고 정보 입력
+InputIncomingFrame -> InputDAO : 입고 내역 추가 요청
+InputDAO --> InputIncomingFrame : 입고 내역 추가 완료
+InputIncomingFrame -> ProductDAO : 제품 정보 추가 요청
+ProductDAO --> InputIncomingFrame : 제품 정보 추가 완료
+InputIncomingFrame --> admin : 추가 입고 완료 메시지 표시
+end
+@enduml

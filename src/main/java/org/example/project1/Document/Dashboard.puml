@@ -1,0 +1,39 @@
+@startuml
+autoactivate on
+title 대시보드 프로세스
+actor 사용자 as user
+box "UserMenuFrame"
+participant UserMenuFrame
+end box
+box "DashboardMainPanel"
+participant DashboardMainPanel
+participant RandomProductRecommendationPanel
+participant TopSellingProductsPanel
+participant TodayInventoryPanel
+participant PieChartPanel
+end box
+box "DAO"
+participant DashboardDAO
+participant OutputProductDAO
+end box
+user -> UserMenuFrame : 대시보드 버튼 클릭
+UserMenuFrame -> DashboardMainPanel : 대시보드 패널 표시
+DashboardMainPanel -> RandomProductRecommendationPanel : 초기화
+RandomProductRecommendationPanel -> DashboardDAO : 랜덤 추천 상품 요청
+DashboardDAO --> RandomProductRecommendationPanel : 추천 상품 목록 반환
+RandomProductRecommendationPanel --> DashboardMainPanel : 추천 상품 표시
+DashboardMainPanel -> TopSellingProductsPanel : 초기화
+TopSellingProductsPanel -> DashboardDAO : 인기 상품 요청
+DashboardDAO --> TopSellingProductsPanel : 인기 상품 목록 반환
+TopSellingProductsPanel --> DashboardMainPanel : 인기 상품 표시
+DashboardMainPanel -> TodayInventoryPanel : 초기화
+TodayInventoryPanel -> DashboardDAO : 오늘의 입고 상품 요청
+DashboardDAO --> TodayInventoryPanel : 입고 상품 목록 반환
+TodayInventoryPanel --> DashboardMainPanel : 입고 상품 표시
+DashboardMainPanel -> PieChartPanel : 초기화
+PieChartPanel -> OutputProductDAO : 사용자 발주 데이터 요청
+OutputProductDAO --> PieChartPanel : 발주 데이터 반환
+PieChartPanel --> DashboardMainPanel : 파이 차트 표시
+DashboardMainPanel --> UserMenuFrame : 대시보드 표시 완료
+UserMenuFrame --> user : 대시보드 화면 표시
+@enduml

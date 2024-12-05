@@ -1,0 +1,39 @@
+@startuml
+autoactivate on
+title 로그인 프로세스
+actor 사용자 as user
+box "LoginFrame"
+participant LoginFrame
+end box
+box "DAO"
+participant AdminDAO
+participant OrdererDAO
+end box
+box "MenuFrame"
+participant UserMenuFrame
+participant AdminMenuFrame
+end box
+user -> LoginFrame : 로그인 시도
+LoginFrame -> LoginFrame : handleLogin()
+LoginFrame -> AdminDAO : isValid(id, password)
+AdminDAO --> LoginFrame : 결과 반환
+alt 관리자 로그인 성공
+LoginFrame -> AdminDAO : idSelect(id)
+AdminDAO --> LoginFrame : AdminVO 반환
+LoginFrame -> AdminMenuFrame : 새 창 생성
+AdminMenuFrame --> user : 관리자 메뉴 표시
+else 관리자 로그인 실패
+LoginFrame -> OrdererDAO : isValid(id, password)
+OrdererDAO --> LoginFrame : 결과 반환
+
+alt 사용자 로그인 성공
+    LoginFrame -> OrdererDAO : idSelect(id)
+    OrdererDAO --> LoginFrame : OrdererVO 반환
+    LoginFrame -> UserMenuFrame : 새 창 생성
+    UserMenuFrame --> user : 사용자 메뉴 표시
+else 로그인 실패
+    LoginFrame --> user : 오류 메시지 표시
+end
+
+end
+@enduml

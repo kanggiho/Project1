@@ -1,0 +1,58 @@
+@startuml
+!theme plain
+skinparam DefaultFontName 나눔고딕
+skinparam DefaultFontSize 12
+skinparam SequenceMessageAlignment center
+
+actor 사용자
+participant "UserMenuFrame" as UMF
+participant "OutgoingPanel" as OP
+participant "ConfirmListPanel" as CLP
+participant "DashboardMainPanel" as DMP
+participant "UserDataUpdatePanel" as UDUP
+participant "ProductInfoDAO" as PIDAO
+participant "OutputInfoDAO" as OIDAO
+participant "OrdererDAO" as ODAO
+
+사용자 -> UMF : 프레임 열기
+activate UMF
+
+UMF -> OP : 생성
+UMF -> CLP : 생성
+UMF -> DMP : 생성
+UMF -> UDUP : 생성
+
+사용자 -> UMF : 발주관리 버튼 클릭
+UMF -> OP : refresh() 호출
+activate OP
+OP -> PIDAO : getInventoryStatus() 호출
+PIDAO --> OP : 재고 정보 반환
+OP --> UMF : 화면 갱신
+deactivate OP
+
+사용자 -> UMF : 발주내역확인 버튼 클릭
+UMF -> CLP : loadData() 호출
+activate CLP
+CLP -> OIDAO : getFilteredOutputInfo() 호출
+OIDAO --> CLP : 필터링된 출고 정보 반환
+CLP --> UMF : 화면 갱신
+deactivate CLP
+
+사용자 -> UMF : 대시보드 버튼 클릭
+UMF -> DMP : updateChart() 호출
+activate DMP
+DMP --> UMF : 차트 갱신
+deactivate DMP
+
+사용자 -> UMF : 회원정보수정 버튼 클릭
+UMF -> UDUP : setData() 호출
+activate UDUP
+UDUP -> ODAO : getUserIdByUserName() 호출
+ODAO --> UDUP : 사용자 ID 반환
+UDUP --> UMF : 화면 갱신
+deactivate UDUP
+
+사용자 -> UMF : 로그아웃
+destroy UMF
+
+@enduml
