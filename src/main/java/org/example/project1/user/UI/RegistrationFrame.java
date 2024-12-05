@@ -1,5 +1,6 @@
 package org.example.project1.user.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.user.DAO.OrdererDAO;
 import org.example.project1.user.VO.OrdererVO;
 
@@ -83,7 +84,11 @@ public class RegistrationFrame extends JFrame {
         add(rightPanel);
 
         completeButton = createButton("가입 완료", 261, 543);
+        completeButton.setBackground(Color.WHITE);
+        completeButton.setForeground(Color.BLACK);
         cancelButton = createButton("취소", 612, 543);
+        cancelButton.setBackground(Color.WHITE);
+        cancelButton.setForeground(Color.BLACK);
         add(completeButton);
         add(cancelButton);
 
@@ -92,7 +97,7 @@ public class RegistrationFrame extends JFrame {
 
     private JPanel createTopPanel() {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        topPanel.setBackground(new Color(80, 113, 158));
+        topPanel.setBackground(ColorSet.color1_bold[1]);
         topPanel.setBounds(0, 0, 1200, 60);
 
         JLabel logo = new JLabel();
@@ -103,7 +108,7 @@ public class RegistrationFrame extends JFrame {
 
         JLabel title = new JLabel("My 웨하스");
         title.setFont(new Font("머니그라피TTF Rounded", Font.PLAIN, 24));
-        title.setForeground(Color.BLACK);
+        title.setForeground(Color.WHITE);
 
         topPanel.add(logo);
         topPanel.add(title);

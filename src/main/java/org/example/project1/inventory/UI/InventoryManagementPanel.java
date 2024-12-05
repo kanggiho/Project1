@@ -1,5 +1,6 @@
 package org.example.project1.inventory.UI;
 
+import org.example.project1._common.utility.ColorSet;
 import org.example.project1.inventory.DAO.ProductInfoDAO;
 import org.example.project1.inventory.VO.ProductInfoProductVO;
 import org.example.project1.inventory.VO.ProductInfoProductWarehouseInfoManufacturingVO;
@@ -45,9 +46,15 @@ public class InventoryManagementPanel extends JPanel {
         Font tossFont = new Font(toss_font, Font.PLAIN, 12);
 
         lowStockButton = new JButton("재고 부족 조회");
-        lowStockButton.setFont(tossFont);
+        lowStockButton.setFont(new Font(toss_font, Font.PLAIN, 14));
+        lowStockButton.setForeground(Color.BLACK);
+        lowStockButton.setSize(110, 30);
+        lowStockButton.setBackground(ColorSet.color_button[1]);
+
         refreshButton = new JButton("새로고침");
         refreshButton.setFont(tossFont);
+        refreshButton.setForeground(Color.WHITE);
+        refreshButton.setBackground(ColorSet.color_button[0]);
         // 패널 초기화
         removeAll();
 
@@ -68,12 +75,12 @@ public class InventoryManagementPanel extends JPanel {
 
         // 각 패널 위치 조절
         stockStatusPanel.setBounds(50,120,1000,210);
-        stockEditPanel.setBounds(150,400,120,100);
-        stockUpdatePanel.setBounds(450,400,100,100);
+        stockEditPanel.setBounds(250,400,120,100);
+        stockUpdatePanel.setBounds(500,400,120,100);
         stockSearchPanel.setBounds(300,10,500,30);
 
         // 버튼 위치 및 크기 설정
-        lowStockButton.setBounds(750, 400, 150, 30);
+        lowStockButton.setBounds(700, 405, 120, 30);
         refreshButton.setBounds(800, 10, 100, 30);
 
 
